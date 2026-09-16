@@ -1841,6 +1841,130 @@
             border-color: var(--line-strong);
             color: var(--text-primary);
         }
+
+        /* ==================================================================
+           手机（≤720px）：单列 + 整页滚动。桌面窗口最小 960px，断点永不命中
+           ================================================================== */
+        @media (max-width: 720px) {
+            /* 三行：标题栏 / 导航条 / 工作区；状态栏在手机上没价值 */
+            .container {
+                height: 100vh;
+                height: 100dvh;
+                grid-template-rows: 40px auto 1fr;
+                grid-template-columns: 1fr;
+            }
+            .app-titlebar {
+                grid-area: 1 / 1 / 2 / 2;
+                padding-right: 10px;
+            }
+            .app-subtitle {
+                display: none;
+            }
+            .app-statusbar {
+                display: none;
+            }
+
+            /* 导航：竖排左栏 → 横排一行；「帮助」的 margin-top:auto 换成 margin-left */
+            .app-rail {
+                grid-area: 2 / 1 / 3 / 2;
+                flex-direction: row;
+                gap: 4px;
+                padding: 4px 8px;
+                border-right: 0;
+                border-bottom: 1px solid var(--line);
+            }
+            .rail-item {
+                flex: 1;
+                width: auto;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 5px;
+                padding: 7px 0;
+                font-size: 12.5px;
+            }
+            .rail-item .rail-icon {
+                margin-bottom: 0;
+                font-size: 15px;
+            }
+            .rail-foot {
+                margin-top: 0;
+            }
+
+            /* 工作区：整页滚动，面板不再各自内部滚动 */
+            .workspace {
+                grid-area: 3 / 1 / 4 / 2;
+            }
+            .main-content,
+            .transcription-container {
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .form-container {
+                height: auto;
+                min-height: 100%;
+                padding: 10px;
+                padding-bottom: calc(10px + env(safe-area-inset-bottom));
+            }
+            #ttsForm {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            .tts-editor,
+            .tts-settings {
+                overflow: visible;
+            }
+            /* 软键盘弹出后文稿区还得留得下字 */
+            .tts-editor .form-textarea {
+                min-height: 40vh;
+            }
+
+            /* 语言条：标签横向滑，输入方式独占一行 */
+            .lang-bar {
+                padding: 6px 10px;
+            }
+            .lang-row {
+                flex-wrap: wrap;
+            }
+            .lang-row .lang-tabs {
+                flex: 1 1 auto;
+                min-width: 0;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                scrollbar-width: none;
+            }
+            .lang-row .lang-tabs::-webkit-scrollbar {
+                display: none;
+            }
+            .lang-row .method-chips {
+                flex: 1 0 100%;
+                margin: 0;
+            }
+
+            /* 触控：输入类控件 16px 起，否则 iOS 聚焦会放大整页 */
+            .form-input,
+            .form-select,
+            .form-textarea,
+            .rich-editor {
+                font-size: 16px;
+            }
+            .btn-primary {
+                padding: 13px;
+            }
+            .icon-btn {
+                width: 32px;
+                height: 32px;
+            }
+
+            /* 弹窗：写死的 min-width 在窄屏会把卡片顶出屏幕 */
+            .app-modal-card,
+            .settings-card,
+            .notice-card {
+                min-width: 0;
+                width: calc(100% - 32px);
+            }
+        }
     </style>
 </head>
 <body>
