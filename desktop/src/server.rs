@@ -9,7 +9,8 @@ use serde_json::{json, Value};
 use std::collections::HashMap;
 use std::net::SocketAddr;
 use std::sync::OnceLock;
-use tauri::WebviewWindow;
+use tauri::{Manager, WebviewWindow};
+use tauri_plugin_dialog::DialogExt;
 use tokio::net::TcpListener;
 
 // 待开发：语音转文字（恢复时取消下面这行注释）
@@ -19,8 +20,11 @@ use crate::ssml::{SegmentKind, VoiceOpts};
 // 待开发：语音转文字（stt 模块已封存，恢复时改回 use crate::{stt, tts};）
 use crate::tts;
 
-/// 单块请求体上限：txt 500KB、音频 10MB，这里留足余量
+/// 单块请求体上限：txt 5MB、音频 10MB，这里留足余量
 const MAX_BODY_BYTES: usize = 32 * 1024 * 1024;
+
+/// 导出音频上限：最长档 WAV 一分钟约 5.6MB，长文一口气导出可能上百 MB，单独放宽
+const MAX_EXPORT_BYTES: usize = 512 * 1024 * 1024;
 
 /// 窗口句柄：窗口是在服务起来之后才创建的，所以这里先占位、建好后由 main.rs 写入
 static WINDOW: OnceLock<WebviewWindow> = OnceLock::new();
@@ -40,6 +44,8 @@ pub async fn serve(port: u16, ready: std::sync::mpsc::Sender<()>) {
         // 页面自绘的窗口按钮与标题栏拖拽：页面是本机外部源，用不了 Tauri 的 IPC，所以走这里
         .route("/__window/{action}", post(window_action))
         .route("/__window/state", get(window_state))
+        // 导出音频：页面把音频字节送过来，由这里弹系统「另存为」再落盘
+        .route("/__save", post(save_export))
         .fallback(fallback);
 
     let listener = match TcpListener::bind(SocketAddr::from(([127, 0, 0, 1], port))).await {
@@ -227,9 +233,9 @@ async fn upload_voice(multipart: Multipart) -> Result<(Vec<u8>, String), UploadE
             code: "invalid_file_type",
         });
     }
-    if upload.bytes.len() > 500 * 1024 {
+    if upload.bytes.len() > 5 * 1024 * 1024 {
         return Err(UploadError::Invalid {
-            message: "文件大小超过限制（最大500KB）".to_string(),
+            message: "文件大小超过限制（最大5MB）".to_string(),
             code: "file_too_large",
         });
     }
@@ -241,9 +247,9 @@ async fn upload_voice(multipart: Multipart) -> Result<(Vec<u8>, String), UploadE
             code: "empty_file",
         });
     }
-    if content.chars().count() > 10000 {
+    if content.chars().count() > 50000 {
         return Err(UploadError::Invalid {
-            message: "文本内容过长（最大10000字符）".to_string(),
+            message: "文本内容过长（最大50000字符）".to_string(),
             code: "text_too_long",
         });
     }
@@ -435,6 +441,73 @@ async fn window_state() -> Response<Body> {
         .and_then(|window| window.is_maximized().ok())
         .unwrap_or(false);
     json_response(json!({ "maximized": maximized }), StatusCode::OK)
+}
+
+// ---------------------------------------------------------------- 导出
+
+/// 导出音频：桌面版不交给 WebView 下载（文件会默默写进「下载」文件夹、界面上看不到任何反馈），
+/// 页面把音频字节 POST 过来，这里弹系统「另存为」再自己写盘。
+async fn save_export(request: Request<Body>) -> Response<Body> {
+    let Some(window) = WINDOW.get() else {
+        return invalid_request("窗口尚未就绪", "window_not_ready", "window");
+    };
+
+    let (parts, body) = request.into_parts();
+    let bytes = match to_bytes(body, MAX_EXPORT_BYTES).await {
+        Ok(bytes) => bytes,
+        Err(_) => return invalid_request("音频数据读取失败（单次导出上限 512MB）", "invalid_body", "body"),
+    };
+
+    let (sender, receiver) = tokio::sync::oneshot::channel();
+    window
+        .app_handle()
+        .dialog()
+        .file()
+        .set_file_name(export_file_name(parts.uri.query().unwrap_or("")))
+        .set_parent(window)
+        .save_file(move |path| {
+            let _ = sender.send(path);
+        });
+
+    match receiver.await {
+        // 用户点了取消：不算失败，页面不用提示
+        Ok(None) => json_response(json!({ "saved": false, "canceled": true }), StatusCode::OK),
+        Ok(Some(path)) => match path.into_path() {
+            Ok(path) => match std::fs::write(&path, &bytes) {
+                Ok(()) => {
+                    json_response(json!({ "saved": true, "path": path.to_string_lossy() }), StatusCode::OK)
+                }
+                Err(error) => error_response(
+                    &format!("写入文件失败：{}", error),
+                    "write_failed",
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    "api_error",
+                ),
+            },
+            Err(_) => error_response(
+                "保存路径无效",
+                "invalid_path",
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "api_error",
+            ),
+        },
+        Err(_) => error_response(
+            "保存对话框没有返回结果",
+            "dialog_closed",
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "api_error",
+        ),
+    }
+}
+
+/// 从 `?name=speech.mp3` 里取默认文件名（只有页面会传，取到就用）
+fn export_file_name(query: &str) -> String {
+    let name = query.strip_prefix("name=").unwrap_or("").trim();
+    if name.is_empty() {
+        "speech.mp3".to_string()
+    } else {
+        name.to_string()
+    }
 }
 
 // ---------------------------------------------------------------- 响应

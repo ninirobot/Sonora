@@ -15,7 +15,9 @@ use crate::ssml::{self, Segment, SegmentKind, VoiceOpts};
 pub const TTS_CONCURRENCY: usize = 5;
 
 const MAX_CHARS: usize = 1500;
-const MAX_GROUPS: usize = 40;
+/// 分块上限：网页版受 Cloudflare 子请求数（免费版 50）限制只能 40 组，
+/// 桌面版走本机没有这层限制，放宽到 100 组（约 15 万字）
+const MAX_GROUPS: usize = 100;
 const MAX_CHUNK_CHARS: usize = 2000;
 const MAX_RETRIES: usize = 3;
 const RETRY_BASE_MS: u64 = 500;

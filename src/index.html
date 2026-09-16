@@ -1968,7 +1968,7 @@
                                             </svg>
                                         </div>
                                         <p class="file-drop-text">拖拽txt文件到此处，或点击选择文件</p>
-                                        <p class="file-drop-hint">支持txt格式，最大500KB</p>
+                                        <p class="file-drop-hint">支持txt格式，最大5MB</p>
                                     </div>
                                     <input type="file" id="fileInput" accept=".txt,text/plain" style="display: none;">
                                 </div>
@@ -3307,8 +3307,8 @@
             }
 
             // 验证文件大小
-            if (file.size > 500 * 1024) {
-                showNotice('文件大小不能超过500KB');
+            if (file.size > 5 * 1024 * 1024) {
+                showNotice('文件大小不能超过5MB');
                 return;
             }
 
@@ -3878,7 +3878,26 @@
             // 弹窗只能点卡片上的按钮关：点外面与 Esc 都不关
             document.getElementById('appModalClose').addEventListener('click', () => modal.classList.remove('show'));
 
-            if (desktop) initializeWindowControls();
+            if (desktop) { initializeWindowControls(); initializeDesktopExport(); }
+        }
+
+        // 导出音频：网页版交给浏览器下载；桌面版改走本机接口，弹系统「另存为」
+        // （WebView 自己的下载只会默默把文件塞进「下载」文件夹，界面上看不到任何反馈）
+        function initializeDesktopExport() {
+            const downloadBtn = document.getElementById('downloadBtn');
+            downloadBtn.addEventListener('click', async event => {
+                if (!downloadBtn.href) return;
+                event.preventDefault();
+                try {
+                    const audio = await (await fetch(downloadBtn.href)).blob();
+                    const response = await fetch('/__save?name=' + downloadBtn.download, { method: 'POST', body: audio });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.error?.message || '导出失败');
+                    if (result.saved) showNotice('已导出到 ' + result.path);
+                } catch (error) {
+                    showNotice('导出失败：' + error.message);
+                }
+            });
         }
 
         // 窗口按钮与标题栏拖拽：桌面版走本机接口，不依赖 Tauri IPC

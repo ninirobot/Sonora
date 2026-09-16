@@ -816,9 +816,9 @@ async function handleFileUpload(request) {
             return invalidRequest("不支持的文件类型，请上传txt文件", "invalid_file_type");
         }
 
-        // 验证文件大小（限制为500KB）
-        if (file.size > 500 * 1024) {
-            return invalidRequest("文件大小超过限制（最大500KB）", "file_too_large");
+        // 验证文件大小（限制为5MB）
+        if (file.size > 5 * 1024 * 1024) {
+            return invalidRequest("文件大小超过限制（最大5MB）", "file_too_large");
         }
 
         // 读取文件内容
@@ -829,9 +829,9 @@ async function handleFileUpload(request) {
             return invalidRequest("文件内容为空", "empty_file");
         }
 
-        // 文本长度限制（10000字符）
-        if (text.length > 10000) {
-            return invalidRequest("文本内容过长（最大10000字符）", "text_too_long");
+        // 文本长度限制（50000字符，与 40 组 × 1500 字的合成上限对齐）
+        if (text.length > 50000) {
+            return invalidRequest("文本内容过长（最大50000字符）", "text_too_long");
         }
 
         // 上传的 txt 也可以按 a: / b: 行格式走多人对话
