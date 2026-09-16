@@ -384,6 +384,13 @@
             font-weight: 600;
         }
 
+        /* 帮助卡片里「联系作者」一段：与上面的快捷键列表之间加分隔线 */
+        .app-modal-card #appModalBody + h3 {
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border-color);
+        }
+
         .app-modal-card dl {
             margin: 0;
             display: grid;
@@ -2236,11 +2243,19 @@
         </footer>
     </div>
 
-    <!-- 浮层：快捷键一览 / 关于共用一个卡片 -->
+    <!-- 浮层：快捷键一览 / 关于 / 联系作者共用一个卡片 -->
     <div class="app-modal" id="appModal">
         <div class="app-modal-card">
             <h3 id="appModalTitle"></h3>
             <div id="appModalBody"></div>
+
+            <!-- 联系作者：与上面的「帮助」正文同级的一段 -->
+            <h3>联系作者</h3>
+            <dl>
+                <dt>微信</dt>
+                <dd>Future_in_the_past</dd>
+            </dl>
+
             <button type="button" id="appModalClose">关闭</button>
         </div>
     </div>
@@ -3831,12 +3846,6 @@
             const runtimeText = desktop ? '桌面版 · 本机服务' : '网页版';
             document.getElementById('runtimeLabel').textContent = runtimeText;
 
-            // 语音规模直接取状态栏里那几项，避免同一组数字写两遍
-            const scaleText = Array.from(document.querySelectorAll('.app-statusbar .feature-item'))
-                .map(item => item.textContent.trim())
-                .filter(Boolean)
-                .join(' · ');
-
             function showModal(title, rows) {
                 document.getElementById('appModalTitle').textContent = title;
                 const body = document.getElementById('appModalBody');
@@ -3854,14 +3863,13 @@
                 modal.classList.add('show');
             }
 
-            // 侧边栏「帮助」：快捷键与关于合成一张卡片
+            // 侧边栏「帮助」：快捷键与关于一段，联系作者另一段（结构写在卡片里）
             document.getElementById('helpBtn').addEventListener('click', () => showModal('帮助', [
                 ['Ctrl+Enter', '生成语音'],
                 ['Ctrl+Z / Ctrl+Y', '撤销 / 重做'],
                 ['Esc', '关闭弹窗与右键菜单'],
                 ['应用', 'Sonora 声界'],
-                ['运行方式', runtimeText],
-                ['语音规模', scaleText]
+                ['运行方式', runtimeText]
             ]));
 
             // 编辑框右上角的撤销 / 重做：mousedown 阻止抢焦点以保住光标

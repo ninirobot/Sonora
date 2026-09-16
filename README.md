@@ -52,10 +52,12 @@ wrangler deploy        # 输出的 *.workers.dev 域名即可访问，不用配�
 ```powershell
 cargo install tauri-cli --version "^2" --locked
 cd desktop
-.\build.ps1            # 调试运行用 .\build.ps1 -Dev
+.\build.ps1            # 一键构建；调试运行用 .\build.ps1 -Dev
 ```
 
-产物是 `desktop\target\release\sonora.exe`，**单个文件约 3.9MB，双击即用**，不写注册表，直接拷给别人就能跑。
+`build.ps1` 就是替你调 `cargo tauri build`（cargo 不在 PATH 时用全路径调），再打印产物路径和体积。cargo 已经配好了的话，直接 `cargo tauri build` 一样能构建。
+
+产物是 `desktop\target\release\sonora.exe`，**单个文件约 3.8MB，双击即用**，不写注册表，直接拷给别人就能跑。
 
 > 桌面版只是省掉了「自己部署一个服务」，**合成仍然需要联网**。
 
