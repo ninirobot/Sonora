@@ -391,6 +391,11 @@
             border-top: 1px solid var(--border-color);
         }
 
+        /* 联系作者里的项目地址：只有网页端会换成可点的链接 */
+        .app-modal-card dd a {
+            color: var(--accent);
+        }
+
         .app-modal-card dl {
             margin: 0;
             display: grid;
@@ -2252,6 +2257,8 @@
             <!-- 联系作者：与上面的「帮助」正文同级的一段 -->
             <h3>联系作者</h3>
             <dl>
+                <dt>项目</dt>
+                <dd id="projectRepo">github.com/ninirobot/Sonora</dd>
                 <dt>微信</dt>
                 <dd>Future_in_the_past</dd>
             </dl>
@@ -3845,6 +3852,12 @@
             // 状态栏的运行方式与「关于」共用同一份文字
             const runtimeText = desktop ? '桌面版 · 本机服务' : '网页版';
             document.getElementById('runtimeLabel').textContent = runtimeText;
+
+            // 联系作者里的项目：网页端换成可点链接，桌面端保持纯文本（WebView 里外链打不开）
+            if (!desktop) {
+                document.getElementById('projectRepo').innerHTML =
+                    '<a href="https://github.com/ninirobot/Sonora" target="_blank" rel="noopener">Sonora · 声界</a>';
+            }
 
             function showModal(title, rows) {
                 document.getElementById('appModalTitle').textContent = title;
