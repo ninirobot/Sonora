@@ -1,0 +1,41 @@
+[package]
+name = "sonora"
+version = "0.1.0"
+description = "Sonora 声界：桌面语音工作台（Windows 桌面版）"
+edition = "2021"
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-single-instance = "2"
+tauri-plugin-dialog = "2"
+tauri-plugin-opener = "2"
+
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+tokio = { version = "1", features = ["rt-multi-thread", "sync", "time"] }
+
+# 本地服务：页面与接口都走 127.0.0.1
+axum = { version = "0.8", default-features = false, features = ["tokio", "http1", "multipart"] }
+
+# 出站请求：Windows 走系统 schannel，不打包 TLS 库（比 rustls 省 1MB 以上）
+# 注意：关掉默认特性后必须显式启用 native-tls，否则 0.13 会走 rustls 把 TLS 库打进包里
+reqwest = { version = "0.13", default-features = false, features = ["json", "multipart", "native-tls", "gzip"] }
+
+hmac = "0.12"
+sha2 = "0.10"
+base64 = "0.22"
+uuid = { version = "1", features = ["v4"] }
+chrono = { version = "0.4", default-features = false, features = ["clock", "std"] }
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+# 体积优先：这几项是 Tauri 官方推荐的最小化配置
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+incremental = false

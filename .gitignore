@@ -1,0 +1,27 @@
+# 项目记忆 / 编辑会话数据
+.codebuddy/
+
+# Cloudflare Wrangler 本地缓存与构建产物
+.wrangler/
+.dev.vars
+
+# wrangler deploy --dry-run 的输出目录（本地试构建用）
+.dryrun/
+
+# 依赖与日志
+node_modules/
+*.log
+npm-debug.log*
+
+# Rust / Tauri 构建产物
+desktop/target/
+desktop/gen/
+
+# 界面方案原型：挑视觉方向用的参考稿，不参与提交
+design/
+
+# 编辑器与系统文件
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

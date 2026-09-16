@@ -1,0 +1,2763 @@
+{
+  "voiceCatalog": [
+    {
+      "tab": "zh-CN",
+      "tabLabel": "普通话",
+      "lang": "zh",
+      "langLabel": "中文",
+      "locale": "zh-CN",
+      "groups": [
+        {
+          "label": "标准",
+          "family": "standard",
+          "voices": [
+            {
+              "id": "zh-CN-XiaoxiaoNeural",
+              "name": "晓晓",
+              "gender": "f",
+              "tag": "温柔",
+              "styles": "affectionate angry assistant calm chat chat-casual cheerful customerservice disgruntled excited fearful friendly gentle lyrical newscast poetry-reading sad serious sorry whispering"
+            },
+            {
+              "id": "zh-CN-YunxiNeural",
+              "name": "云希",
+              "gender": "m",
+              "tag": "清朗",
+              "styles": "angry assistant chat cheerful depressed disgruntled embarrassed fearful narration-relaxed newscast sad serious"
+            },
+            {
+              "id": "zh-CN-YunyangNeural",
+              "name": "云扬",
+              "gender": "m",
+              "tag": "阳光",
+              "styles": "customerservice narration-professional newscast-casual"
+            },
+            {
+              "id": "zh-CN-XiaoyiNeural",
+              "name": "晓伊",
+              "gender": "f",
+              "tag": "甜美",
+              "styles": "affectionate angry cheerful disgruntled embarrassed fearful gentle sad serious"
+            },
+            {
+              "id": "zh-CN-YunjianNeural",
+              "name": "云健",
+              "gender": "m",
+              "tag": "稳重",
+              "styles": "angry cheerful depressed disgruntled documentary-narration narration-relaxed sad serious sports-commentary sports-commentary-excited"
+            },
+            {
+              "id": "zh-CN-XiaochenNeural",
+              "name": "晓辰",
+              "gender": "f",
+              "tag": "知性",
+              "styles": "livecommercial"
+            },
+            {
+              "id": "zh-CN-XiaohanNeural",
+              "name": "晓涵",
+              "gender": "f",
+              "tag": "优雅",
+              "styles": "affectionate angry calm cheerful disgruntled embarrassed fearful gentle sad serious"
+            },
+            {
+              "id": "zh-CN-XiaomengNeural",
+              "name": "晓梦",
+              "gender": "f",
+              "tag": "梦幻",
+              "styles": "chat"
+            },
+            {
+              "id": "zh-CN-XiaomoNeural",
+              "name": "晓墨",
+              "gender": "f",
+              "tag": "文艺",
+              "styles": "affectionate angry calm cheerful depressed disgruntled embarrassed envious fearful gentle sad serious"
+            },
+            {
+              "id": "zh-CN-XiaoqiuNeural",
+              "name": "晓秋",
+              "gender": "f",
+              "tag": "成熟"
+            },
+            {
+              "id": "zh-CN-XiaorouNeural",
+              "name": "晓柔",
+              "gender": "f"
+            },
+            {
+              "id": "zh-CN-XiaoruiNeural",
+              "name": "晓睿",
+              "gender": "f",
+              "tag": "智慧",
+              "styles": "angry calm fearful sad"
+            },
+            {
+              "id": "zh-CN-XiaoshuangNeural",
+              "name": "晓双",
+              "gender": "f",
+              "tag": "活泼",
+              "styles": "chat"
+            },
+            {
+              "id": "zh-CN-XiaoxuanNeural",
+              "name": "晓萱",
+              "gender": "f",
+              "tag": "清新",
+              "styles": "*"
+            },
+            {
+              "id": "zh-CN-XiaoyanNeural",
+              "name": "晓颜",
+              "gender": "f",
+              "tag": "柔美"
+            },
+            {
+              "id": "zh-CN-XiaoyouNeural",
+              "name": "晓悠",
+              "gender": "f",
+              "tag": "悠扬"
+            },
+            {
+              "id": "zh-CN-XiaozhenNeural",
+              "name": "晓甄",
+              "gender": "f",
+              "tag": "端庄",
+              "styles": "angry cheerful disgruntled fearful sad serious"
+            },
+            {
+              "id": "zh-CN-YunfengNeural",
+              "name": "云枫",
+              "gender": "m",
+              "tag": "磁性",
+              "styles": "angry cheerful depressed disgruntled fearful sad serious"
+            },
+            {
+              "id": "zh-CN-YunhaoNeural",
+              "name": "云皓",
+              "gender": "m",
+              "tag": "豪迈",
+              "styles": "advertisement-upbeat"
+            },
+            {
+              "id": "zh-CN-YunjieNeural",
+              "name": "云杰",
+              "gender": "m"
+            },
+            {
+              "id": "zh-CN-YunxiaNeural",
+              "name": "云夏",
+              "gender": "m",
+              "tag": "热情",
+              "styles": "angry calm cheerful fearful sad"
+            },
+            {
+              "id": "zh-CN-YunyeNeural",
+              "name": "云野",
+              "gender": "m",
+              "tag": "野性",
+              "styles": "angry calm cheerful disgruntled embarrassed fearful sad serious"
+            },
+            {
+              "id": "zh-CN-YunzeNeural",
+              "name": "云泽",
+              "gender": "m",
+              "tag": "深沉",
+              "styles": "angry calm cheerful depressed disgruntled documentary-narration fearful sad serious"
+            },
+            {
+              "id": "zh-CN-XiaoxiaoDialectsNeural",
+              "name": "晓晓·方言",
+              "gender": "f"
+            }
+          ]
+        },
+        {
+          "label": "多语言",
+          "family": "multilingual",
+          "voices": [
+            {
+              "id": "zh-CN-XiaoxiaoMultilingualNeural",
+              "name": "晓晓",
+              "gender": "f",
+              "styles": "affectionate cheerful empathetic excited poetry-reading sorry story"
+            },
+            {
+              "id": "zh-CN-XiaochenMultilingualNeural",
+              "name": "晓辰",
+              "gender": "f"
+            },
+            {
+              "id": "zh-CN-XiaoshuangMultilingualNeural",
+              "name": "晓双",
+              "gender": "f",
+              "styles": "chat"
+            },
+            {
+              "id": "zh-CN-XiaoyouMultilingualNeural",
+              "name": "晓悠",
+              "gender": "f",
+              "styles": "angry chat cheerful cute poetry-reading sad story"
+            },
+            {
+              "id": "zh-CN-XiaoyuMultilingualNeural",
+              "name": "晓雨",
+              "gender": "f"
+            },
+            {
+              "id": "zh-CN-YunfanMultilingualNeural",
+              "name": "云帆",
+              "gender": "m"
+            },
+            {
+              "id": "zh-CN-YunxiaoMultilingualNeural",
+              "name": "云霄",
+              "gender": "m"
+            },
+            {
+              "id": "zh-CN-YunyiMultilingualNeural",
+              "name": "云逸",
+              "gender": "m"
+            }
+          ]
+        },
+        {
+          "label": "Neural-HD",
+          "family": "dragonHD",
+          "styleSet": "hd",
+          "voices": [
+            {
+              "id": "zh-CN-Xiaochen:DragonHDLatestNeural",
+              "name": "晓辰",
+              "gender": "f"
+            },
+            {
+              "id": "zh-CN-Yunfan:DragonHDLatestNeural",
+              "name": "云帆",
+              "gender": "m"
+            }
+          ]
+        },
+        {
+          "label": "Neural-HD-Omni",
+          "family": "dragonHDOmni",
+          "styleSet": "omni",
+          "voices": [
+            {
+              "id": "zh-CN-Xiaoyue:DragonHDOmniLatestNeural",
+              "name": "晓月",
+              "gender": "f"
+            },
+            {
+              "id": "zh-CN-Yunqi:DragonHDOmniLatestNeural",
+              "name": "云琪",
+              "gender": "m"
+            },
+            {
+              "id": "zh-CN-Maroonallegro:DragonHDOmniLatestNeural",
+              "name": "Maroonallegro",
+              "gender": "f"
+            }
+          ]
+        },
+        {
+          "label": "Neural-HD-Flash",
+          "family": "dragonHDFlash",
+          "voices": [
+            {
+              "id": "zh-CN-Xiaoxiao:DragonHDFlashLatestNeural",
+              "name": "晓晓",
+              "gender": "f",
+              "styles": "angry chat cheerful comforting customer-service debating disappointed excited fearful sad shy sorry strict voice-assistant whispering"
+            },
+            {
+              "id": "zh-CN-Xiaoxiao2:DragonHDFlashLatestNeural",
+              "name": "晓晓2",
+              "gender": "f",
+              "styles": "affectionate angry anxious cheerful curious disappointed empathetic encouraging excited fearful guilty lonely poetry-reading sad sentimental sorry story-telling surprised tired whispering"
+            },
+            {
+              "id": "zh-CN-Xiaochen:DragonHDFlashLatestNeural",
+              "name": "晓辰",
+              "gender": "f",
+              "styles": "cheerful debating empathetic live-commercial poetry-reading sad sorry"
+            },
+            {
+              "id": "zh-CN-Xiaoyi:DragonHDFlashLatestNeural",
+              "name": "晓伊",
+              "gender": "f",
+              "styles": "angry cheerful complaining cute gentle nervous sad shy strict"
+            },
+            {
+              "id": "zh-CN-Xiaoyu:DragonHDFlashLatestNeural",
+              "name": "晓雨",
+              "gender": "f",
+              "styles": "angry debating cheerful comforting sad sorry"
+            },
+            {
+              "id": "zh-CN-Xiaohan:DragonHDFlashLatestNeural",
+              "name": "晓涵",
+              "gender": "f",
+              "styles": "affectionate angry cheerful complaining fearful gentle sad shy strict"
+            },
+            {
+              "id": "zh-CN-Xiaoke:DragonHDFlashLatestNeural",
+              "name": "晓可",
+              "gender": "f",
+              "styles": "angry customer-service cutesy excited fearful sad sorry whispering"
+            },
+            {
+              "id": "zh-CN-Xiaoshuang:DragonHDFlashLatestNeural",
+              "name": "晓双",
+              "gender": "f",
+              "styles": "chat"
+            },
+            {
+              "id": "zh-CN-Xiaoyou:DragonHDFlashLatestNeural",
+              "name": "晓悠",
+              "gender": "f",
+              "styles": "angry chat cheerful cute poetry-reading sad story-telling"
+            },
+            {
+              "id": "zh-CN-Yunxi:DragonHDFlashLatestNeural",
+              "name": "云希",
+              "gender": "m",
+              "styles": "angry chat cheerful complaining depressed fearful news sad shy strict voice-assistant"
+            },
+            {
+              "id": "zh-CN-Yunyi:DragonHDFlashLatestNeural",
+              "name": "云逸",
+              "gender": "m",
+              "styles": "assassin captain cavalier prince game-narrator geomancer poet"
+            },
+            {
+              "id": "zh-CN-Yunxiao:DragonHDFlashLatestNeural",
+              "name": "云霄",
+              "gender": "m"
+            },
+            {
+              "id": "zh-CN-Yunhan:DragonHDFlashLatestNeural",
+              "name": "云汉",
+              "gender": "m",
+              "styles": "angry cheerful curious empathetic encouraging excited guilty lonely sad serious sorry whispering surprised tired"
+            },
+            {
+              "id": "zh-CN-Yunxia:DragonHDFlashLatestNeural",
+              "name": "云夏",
+              "gender": "m",
+              "styles": "affectionate angry cheerful comforting encouraging excited fearful sad surprised"
+            },
+            {
+              "id": "zh-CN-Yunye:DragonHDFlashLatestNeural",
+              "name": "云野",
+              "gender": "m"
+            }
+          ]
+        },
+        {
+          "label": "MAI-Voice-2",
+          "family": "maiVoice2",
+          "voices": [
+            {
+              "id": "zh-CN-Bo:MAI-Voice-2",
+              "name": "Bo",
+              "gender": "m",
+              "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
+            },
+            {
+              "id": "zh-CN-Bo:MAI-Voice-2-Flash",
+              "name": "Bo·Flash",
+              "gender": "m",
+              "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
+            },
+            {
+              "id": "zh-CN-Mei:MAI-Voice-2",
+              "name": "Mei",
+              "gender": "f",
+              "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
+            },
+            {
+              "id": "zh-CN-Mei:MAI-Voice-2-Flash",
+              "name": "Mei·Flash",
+              "gender": "f",
+              "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
+            },
+            {
+              "id": "zh-CN-Wei:MAI-Voice-2",
+              "name": "Wei",
+              "gender": "m",
+              "styles": "angry confused disgusted embarrassed excited fearful happy hopeful jealous joyful regretful sad surprised"
+            },
+            {
+              "id": "zh-CN-Wei:MAI-Voice-2-Flash",
+              "name": "Wei·Flash",
+              "gender": "m",
+              "styles": "angry confused disgusted embarrassed excited fearful happy hopeful jealous joyful regretful sad surprised"
+            },
+            {
+              "id": "zh-CN-Lan:MAI-Voice-2",
+              "name": "Lan",
+              "gender": "f",
+              "styles": "angry confused disgusted embarrassed excited fearful happy joyful sad surprised"
+            },
+            {
+              "id": "zh-CN-Lan:MAI-Voice-2-Flash",
+              "name": "Lan·Flash",
+              "gender": "f",
+              "styles": "angry confused disgusted embarrassed excited fearful happy joyful sad surprised"
+            }
+          ]
+        },
+        {
+          "label": "多人语音",
+          "family": "multitalker",
+          "styleSet": "hd",
+          "voices": [
+            {
+              "id": "en-Multitalker:DragonHDLatestNeural",
+              "name": "英文对话",
+              "gender": "n",
+              "tag": "中英通用"
+            },
+            {
+              "id": "zh-Multitalker:DragonHDLatestNeural",
+              "name": "中文对话",
+              "gender": "n",
+              "tag": "轮次不稳定"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "zh-dialect",
+      "tabLabel": "方言",
+      "lang": "zh",
+      "langLabel": "中文",
+      "locale": "zh-CN",
+      "groups": [
+        {
+          "label": "地方方言",
+          "family": "dialect",
+          "voices": [
+            {
+              "id": "zh-CN-guangxi-YunqiNeural",
+              "name": "云琪·广西",
+              "gender": "m",
+              "locale": "zh-CN-guangxi"
+            },
+            {
+              "id": "zh-CN-henan-YundengNeural",
+              "name": "云登·河南",
+              "gender": "m",
+              "locale": "zh-CN-henan"
+            },
+            {
+              "id": "zh-CN-liaoning-XiaobeiNeural",
+              "name": "晓北·辽宁",
+              "gender": "f",
+              "locale": "zh-CN-liaoning"
+            },
+            {
+              "id": "zh-CN-liaoning-YunbiaoNeural",
+              "name": "云彪·辽宁",
+              "gender": "m",
+              "locale": "zh-CN-liaoning"
+            },
+            {
+              "id": "zh-CN-shaanxi-XiaoniNeural",
+              "name": "晓妮·陕西",
+              "gender": "f",
+              "locale": "zh-CN-shaanxi"
+            },
+            {
+              "id": "zh-CN-shandong-YunxiangNeural",
+              "name": "云翔·山东",
+              "gender": "m",
+              "locale": "zh-CN-shandong"
+            },
+            {
+              "id": "zh-CN-sichuan-YunxiNeural",
+              "name": "云希·四川",
+              "gender": "m",
+              "locale": "zh-CN-sichuan"
+            }
+          ]
+        },
+        {
+          "label": "吴语",
+          "family": "dialect",
+          "locale": "wuu-CN",
+          "accent": "吴语",
+          "voices": [
+            {
+              "id": "wuu-CN-XiaotongNeural",
+              "name": "晓彤",
+              "gender": "f"
+            },
+            {
+              "id": "wuu-CN-YunzheNeural",
+              "name": "云哲",
+              "gender": "m"
+            }
+          ]
+        },
+        {
+          "label": "台湾国语",
+          "family": "dialect",
+          "locale": "zh-TW",
+          "accent": "台湾",
+          "voices": [
+            {
+              "id": "zh-TW-HsiaoChenNeural",
+              "name": "晓臻",
+              "gender": "f"
+            },
+            {
+              "id": "zh-TW-YunJheNeural",
+              "name": "云杰",
+              "gender": "m"
+            },
+            {
+              "id": "zh-TW-HsiaoYuNeural",
+              "name": "晓雨",
+              "gender": "f"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "yue",
+      "tabLabel": "粤语",
+      "lang": "yue",
+      "langLabel": "粤语",
+      "locale": "zh-HK",
+      "groups": [
+        {
+          "label": "粤语·繁体（香港）",
+          "family": "standard",
+          "voices": [
+            {
+              "id": "zh-HK-HiuMaanNeural",
+              "name": "晓曼",
+              "gender": "f"
+            },
+            {
+              "id": "zh-HK-HiuGaaiNeural",
+              "name": "晓佳",
+              "gender": "f"
+            },
+            {
+              "id": "zh-HK-WanLungNeural",
+              "name": "云龙",
+              "gender": "m"
+            }
+          ]
+        },
+        {
+          "label": "粤语·简体（广东）",
+          "family": "standard",
+          "locale": "yue-CN",
+          "voices": [
+            {
+              "id": "yue-CN-XiaoMinNeural",
+              "name": "晓敏",
+              "gender": "f"
+            },
+            {
+              "id": "yue-CN-YunSongNeural",
+              "name": "云松",
+              "gender": "m"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "en-US",
+      "tabLabel": "US",
+      "lang": "en",
+      "langLabel": "English",
+      "locale": "en-US",
+      "accent": "美式",
+      "groups": [
+        {
+          "label": "标准",
+          "family": "standard",
+          "voices": [
+            {
+              "id": "en-US-AriaNeural",
+              "name": "Aria",
+              "gender": "f",
+              "styles": "angry chat cheerful customerservice empathetic excited friendly hopeful narration-professional newscast-casual newscast-formal sad shouting terrified unfriendly whispering"
+            },
+            {
+              "id": "en-US-JennyNeural",
+              "name": "Jenny",
+              "gender": "f",
+              "styles": "angry assistant chat cheerful customerservice excited friendly hopeful newscast sad shouting terrified unfriendly whispering"
+            },
+            {
+              "id": "en-US-GuyNeural",
+              "name": "Guy",
+              "gender": "m",
+              "styles": "angry cheerful excited friendly hopeful newscast sad shouting terrified unfriendly whispering"
+            },
+            {
+              "id": "en-US-DavisNeural",
+              "name": "Davis",
+              "gender": "m",
+              "styles": "angry chat cheerful excited friendly hopeful sad shouting terrified unfriendly whispering"
+            },
+            {
+              "id": "en-US-JaneNeural",
+              "name": "Jane",
+              "gender": "f",
+              "styles": "angry cheerful excited friendly hopeful sad shouting terrified unfriendly whispering"
+            },
+            {
+              "id": "en-US-JasonNeural",
+              "name": "Jason",
+              "gender": "m",
+              "styles": "angry cheerful excited friendly hopeful sad shouting terrified unfriendly whispering"
+            },
+            {
+              "id": "en-US-SaraNeural",
+              "name": "Sara",
+              "gender": "f",
+              "styles": "angry cheerful excited friendly hopeful sad shouting terrified unfriendly whispering"
+            },
+            {
+              "id": "en-US-TonyNeural",
+              "name": "Tony",
+              "gender": "m",
+              "styles": "angry cheerful excited friendly hopeful sad shouting terrified unfriendly whispering"
+            },
+            {
+              "id": "en-US-NancyNeural",
+              "name": "Nancy",
+              "gender": "f",
+              "styles": "angry cheerful excited friendly hopeful sad shouting terrified unfriendly whispering"
+            },
+            {
+              "id": "en-US-AvaNeural",
+              "name": "Ava",
+              "gender": "f",
+              "styles": "angry fearful sad"
+            },
+            {
+              "id": "en-US-KaiNeural",
+              "name": "Kai",
+              "gender": "m",
+              "styles": "conversation"
+            },
+            {
+              "id": "en-US-LunaNeural",
+              "name": "Luna",
+              "gender": "f",
+              "styles": "conversation"
+            },
+            {
+              "id": "en-US-AndrewNeural",
+              "name": "Andrew",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-EmmaNeural",
+              "name": "Emma",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-BrianNeural",
+              "name": "Brian",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-AmberNeural",
+              "name": "Amber",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-AnaNeural",
+              "name": "Ana",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-AshleyNeural",
+              "name": "Ashley",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-BrandonNeural",
+              "name": "Brandon",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-ChristopherNeural",
+              "name": "Christopher",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-CoraNeural",
+              "name": "Cora",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-ElizabethNeural",
+              "name": "Elizabeth",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-EricNeural",
+              "name": "Eric",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-JacobNeural",
+              "name": "Jacob",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-MichelleNeural",
+              "name": "Michelle",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-MonicaNeural",
+              "name": "Monica",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-RogerNeural",
+              "name": "Roger",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-SteffanNeural",
+              "name": "Steffan",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-AIGenerate1Neural",
+              "name": "AIGenerate1",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-AIGenerate2Neural",
+              "name": "AIGenerate2",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-BlueNeural",
+              "name": "Blue",
+              "gender": "n"
+            }
+          ]
+        },
+        {
+          "label": "多语言",
+          "family": "multilingual",
+          "voices": [
+            {
+              "id": "en-US-AndrewMultilingualNeural",
+              "name": "Andrew",
+              "gender": "m",
+              "styles": "empathetic relieved"
+            },
+            {
+              "id": "en-US-PhoebeMultilingualNeural",
+              "name": "Phoebe",
+              "gender": "f",
+              "styles": "empathetic sad serious"
+            },
+            {
+              "id": "en-US-DavisMultilingualNeural",
+              "name": "Davis",
+              "gender": "m",
+              "styles": "empathetic funny relieved"
+            },
+            {
+              "id": "en-US-DerekMultilingualNeural",
+              "name": "Derek",
+              "gender": "m",
+              "styles": "empathetic excited relieved shy"
+            },
+            {
+              "id": "en-US-NancyMultilingualNeural",
+              "name": "Nancy",
+              "gender": "f",
+              "styles": "excited friendly funny relieved shy"
+            },
+            {
+              "id": "en-US-SerenaMultilingualNeural",
+              "name": "Serena",
+              "gender": "f",
+              "styles": "empathetic excited friendly relieved sad serious shy"
+            },
+            {
+              "id": "en-US-AvaMultilingualNeural",
+              "name": "Ava",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-AmandaMultilingualNeural",
+              "name": "Amanda",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-AdamMultilingualNeural",
+              "name": "Adam",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-EmmaMultilingualNeural",
+              "name": "Emma",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-BrianMultilingualNeural",
+              "name": "Brian",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-CoraMultilingualNeural",
+              "name": "Cora",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-ChristopherMultilingualNeural",
+              "name": "Christopher",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-BrandonMultilingualNeural",
+              "name": "Brandon",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-DustinMultilingualNeural",
+              "name": "Dustin",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-EvelynMultilingualNeural",
+              "name": "Evelyn",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-JennyMultilingualNeural",
+              "name": "Jenny",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-LewisMultilingualNeural",
+              "name": "Lewis",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-LolaMultilingualNeural",
+              "name": "Lola",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-RyanMultilingualNeural",
+              "name": "Ryan",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-SamuelMultilingualNeural",
+              "name": "Samuel",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-SteffanMultilingualNeural",
+              "name": "Steffan",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-AlloyTurboMultilingualNeural",
+              "name": "Alloy Turbo",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-EchoTurboMultilingualNeural",
+              "name": "Echo Turbo",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-FableTurboMultilingualNeural",
+              "name": "Fable Turbo",
+              "gender": "n"
+            },
+            {
+              "id": "en-US-OnyxTurboMultilingualNeural",
+              "name": "Onyx Turbo",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-NovaTurboMultilingualNeural",
+              "name": "Nova Turbo",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-ShimmerTurboMultilingualNeural",
+              "name": "Shimmer Turbo",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-AshTurboMultilingualNeural",
+              "name": "Ash Turbo",
+              "gender": "m"
+            }
+          ]
+        },
+        {
+          "label": "Neural-HD",
+          "family": "dragonHD",
+          "styleSet": "hd",
+          "voices": [
+            {
+              "id": "en-US-Ava:DragonHDLatestNeural",
+              "name": "Ava",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-Andrew:DragonHDLatestNeural",
+              "name": "Andrew",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-Adam:DragonHDLatestNeural",
+              "name": "Adam",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-Alloy:DragonHDLatestNeural",
+              "name": "Alloy",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-Aria:DragonHDLatestNeural",
+              "name": "Aria",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-Bree:DragonHDLatestNeural",
+              "name": "Bree",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-Brian:DragonHDLatestNeural",
+              "name": "Brian",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-Davis:DragonHDLatestNeural",
+              "name": "Davis",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-Emma:DragonHDLatestNeural",
+              "name": "Emma",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-Emma2:DragonHDLatestNeural",
+              "name": "Emma2",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-Jane:DragonHDLatestNeural",
+              "name": "Jane",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-Jenny:DragonHDLatestNeural",
+              "name": "Jenny",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-Nova:DragonHDLatestNeural",
+              "name": "Nova",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-Phoebe:DragonHDLatestNeural",
+              "name": "Phoebe",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-Serena:DragonHDLatestNeural",
+              "name": "Serena",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-Steffan:DragonHDLatestNeural",
+              "name": "Steffan",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-Andrew2:DragonHDLatestNeural",
+              "name": "Andrew2",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-Andrew3:DragonHDLatestNeural",
+              "name": "Andrew3",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-Ava3:DragonHDLatestNeural",
+              "name": "Ava3",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-Evelyn:DragonHDLatestNeural",
+              "name": "Evelyn",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-Jimmie:DragonHDLatestNeural",
+              "name": "Jimmie",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-Juno:DragonHDLatestNeural",
+              "name": "Juno",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-Mila:DragonHDLatestNeural",
+              "name": "Mila",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-Tessa:DragonHDLatestNeural",
+              "name": "Tessa",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-Tiana:DragonHDLatestNeural",
+              "name": "Tiana",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-Tyler:DragonHDLatestNeural",
+              "name": "Tyler",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-Vance:DragonHDLatestNeural",
+              "name": "Vance",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-Andrew-Preview:DragonHDLatestNeural",
+              "name": "Andrew-Preview",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-Ava-Preview:DragonHDLatestNeural",
+              "name": "Ava-Preview",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-Serena-Preview:DragonHDLatestNeural",
+              "name": "Serena-Preview",
+              "gender": "f"
+            }
+          ]
+        },
+        {
+          "label": "Neural-HD-Omni",
+          "family": "dragonHDOmni",
+          "styleSet": "omni",
+          "voices": [
+            {
+              "id": "en-US-Andrew:DragonHDOmniLatestNeural",
+              "name": "Andrew",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-Caleb:DragonHDOmniLatestNeural",
+              "name": "Caleb",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-Dana:DragonHDOmniLatestNeural",
+              "name": "Dana",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-Lewis:DragonHDOmniLatestNeural",
+              "name": "Lewis",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-Phoebe:DragonHDOmniLatestNeural",
+              "name": "Phoebe",
+              "gender": "f"
+            },
+            {
+              "id": "en-us-ava:DragonHDOmniLatestNeural",
+              "name": "Ava",
+              "gender": "f"
+            },
+            {
+              "id": "en-us-emma:DragonHDOmniLatestNeural",
+              "name": "Emma",
+              "gender": "f"
+            },
+            {
+              "id": "en-us-blushzephyr:DragonHDOmniLatestNeural",
+              "name": "Blushzephyr",
+              "gender": "f"
+            },
+            {
+              "id": "en-us-goldenspark:DragonHDOmniLatestNeural",
+              "name": "Goldenspark",
+              "gender": "m"
+            },
+            {
+              "id": "en-us-jelly:DragonHDOmniLatestNeural",
+              "name": "Jelly",
+              "gender": "f"
+            }
+          ]
+        },
+        {
+          "label": "Neural-HD-Flash",
+          "family": "dragonHDFlash",
+          "voices": [
+            {
+              "id": "en-US-Jimmie:DragonHDFlashLatestNeural",
+              "name": "Jimmie",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-Tiana:DragonHDFlashLatestNeural",
+              "name": "Tiana",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-Tyler:DragonHDFlashLatestNeural",
+              "name": "Tyler",
+              "gender": "m"
+            }
+          ]
+        },
+        {
+          "label": "MAI-Voice-2",
+          "family": "maiVoice2",
+          "voices": [
+            {
+              "id": "en-US-Ethan:MAI-Voice-2",
+              "name": "Ethan",
+              "gender": "m",
+              "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
+            },
+            {
+              "id": "en-US-Ethan:MAI-Voice-2-Flash",
+              "name": "Ethan·Flash",
+              "gender": "m",
+              "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
+            },
+            {
+              "id": "en-US-Olivia:MAI-Voice-2",
+              "name": "Olivia",
+              "gender": "f",
+              "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
+            },
+            {
+              "id": "en-US-Olivia:MAI-Voice-2-Flash",
+              "name": "Olivia·Flash",
+              "gender": "f",
+              "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
+            },
+            {
+              "id": "en-US-Harper:MAI-Voice-2",
+              "name": "Harper",
+              "gender": "f",
+              "styles": "angry confused determined embarrassed excited happy hopeful joyful regretful relieved sad shouting softvoice whispering"
+            },
+            {
+              "id": "en-US-Harper:MAI-Voice-2-Flash",
+              "name": "Harper·Flash",
+              "gender": "f",
+              "styles": "angry confused determined embarrassed excited happy hopeful joyful regretful relieved sad shouting softvoice whispering"
+            },
+            {
+              "id": "en-US-Grant:MAI-Voice-2",
+              "name": "Grant",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-Grant:MAI-Voice-2-Flash",
+              "name": "Grant·Flash",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-Iris:MAI-Voice-2",
+              "name": "Iris",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-Iris:MAI-Voice-2-Flash",
+              "name": "Iris·Flash",
+              "gender": "f"
+            },
+            {
+              "id": "en-US-Jasper:MAI-Voice-2",
+              "name": "Jasper",
+              "gender": "m"
+            },
+            {
+              "id": "en-US-Jasper:MAI-Voice-2-Flash",
+              "name": "Jasper·Flash",
+              "gender": "m"
+            }
+          ]
+        },
+        {
+          "label": "多人语音",
+          "family": "multitalker",
+          "styleSet": "hd",
+          "voices": [
+            {
+              "id": "en-Multitalker:DragonHDLatestNeural",
+              "name": "英文对话",
+              "gender": "n"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "en-GB",
+      "tabLabel": "UK",
+      "lang": "en",
+      "langLabel": "English",
+      "locale": "en-GB",
+      "accent": "英式",
+      "groups": [
+        {
+          "label": "标准",
+          "family": "standard",
+          "voices": [
+            {
+              "id": "en-GB-SoniaNeural",
+              "name": "Sonia",
+              "gender": "f",
+              "styles": "cheerful sad"
+            },
+            {
+              "id": "en-GB-RyanNeural",
+              "name": "Ryan",
+              "gender": "m",
+              "styles": "chat cheerful sad whispering"
+            },
+            {
+              "id": "en-GB-LibbyNeural",
+              "name": "Libby",
+              "gender": "f"
+            },
+            {
+              "id": "en-GB-AbbiNeural",
+              "name": "Abbi",
+              "gender": "f"
+            },
+            {
+              "id": "en-GB-BellaNeural",
+              "name": "Bella",
+              "gender": "f"
+            },
+            {
+              "id": "en-GB-HollieNeural",
+              "name": "Hollie",
+              "gender": "f"
+            },
+            {
+              "id": "en-GB-MaisieNeural",
+              "name": "Maisie",
+              "gender": "f"
+            },
+            {
+              "id": "en-GB-OliviaNeural",
+              "name": "Olivia",
+              "gender": "f"
+            },
+            {
+              "id": "en-GB-AlfieNeural",
+              "name": "Alfie",
+              "gender": "m"
+            },
+            {
+              "id": "en-GB-ElliotNeural",
+              "name": "Elliot",
+              "gender": "m"
+            },
+            {
+              "id": "en-GB-EthanNeural",
+              "name": "Ethan",
+              "gender": "m"
+            },
+            {
+              "id": "en-GB-NoahNeural",
+              "name": "Noah",
+              "gender": "m"
+            },
+            {
+              "id": "en-GB-OliverNeural",
+              "name": "Oliver",
+              "gender": "m"
+            },
+            {
+              "id": "en-GB-ThomasNeural",
+              "name": "Thomas",
+              "gender": "m"
+            }
+          ]
+        },
+        {
+          "label": "多语言",
+          "family": "multilingual",
+          "voices": [
+            {
+              "id": "en-GB-AdaMultilingualNeural",
+              "name": "Ada",
+              "gender": "f"
+            },
+            {
+              "id": "en-GB-OllieMultilingualNeural",
+              "name": "Ollie",
+              "gender": "m"
+            }
+          ]
+        },
+        {
+          "label": "Neural-HD",
+          "family": "dragonHD",
+          "styleSet": "hd",
+          "voices": [
+            {
+              "id": "en-GB-Ada:DragonHDLatestNeural",
+              "name": "Ada",
+              "gender": "f"
+            },
+            {
+              "id": "en-GB-Sonia:DragonHDLatestNeural",
+              "name": "Sonia",
+              "gender": "f"
+            },
+            {
+              "id": "en-GB-Ollie:DragonHDLatestNeural",
+              "name": "Ollie",
+              "gender": "m"
+            },
+            {
+              "id": "en-GB-Ryan:DragonHDLatestNeural",
+              "name": "Ryan",
+              "gender": "m"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "en-AU",
+      "tabLabel": "AU",
+      "lang": "en",
+      "langLabel": "English",
+      "locale": "en-AU",
+      "accent": "澳式",
+      "groups": [
+        {
+          "label": "标准",
+          "family": "standard",
+          "voices": [
+            {
+              "id": "en-AU-NatashaNeural",
+              "name": "Natasha",
+              "gender": "f"
+            },
+            {
+              "id": "en-AU-AnnetteNeural",
+              "name": "Annette",
+              "gender": "f"
+            },
+            {
+              "id": "en-AU-CarlyNeural",
+              "name": "Carly",
+              "gender": "f"
+            },
+            {
+              "id": "en-AU-ElsieNeural",
+              "name": "Elsie",
+              "gender": "f"
+            },
+            {
+              "id": "en-AU-FreyaNeural",
+              "name": "Freya",
+              "gender": "f"
+            },
+            {
+              "id": "en-AU-JoanneNeural",
+              "name": "Joanne",
+              "gender": "f"
+            },
+            {
+              "id": "en-AU-KimNeural",
+              "name": "Kim",
+              "gender": "f"
+            },
+            {
+              "id": "en-AU-TinaNeural",
+              "name": "Tina",
+              "gender": "f"
+            },
+            {
+              "id": "en-AU-WilliamNeural",
+              "name": "William",
+              "gender": "m"
+            },
+            {
+              "id": "en-AU-DarrenNeural",
+              "name": "Darren",
+              "gender": "m"
+            },
+            {
+              "id": "en-AU-DuncanNeural",
+              "name": "Duncan",
+              "gender": "m"
+            },
+            {
+              "id": "en-AU-KenNeural",
+              "name": "Ken",
+              "gender": "m"
+            },
+            {
+              "id": "en-AU-NeilNeural",
+              "name": "Neil",
+              "gender": "m"
+            },
+            {
+              "id": "en-AU-TimNeural",
+              "name": "Tim",
+              "gender": "m"
+            }
+          ]
+        },
+        {
+          "label": "多语言",
+          "family": "multilingual",
+          "voices": [
+            {
+              "id": "en-AU-WilliamMultilingualNeural",
+              "name": "William",
+              "gender": "m"
+            }
+          ]
+        },
+        {
+          "label": "Neural-HD-Omni",
+          "family": "dragonHDOmni",
+          "styleSet": "omni",
+          "voices": [
+            {
+              "id": "en-au-cyanspark:DragonHDOmniLatestNeural",
+              "name": "Cyanspark",
+              "gender": "f"
+            },
+            {
+              "id": "en-au-siennatopaz:DragonHDOmniLatestNeural",
+              "name": "Siennatopaz",
+              "gender": "f"
+            }
+          ]
+        },
+        {
+          "label": "MAI-Voice-2",
+          "family": "maiVoice2",
+          "voices": [
+            {
+              "id": "en-AU-Isla:MAI-Voice-2",
+              "name": "Isla",
+              "gender": "f",
+              "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
+            },
+            {
+              "id": "en-AU-Isla:MAI-Voice-2-Flash",
+              "name": "Isla·Flash",
+              "gender": "f",
+              "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "en-IN",
+      "tabLabel": "IN",
+      "lang": "en",
+      "langLabel": "English",
+      "locale": "en-IN",
+      "accent": "印度",
+      "groups": [
+        {
+          "label": "标准",
+          "family": "standard",
+          "voices": [
+            {
+              "id": "en-IN-NeerjaNeural",
+              "name": "Neerja",
+              "gender": "f",
+              "styles": "cheerful empathetic newscast"
+            },
+            {
+              "id": "en-IN-AartiNeural",
+              "name": "Aarti",
+              "gender": "f"
+            },
+            {
+              "id": "en-IN-AashiNeural",
+              "name": "Aashi",
+              "gender": "f"
+            },
+            {
+              "id": "en-IN-AnanyaNeural",
+              "name": "Ananya",
+              "gender": "f"
+            },
+            {
+              "id": "en-IN-KavyaNeural",
+              "name": "Kavya",
+              "gender": "f"
+            },
+            {
+              "id": "en-IN-AaravNeural",
+              "name": "Aarav",
+              "gender": "m"
+            },
+            {
+              "id": "en-IN-ArjunNeural",
+              "name": "Arjun",
+              "gender": "m"
+            },
+            {
+              "id": "en-IN-KunalNeural",
+              "name": "Kunal",
+              "gender": "m"
+            },
+            {
+              "id": "en-IN-PrabhatNeural",
+              "name": "Prabhat",
+              "gender": "m"
+            },
+            {
+              "id": "en-IN-RehaanNeural",
+              "name": "Rehaan",
+              "gender": "m"
+            },
+            {
+              "id": "en-IN-AartiIndicNeural",
+              "name": "Aarti·Indic",
+              "gender": "f"
+            },
+            {
+              "id": "en-IN-NeerjaIndicNeural",
+              "name": "Neerja·Indic",
+              "gender": "f"
+            },
+            {
+              "id": "en-IN-ArjunIndicNeural",
+              "name": "Arjun·Indic",
+              "gender": "m"
+            },
+            {
+              "id": "en-IN-PrabhatIndicNeural",
+              "name": "Prabhat·Indic",
+              "gender": "m"
+            }
+          ]
+        },
+        {
+          "label": "Neural-HD",
+          "family": "dragonHD",
+          "voices": [
+            {
+              "id": "en-IN-Diya:DragonHDLatestNeural",
+              "name": "Diya",
+              "gender": "f"
+            },
+            {
+              "id": "en-IN-Meera:DragonHDLatestNeural",
+              "name": "Meera",
+              "gender": "f"
+            },
+            {
+              "id": "en-IN-Aarti:DragonHDLatestNeural",
+              "name": "Aarti",
+              "gender": "f"
+            },
+            {
+              "id": "en-IN-Neerja:DragonHDLatestNeural",
+              "name": "Neerja",
+              "gender": "f"
+            },
+            {
+              "id": "en-IN-Lavanya:DragonHDLatestNeural",
+              "name": "Lavanya",
+              "gender": "f"
+            },
+            {
+              "id": "en-IN-Arjun:DragonHDLatestNeural",
+              "name": "Arjun",
+              "gender": "m"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "en-CA",
+      "tabLabel": "CA",
+      "lang": "en",
+      "langLabel": "English",
+      "locale": "en-CA",
+      "accent": "加式",
+      "groups": [
+        {
+          "label": "标准",
+          "family": "standard",
+          "voices": [
+            {
+              "id": "en-CA-ClaraNeural",
+              "name": "Clara",
+              "gender": "f"
+            },
+            {
+              "id": "en-CA-LiamNeural",
+              "name": "Liam",
+              "gender": "m"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "en-IE",
+      "tabLabel": "IE",
+      "lang": "en",
+      "langLabel": "English",
+      "locale": "en-IE",
+      "accent": "爱尔兰",
+      "groups": [
+        {
+          "label": "标准",
+          "family": "standard",
+          "voices": [
+            {
+              "id": "en-IE-EmilyNeural",
+              "name": "Emily",
+              "gender": "f"
+            },
+            {
+              "id": "en-IE-ConnorNeural",
+              "name": "Connor",
+              "gender": "m"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "en-NZ",
+      "tabLabel": "NZ",
+      "lang": "en",
+      "langLabel": "English",
+      "locale": "en-NZ",
+      "accent": "新西兰",
+      "groups": [
+        {
+          "label": "标准",
+          "family": "standard",
+          "voices": [
+            {
+              "id": "en-NZ-MollyNeural",
+              "name": "Molly",
+              "gender": "f"
+            },
+            {
+              "id": "en-NZ-MitchellNeural",
+              "name": "Mitchell",
+              "gender": "m"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "en-SG",
+      "tabLabel": "SG",
+      "lang": "en",
+      "langLabel": "English",
+      "locale": "en-SG",
+      "accent": "新加坡",
+      "groups": [
+        {
+          "label": "标准",
+          "family": "standard",
+          "voices": [
+            {
+              "id": "en-SG-LunaNeural",
+              "name": "Luna",
+              "gender": "f"
+            },
+            {
+              "id": "en-SG-WayneNeural",
+              "name": "Wayne",
+              "gender": "m"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "en-HK",
+      "tabLabel": "HK",
+      "lang": "en",
+      "langLabel": "English",
+      "locale": "en-HK",
+      "accent": "香港",
+      "groups": [
+        {
+          "label": "标准",
+          "family": "standard",
+          "voices": [
+            {
+              "id": "en-HK-YanNeural",
+              "name": "Yan",
+              "gender": "f"
+            },
+            {
+              "id": "en-HK-SamNeural",
+              "name": "Sam",
+              "gender": "m"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "en-ZA",
+      "tabLabel": "ZA",
+      "lang": "en",
+      "langLabel": "English",
+      "locale": "en-ZA",
+      "accent": "南非",
+      "groups": [
+        {
+          "label": "标准",
+          "family": "standard",
+          "voices": [
+            {
+              "id": "en-ZA-LeahNeural",
+              "name": "Leah",
+              "gender": "f"
+            },
+            {
+              "id": "en-ZA-LukeNeural",
+              "name": "Luke",
+              "gender": "m"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "en-PH",
+      "tabLabel": "PH",
+      "lang": "en",
+      "langLabel": "English",
+      "locale": "en-PH",
+      "accent": "菲律宾",
+      "groups": [
+        {
+          "label": "标准",
+          "family": "standard",
+          "voices": [
+            {
+              "id": "en-PH-RosaNeural",
+              "name": "Rosa",
+              "gender": "f"
+            },
+            {
+              "id": "en-PH-JamesNeural",
+              "name": "James",
+              "gender": "m"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "en-KE",
+      "tabLabel": "KE",
+      "lang": "en",
+      "langLabel": "English",
+      "locale": "en-KE",
+      "accent": "肯尼亚",
+      "groups": [
+        {
+          "label": "标准",
+          "family": "standard",
+          "voices": [
+            {
+              "id": "en-KE-AsiliaNeural",
+              "name": "Asilia",
+              "gender": "f"
+            },
+            {
+              "id": "en-KE-ChilembaNeural",
+              "name": "Chilemba",
+              "gender": "m"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "en-NG",
+      "tabLabel": "NG",
+      "lang": "en",
+      "langLabel": "English",
+      "locale": "en-NG",
+      "accent": "尼日利亚",
+      "groups": [
+        {
+          "label": "标准",
+          "family": "standard",
+          "voices": [
+            {
+              "id": "en-NG-EzinneNeural",
+              "name": "Ezinne",
+              "gender": "f"
+            },
+            {
+              "id": "en-NG-AbeoNeural",
+              "name": "Abeo",
+              "gender": "m"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "en-TZ",
+      "tabLabel": "TZ",
+      "lang": "en",
+      "langLabel": "English",
+      "locale": "en-TZ",
+      "accent": "坦桑尼亚",
+      "groups": [
+        {
+          "label": "标准",
+          "family": "standard",
+          "voices": [
+            {
+              "id": "en-TZ-ImaniNeural",
+              "name": "Imani",
+              "gender": "f"
+            },
+            {
+              "id": "en-TZ-ElimuNeural",
+              "name": "Elimu",
+              "gender": "m"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "ja-JP",
+      "tabLabel": "日本語",
+      "lang": "ja",
+      "langLabel": "日本語",
+      "locale": "ja-JP",
+      "groups": [
+        {
+          "label": "标准",
+          "family": "standard",
+          "voices": [
+            {
+              "id": "ja-JP-NanamiNeural",
+              "name": "Nanami",
+              "gender": "f",
+              "styles": "chat cheerful customerservice"
+            },
+            {
+              "id": "ja-JP-KeitaNeural",
+              "name": "Keita",
+              "gender": "m"
+            },
+            {
+              "id": "ja-JP-AoiNeural",
+              "name": "Aoi",
+              "gender": "f"
+            },
+            {
+              "id": "ja-JP-DaichiNeural",
+              "name": "Daichi",
+              "gender": "m"
+            },
+            {
+              "id": "ja-JP-MayuNeural",
+              "name": "Mayu",
+              "gender": "f"
+            },
+            {
+              "id": "ja-JP-NaokiNeural",
+              "name": "Naoki",
+              "gender": "m"
+            },
+            {
+              "id": "ja-JP-ShioriNeural",
+              "name": "Shiori",
+              "gender": "f"
+            }
+          ]
+        },
+        {
+          "label": "多语言",
+          "family": "multilingual",
+          "voices": [
+            {
+              "id": "ja-JP-MasaruMultilingualNeural",
+              "name": "Masaru",
+              "gender": "m"
+            }
+          ]
+        },
+        {
+          "label": "Neural-HD",
+          "family": "dragonHD",
+          "styleSet": "hd",
+          "voices": [
+            {
+              "id": "ja-JP-Nanami:DragonHDLatestNeural",
+              "name": "Nanami",
+              "gender": "f"
+            },
+            {
+              "id": "ja-JP-Masaru:DragonHDLatestNeural",
+              "name": "Masaru",
+              "gender": "m"
+            }
+          ]
+        },
+        {
+          "label": "MAI-Voice-2 Flash",
+          "family": "maiVoice2",
+          "voices": [
+            {
+              "id": "ja-JP-Haruto:MAI-Voice-2-Flash",
+              "name": "Haruto",
+              "gender": "m",
+              "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
+            },
+            {
+              "id": "ja-JP-Sakura:MAI-Voice-2-Flash",
+              "name": "Sakura",
+              "gender": "f",
+              "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
+            }
+          ]
+        },
+        {
+          "label": "多人语音",
+          "family": "multitalker",
+          "styleSet": "hd",
+          "voices": [
+            {
+              "id": "en-Multitalker:DragonHDLatestNeural",
+              "name": "英文对话",
+              "gender": "n"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "ko-KR",
+      "tabLabel": "한국어",
+      "lang": "ko",
+      "langLabel": "한국어",
+      "locale": "ko-KR",
+      "groups": [
+        {
+          "label": "标准",
+          "family": "standard",
+          "voices": [
+            {
+              "id": "ko-KR-InJoonNeural",
+              "name": "InJoon",
+              "gender": "m",
+              "styles": "sad"
+            },
+            {
+              "id": "ko-KR-SunHiNeural",
+              "name": "SunHi",
+              "gender": "f"
+            },
+            {
+              "id": "ko-KR-BongJinNeural",
+              "name": "BongJin",
+              "gender": "m"
+            },
+            {
+              "id": "ko-KR-GookMinNeural",
+              "name": "GookMin",
+              "gender": "m"
+            },
+            {
+              "id": "ko-KR-HyunsuNeural",
+              "name": "Hyunsu",
+              "gender": "m"
+            },
+            {
+              "id": "ko-KR-JiMinNeural",
+              "name": "JiMin",
+              "gender": "f"
+            },
+            {
+              "id": "ko-KR-SeoHyeonNeural",
+              "name": "SeoHyeon",
+              "gender": "f"
+            },
+            {
+              "id": "ko-KR-SoonBokNeural",
+              "name": "SoonBok",
+              "gender": "f"
+            },
+            {
+              "id": "ko-KR-YuJinNeural",
+              "name": "YuJin",
+              "gender": "f"
+            }
+          ]
+        },
+        {
+          "label": "多语言",
+          "family": "multilingual",
+          "voices": [
+            {
+              "id": "ko-KR-HyunsuMultilingualNeural",
+              "name": "Hyunsu",
+              "gender": "m"
+            }
+          ]
+        },
+        {
+          "label": "Neural-HD",
+          "family": "dragonHD",
+          "styleSet": "hd",
+          "voices": [
+            {
+              "id": "ko-KR-SunHi:DragonHDLatestNeural",
+              "name": "SunHi",
+              "gender": "f"
+            },
+            {
+              "id": "ko-KR-Hyunsu:DragonHDLatestNeural",
+              "name": "Hyunsu",
+              "gender": "m"
+            }
+          ]
+        },
+        {
+          "label": "MAI-Voice-2",
+          "family": "maiVoice2",
+          "voices": [
+            {
+              "id": "ko-KR-Haena:MAI-Voice-2",
+              "name": "Haena",
+              "gender": "f",
+              "styles": "angry confused determined embarrassed excited happy hopeful joyful regretful relieved sad softvoice surprised"
+            },
+            {
+              "id": "ko-KR-Haena:MAI-Voice-2-Flash",
+              "name": "Haena·Flash",
+              "gender": "f",
+              "styles": "angry confused determined embarrassed excited happy hopeful joyful regretful relieved sad softvoice surprised"
+            },
+            {
+              "id": "ko-KR-Junho:MAI-Voice-2",
+              "name": "Junho",
+              "gender": "m",
+              "styles": "angry confused determined embarrassed excited happy hopeful joyful relieved sad softvoice"
+            },
+            {
+              "id": "ko-KR-Junho:MAI-Voice-2-Flash",
+              "name": "Junho·Flash",
+              "gender": "m",
+              "styles": "angry confused determined embarrassed excited happy hopeful joyful relieved sad softvoice"
+            }
+          ]
+        },
+        {
+          "label": "多人语音",
+          "family": "multitalker",
+          "styleSet": "hd",
+          "voices": [
+            {
+              "id": "en-Multitalker:DragonHDLatestNeural",
+              "name": "英文对话",
+              "gender": "n"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "fr-FR",
+      "tabLabel": "Français",
+      "lang": "fr",
+      "langLabel": "Français",
+      "locale": "fr-FR",
+      "groups": [
+        {
+          "label": "标准",
+          "family": "standard",
+          "voices": [
+            {
+              "id": "fr-FR-DeniseNeural",
+              "name": "Denise",
+              "gender": "f",
+              "styles": "cheerful excited sad whispering"
+            },
+            {
+              "id": "fr-FR-HenriNeural",
+              "name": "Henri",
+              "gender": "m",
+              "styles": "cheerful excited sad whispering"
+            },
+            {
+              "id": "fr-FR-AlainNeural",
+              "name": "Alain",
+              "gender": "m"
+            },
+            {
+              "id": "fr-FR-BrigitteNeural",
+              "name": "Brigitte",
+              "gender": "f"
+            },
+            {
+              "id": "fr-FR-CelesteNeural",
+              "name": "Celeste",
+              "gender": "f"
+            },
+            {
+              "id": "fr-FR-ClaudeNeural",
+              "name": "Claude",
+              "gender": "m"
+            },
+            {
+              "id": "fr-FR-CoralieNeural",
+              "name": "Coralie",
+              "gender": "f"
+            },
+            {
+              "id": "fr-FR-EloiseNeural",
+              "name": "Eloise",
+              "gender": "f"
+            },
+            {
+              "id": "fr-FR-JacquelineNeural",
+              "name": "Jacqueline",
+              "gender": "f"
+            },
+            {
+              "id": "fr-FR-JeromeNeural",
+              "name": "Jerome",
+              "gender": "m"
+            },
+            {
+              "id": "fr-FR-JosephineNeural",
+              "name": "Josephine",
+              "gender": "f"
+            },
+            {
+              "id": "fr-FR-MauriceNeural",
+              "name": "Maurice",
+              "gender": "m"
+            },
+            {
+              "id": "fr-FR-YvesNeural",
+              "name": "Yves",
+              "gender": "m"
+            },
+            {
+              "id": "fr-FR-YvetteNeural",
+              "name": "Yvette",
+              "gender": "f"
+            }
+          ]
+        },
+        {
+          "label": "多语言",
+          "family": "multilingual",
+          "voices": [
+            {
+              "id": "fr-FR-VivienneMultilingualNeural",
+              "name": "Vivienne",
+              "gender": "f"
+            },
+            {
+              "id": "fr-FR-RemyMultilingualNeural",
+              "name": "Remy",
+              "gender": "m"
+            },
+            {
+              "id": "fr-FR-LucienMultilingualNeural",
+              "name": "Lucien",
+              "gender": "m"
+            }
+          ]
+        },
+        {
+          "label": "Neural-HD",
+          "family": "dragonHD",
+          "styleSet": "hd",
+          "voices": [
+            {
+              "id": "fr-FR-Vivienne:DragonHDLatestNeural",
+              "name": "Vivienne",
+              "gender": "f"
+            },
+            {
+              "id": "fr-FR-Remy:DragonHDLatestNeural",
+              "name": "Remy",
+              "gender": "m"
+            }
+          ]
+        },
+        {
+          "label": "MAI-Voice-2",
+          "family": "maiVoice2",
+          "voices": [
+            {
+              "id": "fr-FR-Marc:MAI-Voice-2",
+              "name": "Marc",
+              "gender": "m",
+              "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
+            },
+            {
+              "id": "fr-FR-Marc:MAI-Voice-2-Flash",
+              "name": "Marc·Flash",
+              "gender": "m",
+              "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
+            },
+            {
+              "id": "fr-FR-Soleil:MAI-Voice-2",
+              "name": "Soleil",
+              "gender": "f",
+              "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
+            },
+            {
+              "id": "fr-FR-Soleil:MAI-Voice-2-Flash",
+              "name": "Soleil·Flash",
+              "gender": "f",
+              "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
+            }
+          ]
+        },
+        {
+          "label": "多人语音",
+          "family": "multitalker",
+          "styleSet": "hd",
+          "voices": [
+            {
+              "id": "fr-Multitalker:DragonHDLatestNeural",
+              "name": "法语对话",
+              "gender": "n"
+            },
+            {
+              "id": "en-Multitalker:DragonHDLatestNeural",
+              "name": "英文对话",
+              "gender": "n"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "es-ES",
+      "tabLabel": "Español",
+      "lang": "es",
+      "langLabel": "Español",
+      "locale": "es-ES",
+      "groups": [
+        {
+          "label": "标准",
+          "family": "standard",
+          "voices": [
+            {
+              "id": "es-ES-AlvaroNeural",
+              "name": "Alvaro",
+              "gender": "m",
+              "styles": "cheerful sad"
+            },
+            {
+              "id": "es-ES-ElviraNeural",
+              "name": "Elvira",
+              "gender": "f"
+            },
+            {
+              "id": "es-ES-AbrilNeural",
+              "name": "Abril",
+              "gender": "f"
+            },
+            {
+              "id": "es-ES-ArnauNeural",
+              "name": "Arnau",
+              "gender": "m"
+            },
+            {
+              "id": "es-ES-DarioNeural",
+              "name": "Dario",
+              "gender": "m"
+            },
+            {
+              "id": "es-ES-EliasNeural",
+              "name": "Elias",
+              "gender": "m"
+            },
+            {
+              "id": "es-ES-EstrellaNeural",
+              "name": "Estrella",
+              "gender": "f"
+            },
+            {
+              "id": "es-ES-IreneNeural",
+              "name": "Irene",
+              "gender": "f"
+            },
+            {
+              "id": "es-ES-LaiaNeural",
+              "name": "Laia",
+              "gender": "f"
+            },
+            {
+              "id": "es-ES-LiaNeural",
+              "name": "Lia",
+              "gender": "f"
+            },
+            {
+              "id": "es-ES-NilNeural",
+              "name": "Nil",
+              "gender": "m"
+            },
+            {
+              "id": "es-ES-SaulNeural",
+              "name": "Saul",
+              "gender": "m"
+            },
+            {
+              "id": "es-ES-TeoNeural",
+              "name": "Teo",
+              "gender": "m"
+            },
+            {
+              "id": "es-ES-TrianaNeural",
+              "name": "Triana",
+              "gender": "f"
+            },
+            {
+              "id": "es-ES-VeraNeural",
+              "name": "Vera",
+              "gender": "f"
+            },
+            {
+              "id": "es-ES-XimenaNeural",
+              "name": "Ximena",
+              "gender": "f"
+            }
+          ]
+        },
+        {
+          "label": "多语言",
+          "family": "multilingual",
+          "voices": [
+            {
+              "id": "es-ES-ArabellaMultilingualNeural",
+              "name": "Arabella",
+              "gender": "f"
+            },
+            {
+              "id": "es-ES-IsidoraMultilingualNeural",
+              "name": "Isidora",
+              "gender": "f"
+            },
+            {
+              "id": "es-ES-TristanMultilingualNeural",
+              "name": "Tristan",
+              "gender": "m"
+            },
+            {
+              "id": "es-ES-XimenaMultilingualNeural",
+              "name": "Ximena",
+              "gender": "f"
+            }
+          ]
+        },
+        {
+          "label": "Neural-HD",
+          "family": "dragonHD",
+          "styleSet": "hd",
+          "voices": [
+            {
+              "id": "es-ES-Ximena:DragonHDLatestNeural",
+              "name": "Ximena",
+              "gender": "f"
+            },
+            {
+              "id": "es-ES-Tristan:DragonHDLatestNeural",
+              "name": "Tristan",
+              "gender": "m"
+            }
+          ]
+        },
+        {
+          "label": "MAI-Voice-2",
+          "family": "maiVoice2",
+          "voices": [
+            {
+              "id": "es-ES-Marta:MAI-Voice-2",
+              "name": "Marta",
+              "gender": "f",
+              "styles": "adventurous caring empathy curious encouraging excited friendly cheerful nostalgic reflective sad disappointed serious"
+            },
+            {
+              "id": "es-ES-Marta:MAI-Voice-2-Flash",
+              "name": "Marta·Flash",
+              "gender": "f",
+              "styles": "adventurous caring empathy curious encouraging excited friendly cheerful nostalgic reflective sad disappointed serious"
+            }
+          ]
+        },
+        {
+          "label": "多人语音",
+          "family": "multitalker",
+          "styleSet": "hd",
+          "voices": [
+            {
+              "id": "en-Multitalker:DragonHDLatestNeural",
+              "name": "英文对话",
+              "gender": "n"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "ru-RU",
+      "tabLabel": "Русский",
+      "lang": "ru",
+      "langLabel": "Русский",
+      "locale": "ru-RU",
+      "groups": [
+        {
+          "label": "标准",
+          "family": "standard",
+          "voices": [
+            {
+              "id": "ru-RU-SvetlanaNeural",
+              "name": "Svetlana",
+              "gender": "f"
+            },
+            {
+              "id": "ru-RU-DmitryNeural",
+              "name": "Dmitry",
+              "gender": "m"
+            },
+            {
+              "id": "ru-RU-DariyaNeural",
+              "name": "Dariya",
+              "gender": "f"
+            }
+          ]
+        },
+        {
+          "label": "MAI-Voice-2",
+          "family": "maiVoice2",
+          "voices": [
+            {
+              "id": "ru-RU-Lev:MAI-Voice-2",
+              "name": "Lev",
+              "gender": "m",
+              "styles": "adventurous caring empathy curious encouraging excited friendly cheerful nostalgic reflective sad disappointed serious"
+            },
+            {
+              "id": "ru-RU-Lev:MAI-Voice-2-Flash",
+              "name": "Lev·Flash",
+              "gender": "m",
+              "styles": "adventurous caring empathy curious encouraging excited friendly cheerful nostalgic reflective sad disappointed serious"
+            },
+            {
+              "id": "ru-RU-Masha:MAI-Voice-2",
+              "name": "Masha",
+              "gender": "f",
+              "styles": "adventurous caring empathy curious encouraging excited friendly cheerful nostalgic reflective sad disappointed serious"
+            },
+            {
+              "id": "ru-RU-Masha:MAI-Voice-2-Flash",
+              "name": "Masha·Flash",
+              "gender": "f",
+              "styles": "adventurous caring empathy curious encouraging excited friendly cheerful nostalgic reflective sad disappointed serious"
+            }
+          ]
+        },
+        {
+          "label": "多人语音",
+          "family": "multitalker",
+          "styleSet": "hd",
+          "voices": [
+            {
+              "id": "en-Multitalker:DragonHDLatestNeural",
+              "name": "英文对话",
+              "gender": "n"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "de-DE",
+      "tabLabel": "Deutsch",
+      "lang": "de",
+      "langLabel": "Deutsch",
+      "locale": "de-DE",
+      "groups": [
+        {
+          "label": "标准",
+          "family": "standard",
+          "voices": [
+            {
+              "id": "de-DE-ConradNeural",
+              "name": "Conrad",
+              "gender": "m",
+              "styles": "cheerful sad"
+            },
+            {
+              "id": "de-DE-KatjaNeural",
+              "name": "Katja",
+              "gender": "f"
+            },
+            {
+              "id": "de-DE-AmalaNeural",
+              "name": "Amala",
+              "gender": "f"
+            },
+            {
+              "id": "de-DE-BerndNeural",
+              "name": "Bernd",
+              "gender": "m"
+            },
+            {
+              "id": "de-DE-ChristophNeural",
+              "name": "Christoph",
+              "gender": "m"
+            },
+            {
+              "id": "de-DE-ElkeNeural",
+              "name": "Elke",
+              "gender": "f"
+            },
+            {
+              "id": "de-DE-GiselaNeural",
+              "name": "Gisela",
+              "gender": "f"
+            },
+            {
+              "id": "de-DE-KasperNeural",
+              "name": "Kasper",
+              "gender": "m"
+            },
+            {
+              "id": "de-DE-KillianNeural",
+              "name": "Killian",
+              "gender": "m"
+            },
+            {
+              "id": "de-DE-KlarissaNeural",
+              "name": "Klarissa",
+              "gender": "f"
+            },
+            {
+              "id": "de-DE-KlausNeural",
+              "name": "Klaus",
+              "gender": "m"
+            },
+            {
+              "id": "de-DE-LouisaNeural",
+              "name": "Louisa",
+              "gender": "f"
+            },
+            {
+              "id": "de-DE-MajaNeural",
+              "name": "Maja",
+              "gender": "f"
+            },
+            {
+              "id": "de-DE-RalfNeural",
+              "name": "Ralf",
+              "gender": "m"
+            },
+            {
+              "id": "de-DE-TanjaNeural",
+              "name": "Tanja",
+              "gender": "f"
+            }
+          ]
+        },
+        {
+          "label": "多语言",
+          "family": "multilingual",
+          "voices": [
+            {
+              "id": "de-DE-SeraphinaMultilingualNeural",
+              "name": "Seraphina",
+              "gender": "f"
+            },
+            {
+              "id": "de-DE-FlorianMultilingualNeural",
+              "name": "Florian",
+              "gender": "m"
+            }
+          ]
+        },
+        {
+          "label": "Neural-HD",
+          "family": "dragonHD",
+          "styleSet": "hd",
+          "voices": [
+            {
+              "id": "de-DE-Seraphina:DragonHDLatestNeural",
+              "name": "Seraphina",
+              "gender": "f"
+            },
+            {
+              "id": "de-DE-Florian:DragonHDLatestNeural",
+              "name": "Florian",
+              "gender": "m"
+            }
+          ]
+        },
+        {
+          "label": "MAI-Voice-2",
+          "family": "maiVoice2",
+          "voices": [
+            {
+              "id": "de-DE-Klaus:MAI-Voice-2",
+              "name": "Klaus",
+              "gender": "m",
+              "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
+            },
+            {
+              "id": "de-DE-Klaus:MAI-Voice-2-Flash",
+              "name": "Klaus·Flash",
+              "gender": "m",
+              "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
+            },
+            {
+              "id": "de-DE-Mia:MAI-Voice-2",
+              "name": "Mia",
+              "gender": "f",
+              "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
+            },
+            {
+              "id": "de-DE-Mia:MAI-Voice-2-Flash",
+              "name": "Mia·Flash",
+              "gender": "f",
+              "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
+            }
+          ]
+        },
+        {
+          "label": "多人语音",
+          "family": "multitalker",
+          "styleSet": "hd",
+          "voices": [
+            {
+              "id": "en-Multitalker:DragonHDLatestNeural",
+              "name": "英文对话",
+              "gender": "n"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "multitalkerSpeakers": {
+    "en-Multitalker:DragonHDLatestNeural": [
+      {
+        "id": "ada",
+        "name": "Ada"
+      },
+      {
+        "id": "ava",
+        "name": "Ava"
+      },
+      {
+        "id": "emma",
+        "name": "Emma"
+      },
+      {
+        "id": "jane",
+        "name": "Jane"
+      },
+      {
+        "id": "andrew",
+        "name": "Andrew"
+      },
+      {
+        "id": "brian",
+        "name": "Brian"
+      },
+      {
+        "id": "davis",
+        "name": "Davis"
+      },
+      {
+        "id": "steffan",
+        "name": "Steffan"
+      }
+    ],
+    "fr-Multitalker:DragonHDLatestNeural": [
+      {
+        "id": "vivienne",
+        "name": "Vivienne"
+      },
+      {
+        "id": "remy",
+        "name": "Remy"
+      }
+    ],
+    "zh-Multitalker:DragonHDLatestNeural": [
+      {
+        "id": "xiaoxiao",
+        "name": "晓晓"
+      },
+      {
+        "id": "yunxiao",
+        "name": "云霄"
+      }
+    ]
+  },
+  "multitalkerLocale": {
+    "en": "en-US",
+    "zh": "zh-CN",
+    "fr": "fr-FR"
+  }
+}

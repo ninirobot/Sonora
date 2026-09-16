@@ -1,0 +1,4160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="page.title">Sonora - Desktop Voice Studio</title>
+    <meta name="description" content="" data-i18n-content="page.description">
+    <meta name="keywords" content="" data-i18n-content="page.keywords">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5NiA5NiIgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IlNvbm9yYSAwMmYg6aKR6LCx5p2hIDYg5p2hIOWxheS4rSI+CiAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+CiAgICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzFmMmEzZCIvPgogICAgICAgICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwZDExMTkiLz4KICAgICAgICA8L2xpbmVhckdyYWRpZW50PgogICAgICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYmFyIiB4MT0iMCIgeTE9IjEiIHgyPSIwIiB5Mj0iMCI+CiAgICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzBmNmNiZCIvPgogICAgICAgICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM3YWQxZmYiLz4KICAgICAgICA8L2xpbmVhckdyYWRpZW50PgogICAgPC9kZWZzPgogICAgPHJlY3Qgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByeD0iMjIiIGZpbGw9InVybCgjYmcpIi8+CiAgICA8ZyBmaWxsPSJ1cmwoI2JhcikiPgogICAgICAgIDxyZWN0IHg9IjE0LjUiIHk9IjM4IiB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgcng9IjMuNSIvPgogICAgICAgIDxyZWN0IHg9IjI2LjUiIHk9IjMwIiB3aWR0aD0iNyIgaGVpZ2h0PSIzNiIgcng9IjMuNSIvPgogICAgICAgIDxyZWN0IHg9IjM4LjUiIHk9IjIwIiB3aWR0aD0iNyIgaGVpZ2h0PSI1NiIgcng9IjMuNSIvPgogICAgICAgIDxyZWN0IHg9IjUwLjUiIHk9IjEyIiB3aWR0aD0iNyIgaGVpZ2h0PSI3MiIgcng9IjMuNSIvPgogICAgICAgIDxyZWN0IHg9IjYyLjUiIHk9IjI2IiB3aWR0aD0iNyIgaGVpZ2h0PSI0NCIgcng9IjMuNSIvPgogICAgICAgIDxyZWN0IHg9Ijc0LjUiIHk9IjM1IiB3aWR0aD0iNyIgaGVpZ2h0PSIyNiIgcng9IjMuNSIvPgogICAgPC9nPgo8L3N2Zz4K">
+    <!-- 明暗模式：首屏绘制前定好，避免先闪一下浅色 -->
+    <script>
+        try {
+            if (localStorage.getItem('sonora-scheme') === 'dark') {
+                document.documentElement.classList.add('dark');
+            }
+        } catch (ignored) { }
+    </script>
+    <style>
+        /* 外观严格复刻 design/01-fluent-mica.html，色值一个都不要改 */
+        :root {
+            /* Fluent 记号：与 design/01-fluent-mica.html 对齐 */
+            --accent: #0f6cbd;
+            --accent-soft: #cfe4f7;
+            --surface: rgba(250, 250, 252, .86);
+            --panel: rgba(255, 255, 255, .7);
+            --card: #fff;
+            --line: rgba(0, 0, 0, .07);
+            --line-strong: rgba(0, 0, 0, .14);
+            --wave: #c9cdd6;
+
+            --primary-color: #0f6cbd;
+            --primary-hover: #0d5da3;
+            --secondary-color: #64748b;
+            --success-color: #059669;
+            --warning-color: #d97706;
+            --error-color: #dc2626;
+            --background-color: #eef2f8;
+            --surface-color: #ffffff;
+            --text-primary: #1b1b1f;
+            --text-secondary: #5c5f66;
+            --border-color: rgba(0, 0, 0, 0.11);
+            --border-focus: #0f6cbd;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 2px 4px rgb(15 25 45 / 0.10);
+            --shadow-lg: 0 2px 8px rgb(15 25 45 / 0.10);
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 10px;
+            --radius-xl: 12px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Segoe UI Variable Text', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Microsoft YaHei', Roboto, sans-serif;
+            background-color: #0d1119;
+            /* 严格复刻 design/01：深色壁纸（两道彩色光斑 + 140 度线性渐变） */
+            background-image:
+                radial-gradient(900px 600px at 12% 8%, #6f7ea8 0%, transparent 60%),
+                radial-gradient(900px 700px at 88% 92%, #2c4a6e 0%, transparent 62%),
+                linear-gradient(140deg, #243044, #111826 55%, #0d1119);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow: hidden;
+        }
+
+        /* 应用外壳：整窗网格。行 = 标题栏 / 菜单栏 / 工具条 / 工作区 / 状态栏 */
+        .container {
+            height: 100vh;
+            display: grid;
+            grid-template-rows: 40px 1fr 27px;
+            grid-template-columns: 88px minmax(0, 1fr);
+            overflow: hidden;
+            position: relative;
+            background: var(--surface);
+            backdrop-filter: blur(40px) saturate(150%);
+            -webkit-backdrop-filter: blur(40px) saturate(150%);
+        }
+
+        /* 顶部一道柔和高光，撑出窗口纵深（照 design/01 的 .window::before） */
+        .container::before {
+            content: "";
+            position: absolute;
+            inset: 0 0 auto;
+            height: 150px;
+            background: radial-gradient(600px 120px at 30% 0, #fff, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 内容压在高光之上 */
+        .container > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .app-titlebar {
+            grid-area: 1 / 1 / 2 / 3;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 0 0 0 13px;
+            border-bottom: 1px solid var(--border-color);
+            /* 必须高过 .workspace：否则语言下拉会被下面的面板盖住，像是「点了没反应」 */
+            z-index: 5;
+        }
+
+        .app-logo {
+            width: 17px;
+            height: 17px;
+            border-radius: 5px;
+            background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5NiA5NiIgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IlNvbm9yYSAwMmYg6aKR6LCx5p2hIDYg5p2hIOWxheS4rSI+CiAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+CiAgICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzFmMmEzZCIvPgogICAgICAgICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwZDExMTkiLz4KICAgICAgICA8L2xpbmVhckdyYWRpZW50PgogICAgICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYmFyIiB4MT0iMCIgeTE9IjEiIHgyPSIwIiB5Mj0iMCI+CiAgICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzBmNmNiZCIvPgogICAgICAgICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM3YWQxZmYiLz4KICAgICAgICA8L2xpbmVhckdyYWRpZW50PgogICAgPC9kZWZzPgogICAgPHJlY3Qgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByeD0iMjIiIGZpbGw9InVybCgjYmcpIi8+CiAgICA8ZyBmaWxsPSJ1cmwoI2JhcikiPgogICAgICAgIDxyZWN0IHg9IjE0LjUiIHk9IjM4IiB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgcng9IjMuNSIvPgogICAgICAgIDxyZWN0IHg9IjI2LjUiIHk9IjMwIiB3aWR0aD0iNyIgaGVpZ2h0PSIzNiIgcng9IjMuNSIvPgogICAgICAgIDxyZWN0IHg9IjM4LjUiIHk9IjIwIiB3aWR0aD0iNyIgaGVpZ2h0PSI1NiIgcng9IjMuNSIvPgogICAgICAgIDxyZWN0IHg9IjUwLjUiIHk9IjEyIiB3aWR0aD0iNyIgaGVpZ2h0PSI3MiIgcng9IjMuNSIvPgogICAgICAgIDxyZWN0IHg9IjYyLjUiIHk9IjI2IiB3aWR0aD0iNyIgaGVpZ2h0PSI0NCIgcng9IjMuNSIvPgogICAgICAgIDxyZWN0IHg9Ijc0LjUiIHk9IjM1IiB3aWR0aD0iNyIgaGVpZ2h0PSIyNiIgcng9IjMuNSIvPgogICAgPC9nPgo8L3N2Zz4K") center / 100% 100% no-repeat;
+            box-shadow: 0 1px 3px rgb(15 108 189 / 0.45);
+        }
+
+        .app-titlebar h1 {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            margin: 0;
+        }
+
+        .app-subtitle {
+            color: var(--text-secondary);
+            font-size: 12.5px;
+        }
+
+        .app-subtitle::before {
+            content: "—";
+            margin-right: 8px;
+            opacity: 0.5;
+        }
+
+        .titlebar-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            height: 100%;
+        }
+
+        /* 语言切换器从右上角浮层搬进标题栏：改 relative 保留下拉定位基准，z-index 要高过菜单栏 */
+        .titlebar-right .language-switcher {
+            position: relative;
+            top: auto;
+            right: auto;
+            z-index: 70;
+        }
+
+        .titlebar-right .language-btn {
+            padding: 4px 10px;
+            font-size: 12.5px;
+            box-shadow: none;
+        }
+
+        /* 窗口按钮：仅桌面版显示（网页版隐藏），数值照搬原型 */
+        .window-controls {
+            display: flex;
+            height: 100%;
+        }
+
+        .window-controls[hidden] {
+            display: none;
+        }
+
+        .window-controls button {
+            width: 46px;
+            border: 0;
+            background: transparent;
+            color: var(--text-primary);
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.14s ease;
+        }
+
+        .window-controls button:hover {
+            background: rgb(0 0 0 / 0.06);
+        }
+
+        .window-controls .close:hover {
+            background: #c42b1c;
+            color: #fff;
+        }
+
+        /* 左侧导航：形态照 design/08 的 .rail，配色用 01 的 accent */
+        .app-rail {
+            grid-area: 2 / 1 / 3 / 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 0;
+            background: rgba(255, 255, 255, 0.42);
+            border-right: 1px solid var(--line);
+            overflow: hidden;
+        }
+
+        .rail-item {
+            width: 66px;
+            flex: none;
+            padding: 8px 0;
+            border: 0;
+            border-radius: 8px;
+            background: transparent;
+            font: inherit;
+            font-size: 11px;
+            text-align: center;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: 0.16s ease;
+        }
+        .rail-item .rail-icon {
+            display: block;
+            font-size: 17px;
+            line-height: 1.2;
+            margin-bottom: 3px;
+        }
+        .rail-item:hover {
+            background: rgb(0 0 0 / 0.05);
+        }
+        .rail-item.active {
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .rail-foot {
+            margin-top: auto;
+        }
+
+        /* 工作区：语言条 + 主区，竖向排布 */
+        .workspace {
+            grid-area: 2 / 2 / 3 / 3;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        /* 语言条：语言第 1 行，口音第 2 行（不再横排挤在一起） */
+        .lang-bar {
+            flex: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 7px 16px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .lang-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .lang-row .lang-tabs {
+            flex-wrap: wrap;
+        }
+
+        /* 输入方式 chips：跟语言标签同一行，靠右，行高对齐 */
+        .lang-row .method-chips {
+            margin: 0 0 0 auto;
+            flex: none;
+        }
+        .lang-row .method-chip {
+            flex: none;
+            padding: 3px 12px;
+            font-size: 12px;
+        }
+
+        /* 没有口音时第二行整行不占位 */
+        .accent-row:has(.accent-tabs:empty) {
+            display: none;
+        }
+
+        /* 状态栏 */
+        .app-statusbar {
+            grid-area: 3 / 1 / 4 / 3;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 0 16px;
+            border-top: 1px solid var(--line);
+            font-size: 11.5px;
+            color: var(--text-secondary);
+            overflow: hidden;
+        }
+
+        .app-statusbar .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #0d9c67;
+            margin-right: -8px;
+            flex: none;
+        }
+
+        .app-statusbar .feature-item {
+            color: var(--text-secondary);
+            font-size: 11.5px;
+            white-space: nowrap;
+        }
+
+        .app-statusbar .feature-icon {
+            display: none;
+        }
+
+        .app-statusbar .status-right {
+            margin-left: auto;
+            white-space: nowrap;
+        }
+
+        /* 工作区：TTS 与 STT 两半互斥占同一格，各自内部滚动 */
+        .main-content,
+        .transcription-container {
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+            background: transparent;
+            border: 0;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .form-container {
+            height: 100%;
+            min-height: 0;
+            padding: 14px 16px;
+            display: flex;
+        }
+
+        /* 浮层：快捷键 / 关于 */
+        .app-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgb(15 25 45 / 0.32);
+            backdrop-filter: blur(3px);
+        }
+
+        .app-modal.show {
+            display: flex;
+            animation: overlayIn 0.18s ease;
+        }
+
+        /* Win11 风格打开动效：背景淡入 + 卡片轻微上浮放大（四个浮层共用） */
+        @keyframes overlayIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(8px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .app-modal.show .app-modal-card {
+            animation: cardIn 0.2s cubic-bezier(0, 0, 0, 1);
+        }
+
+        .app-modal-card {
+            min-width: 340px;
+            max-width: 460px;
+            padding: 18px 20px;
+            border-radius: var(--radius-xl);
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 24px 60px rgb(15 25 45 / 0.3);
+        }
+
+        .app-modal-card h3 {
+            margin: 0 0 12px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .app-modal-card dl {
+            margin: 0;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 8px 16px;
+            font-size: 12.5px;
+        }
+
+        .app-modal-card dt {
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .app-modal-card dd {
+            margin: 0;
+        }
+
+        .app-modal-card button {
+            margin-top: 16px;
+            width: 100%;
+            padding: 9px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: var(--background-color);
+            font: inherit;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        /* 设置弹窗：格式 / 质量用分段按钮，样式压掉卡片里 button 的整行规则 */
+        .settings-card {
+            min-width: 380px;
+        }
+        .settings-card .form-hint {
+            margin: 12px 0 6px;
+            font-size: 11.5px;
+        }
+        .seg-row {
+            display: flex;
+            gap: 6px;
+        }
+        .settings-card .seg-btn {
+            flex: 1;
+            margin: 0;
+            width: auto;
+            padding: 7px 0;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: var(--background-color);
+            font: inherit;
+            font-size: 12.5px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: 0.16s ease;
+        }
+        .settings-card .seg-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .settings-card .seg-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* 确定 / 取消并排：设置必须二选一，不支持点外面关闭 */
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        .app-modal-card .modal-actions button {
+            flex: 1;
+            margin-top: 0;
+        }
+        /* 卡片里的 button 规则会盖掉 .btn-primary 的渐变，这里把主按钮的底色补回来 */
+        .app-modal-card .modal-actions .btn-primary {
+            border: 0;
+            color: #fff;
+            padding: 9px;
+            font-size: 13px;
+            background: linear-gradient(180deg, #1277cf, #0f6cbd);
+        }
+
+        /* 通知弹窗：一句消息 + 「知道了」 */
+        .notice-card {
+            min-width: 280px;
+            max-width: 360px;
+        }
+        .notice-card p {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+        
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 7px 9px;
+            border: 1px solid var(--line-strong);
+            border-radius: 6px;
+            font: inherit;
+            font-size: 13px;
+            color: var(--text-primary);
+            background: var(--card);
+            transition: 0.16s ease;
+        }
+        
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgb(15 108 189 / 0.16);
+        }
+        
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        /* 工作台两栏：左编辑面板 + 右参数面板，面板内部各自滚动 */
+        #ttsForm {
+            flex: 1;
+            min-height: 0;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 342px;
+            gap: 14px;
+            align-items: stretch;
+        }
+
+        .tts-editor,
+        .tts-settings {
+            min-height: 0;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-md);
+            backdrop-filter: blur(18px) saturate(150%);
+            -webkit-backdrop-filter: blur(18px) saturate(150%);
+        }
+
+        .tts-editor {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* 待开发：语音转文字面板样式（.stt-main / .stt-settings）
+        .stt-main {
+            padding: 12px 13px;
+            overflow: auto;
+        }
+
+        .stt-settings {
+            padding: 12px 13px;
+            overflow: auto;
+        }
+        ===== 待开发结束 ===== */
+
+        .tts-settings {
+            padding: 12px 13px;
+            overflow: auto;
+        }
+
+        /* 三个输入区域撑满面板剩余高度，编辑器内部滚动 */
+        .tts-editor #textInputArea,
+        .tts-editor #dialogueArea,
+        .tts-editor #fileUploadArea {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+            flex-direction: column;
+            margin: 0;
+            padding: 0 12px 12px;
+        }
+
+        .tts-editor .form-textarea {
+            flex: 1;
+            min-height: 0;
+        }
+
+        /* 右栏设置项单列排布 */
+        .tts-settings .controls-grid {
+            grid-template-columns: 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .tts-settings .controls-grid .form-group,
+        .tts-settings .form-group,
+        .tts-settings .row {
+            margin-bottom: 0;
+        }
+
+        /* 输入方式：Material chip 风格（形态照 08，配色用 01） */
+        .method-chips {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+        .method-chip {
+            flex: 1;
+            padding: 6px 0;
+            border: 1px solid var(--line-strong);
+            border-radius: 999px;
+            background: transparent;
+            font: inherit;
+            font-size: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: 0.16s ease;
+        }
+        .method-chip:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .method-chip.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* 语言页签：Fluent segmented 控件（浅底容器 + 白底选中项） */
+        .lang-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+            padding: 2px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.55);
+            border: 1px solid var(--line);
+        }
+        .lang-tab {
+            padding: 3px 10px;
+            font: inherit;
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--text-secondary);
+            background: transparent;
+            border: 0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.16s ease;
+        }
+        .lang-tab:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        .lang-tab.active {
+            background: var(--card);
+            color: var(--text-primary);
+            font-weight: 600;
+            box-shadow: 0 1px 4px rgb(15 25 45 / 0.16);
+        }
+
+        /* 二级口音页签：复用 .lang-tab 的全部样式与动画，仅略小；无内容时不占位 */
+        .accent-tabs {
+            margin-top: 0;
+        }
+        .accent-tabs:empty {
+            display: none;
+        }
+        .accent-tabs .lang-tab {
+            padding: 3px 9px;
+            font-size: 11.5px;
+        }
+
+        /* 下拉中不支持的选项置灰 */
+        .form-select option:disabled {
+            color: #9ca3af;
+        }
+
+        /* 滑块：3px 渐变轨道 + 17px 白色圆 thumb（照 design/01） */
+        .form-range {
+            width: 100%;
+            height: 18px;
+            margin-top: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            outline: none;
+            cursor: pointer;
+        }
+        .form-range::-webkit-slider-runnable-track {
+            height: 3px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, var(--accent), #8fb9e0);
+        }
+        .form-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 17px;
+            height: 17px;
+            margin-top: -7px;
+            border-radius: 50%;
+            background: #fff;
+            border: 4px solid var(--accent);
+            box-shadow: 0 1px 4px rgb(15 25 45 / 0.3);
+            cursor: pointer;
+            transition: transform 0.14s ease;
+        }
+        .form-range::-webkit-slider-thumb:hover {
+            transform: scale(1.12);
+        }
+        .form-range::-moz-range-track {
+            height: 3px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, var(--accent), #8fb9e0);
+        }
+        .form-range::-moz-range-thumb {
+            width: 17px;
+            height: 17px;
+            border-radius: 50%;
+            background: #fff;
+            border: 4px solid var(--accent);
+            box-shadow: 0 1px 4px rgb(15 25 45 / 0.3);
+            cursor: pointer;
+        }
+        .form-range:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+        /* 富文本编辑区（可插入停顿 / 副语言芯片） */
+        .rich-editor {
+            position: relative;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            padding: 15px 16px;
+            border: 1px solid var(--line-strong);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.75);
+            line-height: 2.05;
+            font-size: 14px;
+            cursor: text;
+            transition: 0.16s ease;
+        }
+
+        .rich-editor:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgb(15 108 189 / 0.16);
+        }
+
+        /* 占位文字必须脱离文档流（绝对定位），否则光标会被挤到提示文字后面 */
+        .rich-editor.is-empty::before {
+            content: attr(data-placeholder);
+            position: absolute;
+            top: 12px;
+            left: 16px;
+            right: 16px;
+            color: var(--text-secondary);
+            pointer-events: none;
+        }
+
+        /* 芯片：整体不可编辑，只能整体删除 */
+        .chip {
+            display: inline-block;
+            margin: 0 2px;
+            padding: 1px 8px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            user-select: none;
+            cursor: default;
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .chip.para {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        /* 角色芯片（A: / B:）：放大加粗 + 按角色配色，一眼看出说话人切换 */
+        .chip.role {
+            margin: 0 6px 0 0;
+            padding: 2px 9px;
+            border: 1px solid currentColor;
+            border-radius: 7px;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+        }
+
+        .chip.role[data-role="a"] {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .chip.role[data-role="b"] {
+            background: #d1fae5;
+            color: #047857;
+        }
+
+        /* 多人语音：角色卡（说话人 + 语速同卡，A / B 标签兼任插入按钮） */
+        .dialogue-roles {
+            display: grid;
+            gap: 8px;
+        }
+
+        .dialogue-role {
+            position: relative;
+            padding: 10px 12px 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: var(--background-color);
+        }
+
+        /* 角色配色：A 蓝 / B 绿，竖条、标签、语速数值、工具条按钮共用同一个变量 */
+        .role-a { --role-color: #2563eb; }
+        .role-b { --role-color: #059669; }
+
+        .dialogue-role::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 9px;
+            bottom: 9px;
+            width: 3px;
+            border-radius: 0 3px 3px 0;
+            background: var(--role-color);
+        }
+
+        .role-head {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* A / B 标签：既是角色标识，也是「在光标处插入标记」的按钮 */
+        .role-tag {
+            flex: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+            height: 27px;
+            padding: 0 9px;
+            border: none;
+            border-radius: 8px;
+            background: var(--role-color);
+            color: #fff;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .role-tag:hover {
+            filter: brightness(0.88);
+        }
+
+        .role-tag:active {
+            transform: scale(0.94);
+        }
+
+        /* 语速标签小字 */
+        .role-row-label {
+            flex: none;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* 说话人下拉：收窄并靠右，不再拉满整行 */
+        .role-head .form-select {
+            flex: none;
+            width: 132px;
+            margin-left: auto;
+        }
+
+        /* 语速：标签 + 滑块 + 数值同一行，数值不再另起小字 */
+        .role-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 9px;
+        }
+
+        .role-row .form-range {
+            flex: 1;
+            min-width: 0;
+            margin-top: 0;
+        }
+
+        .role-value {
+            flex: none;
+            min-width: 46px;
+            text-align: right;
+            font-size: 12px;
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+            color: var(--role-color);
+        }
+
+        /* 角色卡里的 A / B 静态徽标（插入按钮已移到输入框上方的工具条） */
+        .role-badge {
+            flex: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+            height: 27px;
+            padding: 0 9px;
+            border-radius: 8px;
+            background: var(--role-color);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .dialogue-file-check {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        .form-hint {
+            margin: 6px 0 0;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* 副语言标记按钮 */
+        .para-insert.disabled .para-btns {
+            opacity: 0.45;
+        }
+        .para-btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .para-btn {
+            padding: 5px 12px;
+            font-size: 13px;
+            color: var(--text-primary);
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .para-btn:hover:not(:disabled) {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        .para-btn:disabled {
+            cursor: not-allowed;
+        }
+        
+        .btn-primary {
+            width: 100%;
+            background: linear-gradient(180deg, #1277cf, #0f6cbd);
+            color: #fff;
+            border: 0;
+            padding: 11px;
+            font: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgb(15 108 189 / 0.4);
+            transition: 0.16s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            filter: brightness(1.07);
+            box-shadow: 0 6px 18px rgb(15 108 189 / 0.45);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(1px);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: var(--success-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .btn-secondary:hover {
+            background: #047857;
+            transform: translateY(-1px);
+        }
+        
+        .result-container {
+            margin-top: 32px;
+            padding: 24px;
+            background: var(--background-color);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            display: none;
+        }
+        
+        .audio-player {
+            width: 100%;
+            margin-bottom: 16px;
+            border-radius: var(--radius-md);
+        }
+        
+        .error-message {
+            color: var(--error-color);
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            margin-top: 16px;
+            font-weight: 500;
+        }
+        
+        .loading-container {
+            text-align: center;
+            padding: 32px 20px;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        
+        .loading-text {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .promotion-card {
+            margin-top: 40px;
+            background: var(--surface-color);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+        
+        .promotion-header {
+            background: #f1f5f9;
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .promotion-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        
+        .promotion-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        .promotion-content {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 24px;
+            align-items: center;
+        }
+        
+        .qr-code {
+            width: 120px;
+            height: 120px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .qr-code img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .promotion-info h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+        
+        .promotion-info p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+        
+        .benefits-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .benefits-list li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 8px;
+        }
+        
+        .benefits-list li:before {
+            content: "✓";
+            color: var(--success-color);
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .file-upload-container {
+            width: 100%;
+        }
+        
+        .file-drop-zone,
+        .file-drop-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .file-drop-icon {
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #3b82f6 100%);
+            border-radius: var(--radius-lg);
+            color: white;
+            margin-bottom: 8px;
+            box-shadow: var(--shadow-md);
+            position: relative;
+        }
+        
+        .file-drop-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+            line-height: 1.4;
+        }
+        
+        .file-drop-hint {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin: 0;
+            padding: 8px 16px;
+            background: rgba(100, 116, 139, 0.1);
+            border-radius: var(--radius-sm);
+        }
+        
+        .file-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--surface-color) 0%, rgba(248, 250, 252, 0.5) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            margin-top: 16px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+        }
+        
+        .file-info:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .file-details {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+        }
+        
+        .file-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .file-name::before {
+            content: '';
+            width: 16px;
+            height: 16px;
+            background: var(--primary-color);
+            border-radius: 3px;
+            opacity: 0.8;
+            flex-shrink: 0;
+        }
+        
+        .file-size {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            background: rgba(100, 116, 139, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            width: fit-content;
+        }
+        
+        .file-remove-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: var(--error-color);
+            color: white;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+        }
+        
+        .file-remove-btn:hover {
+            background: #b91c1c;
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+        
+        
+        /* 待开发：语音转文字（Token 配置与转录结果区样式）
+        .token-config {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 16px;
+        }
+        
+        .token-option {
+            display: flex;
+            align-items: center;
+        }
+        
+        .token-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: color 0.2s ease;
+        }
+        
+        .token-label:hover {
+            color: var(--text-primary);
+        }
+        
+        .token-label input[type="radio"] {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+            margin: 0;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+        }
+        
+        .transcription-result {
+            margin-top: 20px;
+        }
+        ===== 待开发结束 ===== */
+
+        /* 待开发占位：从左侧「转录」进来时显示 */
+        .stt-todo {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+        }
+
+        .stt-todo-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .stt-todo-hint {
+            font-size: 0.875rem;
+        }
+        
+        .result-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .result-actions .btn-secondary {
+            flex: 1;
+            min-width: 140px;
+        }
+        
+        /* 语言切换器样式 */
+        .language-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .language-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .language-btn:hover {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .language-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 4px;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            min-width: 120px;
+            display: none;
+        }
+        
+        .language-dropdown.show {
+            display: block;
+        }
+        
+        .language-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            transition: background-color 0.2s ease;
+        }
+        
+        .language-option:hover {
+            background: var(--background-color);
+            color: var(--text-primary);
+        }
+        
+        .language-option.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .controls-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .promotion-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .qr-code {
+                margin: 0 auto;
+            }
+            
+            .file-drop-zone {
+                padding: 32px 16px;
+            }
+            
+            .file-drop-icon {
+                width: 56px;
+                height: 56px;
+            }
+            
+            .file-info {
+                padding: 16px;
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+            
+            .file-remove-btn {
+                align-self: flex-end;
+            }
+            
+            /* 待开发：移动端语音转文字（Token 配置纵向排列）
+            .token-config {
+                flex-direction: column;
+                gap: 12px;
+            }
+            ===== 待开发结束 ===== */
+            
+            .result-actions {
+                flex-direction: column;
+            }
+            
+            .result-actions .btn-secondary {
+                min-width: auto;
+            }
+        }
+
+        /* ==================================================================
+           副语言插入区：坐在右栏「语音」下方，标题与「语音 / 参数」同级
+           ================================================================== */
+        .insert-toolbar {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .insert-toolbar .para-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .insert-toolbar .form-hint {
+            margin: 0;
+            font-size: 11.5px;
+        }
+
+        /* 六个副语言标记压到能排进一行：右栏内容宽约 316px */
+        .insert-toolbar .para-btn {
+            padding: 3px 8px;
+            font-size: 11.5px;
+        }
+
+        /* 角色标记（A / B）跟着副语言块排一行 */
+        .insert-toolbar .role-insert {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .insert-toolbar .role-tag {
+            min-width: 34px;
+            height: 26px;
+            font-size: 12px;
+            padding: 0 8px;
+        }
+
+        /* 窄屏：侧边栏收窄、状态栏精简。文稿与语音始终左右排，不再折成上下 */
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 72px minmax(0, 1fr);
+            }
+
+            /* 窄屏状态栏放不下这么多项，只留运行方式与快捷键提示 */
+            .app-statusbar .feature-item,
+            .app-statusbar > span:nth-child(3) {
+                display: none;
+            }
+        }
+
+        /* ==================================================================
+           Fluent 补充：模式提示条 / 明暗模式 / 右键菜单 / 进度与波形播放
+           ================================================================== */
+
+        /* 编辑卡标题行：文稿 + 插入区 + 字数统计 + 撤销 / 重做 */
+        .editor-head {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px 8px;
+            flex: none;
+            padding: 9px 12px 7px;
+        }
+        .editor-head .insert-toolbar {
+            flex: 1 1 auto;
+        }
+        .editor-title {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.4px;
+            color: var(--text-secondary);
+        }
+        .editor-head .count {
+            margin-left: auto;
+            font-size: 11.5px;
+            color: var(--text-secondary);
+        }
+        .icon-btn {
+            width: 26px;
+            height: 26px;
+            flex: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--line-strong);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.7);
+            font: inherit;
+            font-size: 14px;
+            line-height: 1;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: 0.16s ease;
+        }
+        .icon-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: #fff;
+        }
+
+        /* 一行式参数：标签 + 滑块 + 数值（借鉴 design/08 的 .row） */
+        .row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .row .row-label {
+            width: 58px;
+            flex: none;
+            font-size: 12.5px;
+            color: var(--text-secondary);
+        }
+        .row .form-range {
+            flex: 1;
+            min-width: 0;
+            margin-top: 0;
+        }
+        .row .val {
+            width: 84px;
+            flex: none;
+            text-align: right;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent);
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+        /* 停顿行的数值格本身就是插入按钮：外框照副语言标记；宽度收紧到贴着文字，
+           不用 .val 的 84px（那一列是为「⚡ 正常 1.00x」准备的，放到这里左半边会空一大截） */
+        .row .val-btn {
+            width: auto;
+            min-width: 62px;
+            padding: 3px 9px;
+            border: 1px solid var(--border-color);
+            border-radius: 999px;
+            background: var(--surface-color);
+            font-family: inherit;
+            cursor: pointer;
+            transition: 0.16s ease;
+        }
+        .row .val-btn:hover {
+            border-color: var(--accent);
+            background: rgba(15, 108, 189, 0.1);
+        }
+
+        /* 结果区：收进右栏底部，只占一条，不再抢占编辑区 */
+        .result-container {
+            margin-top: 10px;
+        }
+        /* 原生 audio 只作音源，界面由 .player 自绘 */
+        .audio-player {
+            display: none;
+        }
+        .loading-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        .progress-info {
+            margin-left: auto;
+            font-size: 11.5px;
+        }
+
+        /* 播放器：圆形按钮 + 可拖进度条 + 时间码（不要波形） */
+        .player {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .play-btn {
+            width: 30px;
+            height: 30px;
+            flex: none;
+            border: 0;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #fff;
+            font-size: 11px;
+            line-height: 1;
+            cursor: pointer;
+            transition: 0.16s ease;
+        }
+        .play-btn:hover {
+            filter: brightness(1.08);
+        }
+        .seek {
+            flex: 1;
+            min-width: 0;
+        }
+        .time {
+            flex: none;
+            font-size: 11.5px;
+            color: var(--text-secondary);
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* 导出音频：与「生成语音」同风格，只是它其实是下载链接 */
+        #success .btn-primary {
+            margin-top: 8px;
+            padding: 9px;
+            font-size: 13px;
+            text-decoration: none;
+        }
+
+        /* 右栏分组小标题（照 design/01 的 .settings h3） */
+        .tts-settings h3 {
+            margin: 0 0 2px;
+            font-size: 11.5px;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        /* 明暗模式按钮：坐在标题栏里，紧邻「🌐 中文」语言切换框 */
+        .ghost {
+            flex: none;
+            border: 1px solid var(--line-strong);
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 6px;
+            padding: 5px 11px;
+            font: inherit;
+            font-size: 12.5px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: 0.16s ease;
+        }
+        .ghost:hover {
+            background: #fff;
+        }
+        /* 标题栏里压到与语言按钮同高 */
+        .titlebar-right .ghost {
+            padding: 3px 10px;
+            font-size: 12px;
+        }
+
+        /* 生成进度条 */
+        .progress {
+            height: 4px;
+            margin-top: 8px;
+            border-radius: 3px;
+            background: rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .progress.run {
+            opacity: 1;
+        }
+        .progress i {
+            display: block;
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #0f6cbd, #39b0f5);
+            transition: width 0.12s linear;
+        }
+
+        /* 编辑区右键菜单 */
+        #ctx {
+            position: fixed;
+            display: none;
+            min-width: 186px;
+            padding: 5px;
+            border-radius: 8px;
+            background: var(--card);
+            border: 1px solid var(--line-strong);
+            box-shadow: 0 14px 34px rgb(15 25 45 / 0.24);
+            z-index: 120;
+            font-size: 12.5px;
+        }
+        #ctx.show {
+            display: block;
+        }
+        #ctx div {
+            padding: 7px 10px;
+            border-radius: 5px;
+            cursor: default;
+        }
+        #ctx div:hover {
+            background: var(--accent-soft);
+        }
+        #ctx hr {
+            border: 0;
+            border-top: 1px solid var(--line);
+            margin: 5px 6px;
+        }
+
+        /* ============================ 深色模式 ============================ */
+        html.dark {
+            --surface: rgba(32, 36, 44, .9);
+            --background-color: #20242c;
+            --surface-color: #2b3038;
+            --panel: rgba(44, 49, 58, .66);
+            --card: #2b3038;
+            --text-primary: #eef1f6;
+            --text-secondary: #a5acb8;
+            --border-color: rgba(255, 255, 255, .12);
+            --line: rgba(255, 255, 255, .08);
+            --line-strong: rgba(255, 255, 255, .16);
+            --accent-soft: rgba(15, 108, 189, .32);
+            --wave: #4a515c;
+        }
+        html.dark .form-input,
+        html.dark .form-select,
+        html.dark .form-textarea {
+            background: #23272f;
+            color: var(--text-primary);
+        }
+        html.dark .rich-editor {
+            background: rgba(20, 23, 28, 0.6);
+            color: var(--text-primary);
+        }
+        html.dark .lang-tabs {
+            background: rgba(255, 255, 255, 0.07);
+        }
+        html.dark .lang-tab.active {
+            background: #3a414c;
+            color: var(--text-primary);
+        }
+        html.dark .hint {
+            background: rgba(15, 108, 189, 0.22);
+            border-color: rgba(15, 108, 189, 0.4);
+            color: var(--accent-soft);
+        }
+        html.dark .ghost,
+        html.dark .para-btn,
+        html.dark .icon-btn {
+            background: rgba(255, 255, 255, 0.07);
+            color: var(--text-primary);
+        }
+        html.dark .ghost:hover,
+        html.dark .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.14);
+        }
+        html.dark .rail-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+        html.dark .app-rail {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        html.dark .app-rail,
+        html.dark .lang-bar {
+            border-color: var(--line);
+        }
+        html.dark .method-chip {
+            border-color: var(--line-strong);
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 标题栏：应用图标 + 应用名 + 副标题 + 语言切换 + 窗口按钮（仅桌面版显示） -->
+        <header class="app-titlebar">
+            <span class="app-logo"></span>
+            <h1 data-i18n="header.title">Sonora</h1>
+            <span class="app-subtitle" data-i18n="header.subtitle">Desktop Voice Studio</span>
+            <div class="titlebar-right">
+                <div class="language-switcher">
+        <div class="language-btn" id="languageBtn">
+            <span id="currentLangFlag">🌐</span>
+            <span id="currentLangName" data-i18n="lang.current">English</span>
+            <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+            </svg>
+        </div>
+        <div class="language-dropdown" id="languageDropdown">
+            <div class="language-option" data-lang="en">
+                <span>🇺🇸</span>
+                <span data-i18n="lang.en">English</span>
+            </div>
+            <div class="language-option" data-lang="zh">
+                <span>🇨🇳</span>
+                <span data-i18n="lang.zh">中文</span>
+            </div>
+            <div class="language-option" data-lang="ja">
+                <span>🇯🇵</span>
+                <span data-i18n="lang.ja">日本語</span>
+            </div>
+            <div class="language-option" data-lang="ko">
+                <span>🇰🇷</span>
+                <span data-i18n="lang.ko">한국어</span>
+            </div>
+            <div class="language-option" data-lang="es">
+                <span>🇪🇸</span>
+                <span data-i18n="lang.es">Español</span>
+            </div>
+            <div class="language-option" data-lang="fr">
+                <span>🇫🇷</span>
+                <span data-i18n="lang.fr">Français</span>
+            </div>
+            <div class="language-option" data-lang="de">
+                <span>🇩🇪</span>
+                <span data-i18n="lang.de">Deutsch</span>
+            </div>
+            <div class="language-option" data-lang="ru">
+                <span>🇷🇺</span>
+                <span data-i18n="lang.ru">Русский</span>
+            </div>
+                </div>
+            </div>
+            <button type="button" class="ghost" id="schemeBtn">深色模式</button>
+            <div class="window-controls" id="windowControls" hidden>
+                    <button type="button" data-window="minimize" title="最小化">—</button>
+                    <button type="button" data-window="maximize" title="最大化">▢</button>
+                    <button type="button" class="close" data-window="close" title="关闭">✕</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 左侧导航：合成 / 转录 + 输入方式二级项 + 帮助 -->
+        <nav class="app-rail">
+            <button type="button" class="rail-item active" id="ttsMode">
+                <span class="rail-icon">✎</span>
+                <span>合成</span>
+            </button>
+            <button type="button" class="rail-item" id="transcriptionMode">
+                <span class="rail-icon">▶</span>
+                <span>转录</span>
+            </button>
+            <button type="button" class="rail-item" id="settingsBtn">
+                <span class="rail-icon">⚙</span>
+                <span>设置</span>
+            </button>
+
+            <button type="button" class="rail-item rail-foot" id="helpBtn">
+                <span class="rail-icon">?</span>
+                <span>帮助</span>
+            </button>
+        </nav>
+
+        <div class="workspace">
+            <!-- 语言条：语言第 1 行，口音第 2 行 -->
+            <div class="lang-bar">
+                <div class="lang-row">
+                    <div class="lang-tabs" id="langTabs"></div>
+
+                    <!-- 输入方式：单人 / 多人 / 上传（跟语言标签同一行，靠右） -->
+                    <div class="method-chips">
+                        <button type="button" class="method-chip active" id="textInputTab">单人语音</button>
+                        <button type="button" class="method-chip" id="dialogueTab">多人语音</button>
+                        <button type="button" class="method-chip" id="fileUploadTab">上传文件</button>
+                    </div>
+                </div>
+                <div class="lang-row accent-row">
+                    <div class="lang-tabs accent-tabs" id="accentTabs"></div>
+                </div>
+            </div>
+
+        <div class="main-content">
+            <div class="form-container">
+                <form id="ttsForm">
+                    <!-- 左栏：内容区 -->
+                    <div class="tts-editor">
+                        <!-- 文稿标题行：字数统计 + 撤销 / 重做（插入区在右栏「语音」下方） -->
+                        <div class="editor-head">
+                            <span class="editor-title">文稿</span>
+                            <span class="count" id="charCount">0 字</span>
+                            <button type="button" class="icon-btn" id="undoBtn" title="撤销">↶</button>
+                            <button type="button" class="icon-btn" id="redoBtn" title="重做">↷</button>
+                        </div>
+
+                        <!-- 单人语音区域 -->
+                        <div class="form-group" id="textInputArea">
+                            <div class="form-textarea rich-editor" id="text" contenteditable="true"
+                                 data-placeholder="请输入要转换为语音的文本内容..."></div>
+                        </div>
+
+                        <!-- 多人语音区域 -->
+                        <div class="form-group" id="dialogueArea" style="display: none;">
+                            <div class="form-textarea rich-editor" id="dialogueText" contenteditable="true"
+                                 data-placeholder="每行一句话，行首用 A: 或 B: 指定说话人"></div>
+                        </div>
+
+                        <!-- 文件上传区域 -->
+                        <div class="form-group" id="fileUploadArea" style="display: none;">
+                            <label class="form-label" for="fileInput">上传txt文件</label>
+                            <div class="file-upload-container">
+                                <div class="file-drop-zone" id="fileDropZone">
+                                    <div class="file-drop-content">
+                                        <div class="file-drop-icon">
+                                            <svg width="28" height="28" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 2L13.09 8.26L19 7L17.74 13.09L24 12L17.74 10.91L19 5L13.09 6.26L12 0L10.91 6.26L5 5L6.26 10.91L0 12L6.26 13.09L5 19L10.91 17.74L12 24L13.09 17.74L19 19L17.74 13.09L24 12Z"/>
+                                                <path d="M14 2H6A2 2 0 0 0 4 4V20A2 2 0 0 0 6 22H18A2 2 0 0 0 20 20V8L14 2M18 20H6V4H13V9H18V20Z"/>
+                                            </svg>
+                                        </div>
+                                        <p class="file-drop-text">拖拽txt文件到此处，或点击选择文件</p>
+                                        <p class="file-drop-hint">支持txt格式，最大500KB</p>
+                                    </div>
+                                    <input type="file" id="fileInput" accept=".txt,text/plain" style="display: none;">
+                                </div>
+                                <div class="file-info" id="fileInfo" style="display: none;">
+                                    <div class="file-details">
+                                        <span class="file-name" id="fileName"></span>
+                                        <span class="file-size" id="fileSize"></span>
+                                    </div>
+                                    <button type="button" class="file-remove-btn" id="fileRemoveBtn">✕</button>
+                                </div>
+                            </div>
+                            <label class="dialogue-file-check">
+                                <input type="checkbox" id="fileAsDialogue">
+                                按多人语音解析（角色与语速在右栏「对话角色」里配置）
+                            </label>
+                            <p class="form-hint">对话格式：每行一句话，用 A: 或 B: 开头指定说话人，不加前缀的行并入上一句。示例：<br>A: 周末你有没有做什么好玩的事？<br>B: 去了本地的市集，吃了太多小吃。<br>A: 听起来不错，下次带上我。</p>
+                        </div>
+
+                
+                    </div>
+
+                    <!-- 右栏：控制台 -->
+                    <div class="tts-settings">
+                        <div class="controls-grid">
+                            <h3>语音</h3>
+                            <select class="form-select" id="voice"></select>
+
+                            <!-- 副语言插入区：标题与「语音 / 参数」同级；说明与标记按钮同属一组 -->
+                            <div class="insert-toolbar" id="insertToolbar">
+                                <div class="para-group" id="paraGroup">
+                                    <h3>副语言（点击插入到文本）</h3>
+                                    <p class="form-hint" id="paraHint"></p>
+                                    <div class="para-insert" id="paraInsert">
+                                        <div class="para-btns" id="paraButtons"></div>
+                                    </div>
+                                </div>
+                                <div class="role-insert" id="roleInsertGroup" style="display: none;">
+                                    <button type="button" class="role-tag role-a" id="insertRoleA" title="在光标处插入 A: 标记">A</button>
+                                    <button type="button" class="role-tag role-b" id="insertRoleB" title="在光标处插入 B: 标记">B</button>
+                                </div>
+                            </div>
+                            <div class="form-group" id="dialogueRolesGroup" style="display: none;">
+                                <label class="form-label">对话角色</label>
+                                <div class="dialogue-roles">
+                                    <div class="dialogue-role role-a">
+                                        <div class="role-head">
+                                            <span class="role-badge">A</span>
+                                            <select class="form-select" id="speakerA"></select>
+                                        </div>
+                                        <div class="role-row">
+                                            <span class="role-row-label">语速</span>
+                                            <input type="range" class="form-range" id="speedA" min="0" max="2" step="0.05" value="1">
+                                            <span class="role-value" id="roleAValue"></span>
+                                        </div>
+                                    </div>
+                                    <div class="dialogue-role role-b">
+                                        <div class="role-head">
+                                            <span class="role-badge">B</span>
+                                            <select class="form-select" id="speakerB"></select>
+                                        </div>
+                                        <div class="role-row">
+                                            <span class="role-row-label">语速</span>
+                                            <input type="range" class="form-range" id="speedB" min="0" max="2" step="0.05" value="1">
+                                            <span class="role-value" id="roleBValue"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3>风格</h3>
+                            <div class="form-group" id="styleGroup">
+                                <select class="form-select" id="style"></select>
+                                <p class="form-hint" id="styleHint"></p>
+                            </div>
+
+                            <div class="row" id="degreeGroup">
+                                <span class="row-label">风格强度</span>
+                                <input type="range" class="form-range" id="styleDegree"
+                                       min="0" max="3" step="1" value="1">
+                                <span class="val" id="degreeValue"></span>
+                            </div>
+                            <div class="row" id="pauseGroup">
+                                <span class="row-label">停顿</span>
+                                <input type="range" class="form-range" id="pauseLength"
+                                       min="0" max="5000" step="100" value="500">
+                                <button type="button" class="val val-btn" id="insertPauseBtn"
+                                        title="点击将停顿标记插到光标处">＋500ms</button>
+                            </div>
+                            <div class="row" id="speedGroup">
+                                <span class="row-label">语速</span>
+                                <input type="range" class="form-range" id="speed"
+                                       min="0" max="2" step="0.05" value="1">
+                                <span class="val" id="speedValue"></span>
+                            </div>
+                            <div class="row" id="pitchGroup">
+                                <span class="row-label">音调</span>
+                                <input type="range" class="form-range" id="pitch"
+                                       min="-50" max="50" step="1" value="0">
+                                <span class="val" id="pitchValue"></span>
+                            </div>
+                        </div>
+                    
+                        <button type="submit" class="btn-primary" id="generateBtn">
+                            <span>生成语音</span>
+                        </button>
+                        <div class="progress" id="progress"><i id="progressFill"></i></div>
+
+                        <div id="result" class="result-container">
+                            <div id="loading" class="loading-container" style="display: none;">
+                                <span id="loadingText">正在生成语音…</span>
+                                <span class="progress-info" id="progressInfo"></span>
+                            </div>
+                            <div id="success" style="display: none;">
+                                <audio id="audioPlayer" class="audio-player"></audio>
+                                <div class="player">
+                                    <button type="button" class="play-btn" id="playBtn" title="播放 / 暂停">⯈</button>
+                                    <input type="range" class="seek" id="seek" min="0" max="1000" step="1" value="0"
+                                           aria-label="播放进度">
+                                    <span class="time" id="playTime">0:00 / 0:00</span>
+                                </div>
+                                <a id="downloadBtn" class="btn-primary" download="speech.mp3">
+                                    <span>导出音频</span>
+                                </a>
+                            </div>
+                            <div id="error" class="error-message" style="display: none;"></div>
+                        </div>
+                    </div>
+            </form>
+            </div>
+        </div>
+        
+        <!-- 语音转录界面：待开发。左侧「转录」入口保留，点进来显示下面这块提示；
+             原界面结构整体注释封存在本块下方，开发时删掉那对注释标记即可恢复。 -->
+        <div class="transcription-container" id="transcriptionContainer" style="display: none;">
+            <div class="form-container">
+                <div class="stt-todo">
+                    <p class="stt-todo-title" data-i18n="stt.todo">功能开发中，敬请期待</p>
+                    <p class="stt-todo-hint" data-i18n="stt.todoHint">语音转文字正在开发，完成后会出现在这里。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 待开发：语音转文字界面（原样封存，恢复时删掉本行与结尾那行标记） =====
+                <form id="transcriptionForm">
+                    <div class="stt-main">
+                        <div class="form-group">
+                            <label class="form-label">上传音频文件</label>
+                            <div class="audio-upload-zone" id="audioDropZone">
+                                <div class="file-drop-content">
+                                    <div class="file-drop-icon">
+                                        <svg width="28" height="28" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+                                            <path d="M14 2v6h6"/>
+                                            <path d="M12 18v-6"/>
+                                            <path d="M9 15l3-3 3 3"/>
+                                        </svg>
+                                    </div>
+                                    <p class="file-drop-text">拖拽音频文件到此处，或点击选择文件</p>
+                                    <p class="file-drop-hint">支持mp3、wav、m4a、flac、aac、ogg、webm、amr、3gp格式，最大10MB</p>
+                                </div>
+                                <input type="file" id="audioFileInput" accept=".mp3,.wav,.m4a,.flac,.aac,.ogg,.webm,.amr,.3gp,audio/*" style="display: none;">
+                            </div>
+                            <div class="file-info" id="audioFileInfo" style="display: none;">
+                                <div class="file-details">
+                                    <span class="file-name" id="audioFileName"></span>
+                                    <span class="file-size" id="audioFileSize"></span>
+                                </div>
+                                <button type="button" class="file-remove-btn" id="audioFileRemoveBtn">✕</button>
+                            </div>
+                        </div>
+
+                            <div id="transcriptionResult" class="result-container">
+                                <div id="transcriptionLoading" class="loading-container" style="display: none;">
+                                    <div class="loading-spinner"></div>
+                                    <p class="loading-text" id="transcriptionLoadingText">正在转录音频，请稍候...</p>
+                                    <div class="progress-info" id="transcriptionProgressInfo" style="margin-top: 12px; font-size: 0.875rem; color: var(--text-secondary);"></div>
+                                </div>
+                                <div id="transcriptionSuccess" style="display: none;">
+                                    <div class="transcription-result">
+                                        <label class="form-label">转录结果</label>
+                                        <textarea class="form-textarea" id="transcriptionText" 
+                                                  placeholder="转录结果将在这里显示..." readonly></textarea>
+                                        <div class="result-actions">
+                                            <button type="button" class="btn-secondary" id="copyTranscriptionBtn">
+                                                <span>📋</span>
+                                                <span>复制文本</span>
+                                            </button>
+                                            <button type="button" class="btn-secondary" id="editTranscriptionBtn">
+                                                <span>✏️</span>
+                                                <span>编辑文本</span>
+                                            </button>
+                                            <button type="button" class="btn-secondary" id="useForTtsBtn">
+                                                <span>🎙️</span>
+                                                <span>转为语音</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="transcriptionError" class="error-message" style="display: none;"></div>
+                            </div>
+
+                    </div>
+
+                    <div class="stt-settings">
+                        <div class="form-group">
+                            <label class="form-label" for="tokenInput">API Token配置</label>
+                            <div class="token-config">
+                                <div class="token-option">
+                                    <label class="token-label">
+                                        <input type="radio" name="tokenOption" value="default" checked>
+                                        <span>使用默认Token</span>
+                                    </label>
+                                </div>
+                                <div class="token-option">
+                                    <label class="token-label">
+                                        <input type="radio" name="tokenOption" value="custom">
+                                        <span>使用硅基流动自定义Token</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <input type="password" class="form-input" id="tokenInput" 
+                                   placeholder="输入您的API Token（可选）" style="display: none;">
+                        </div>
+
+                        <button type="submit" class="btn-primary" id="transcribeBtn">
+                            <span>🎧</span>
+                            <span>开始语音转录</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        ===== 待开发结束 ===== -->
+
+        </div>
+
+        <!-- 推广组件：内容取自 PROMOTION，enabled 为 false 时不会展示 -->
+        <div class="promotion-card" id="promotionBox" style="display: none;">
+            <div class="promotion-header">
+                <h2 class="promotion-title">/*__DATA:PROMOTION.title__*/</h2>
+                <p class="promotion-subtitle">/*__DATA:PROMOTION.subtitle__*/</p>
+            </div>
+            <div class="promotion-content">
+                <div class="qr-code">
+                    <img src="/*__DATA:PROMOTION.qrCodeUrl__*/" alt="/*__DATA:PROMOTION.qrCodeAlt__*/" />
+                </div>
+                <div class="promotion-info">
+                    <h3>/*__DATA:PROMOTION.name__*/</h3>
+                    <p>/*__DATA:PROMOTION.description__*/</p>
+                    <ul class="benefits-list">
+                        /*__DATA:PROMOTION.benefits__*/
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 状态栏：运行方式 + 语音规模（沿用原有文案，图标在状态栏里隐藏）+ 快捷键 -->
+        <footer class="app-statusbar">
+            <span class="status-dot"></span>
+            <span id="runtimeLabel"></span>
+            <span class="feature-item"><span class="feature-icon">🎙️</span><span data-i18n="header.feature1">300+ Voices</span></span>
+            <span class="feature-item"><span class="feature-icon">🌍</span><span data-i18n="header.feature2">9 Languages · 23 Accents</span></span>
+            <span class="feature-item"><span class="feature-icon">🧩</span><span data-i18n="header.feature3">8 Voice Families</span></span>
+            <span class="feature-item"><span class="feature-icon">🖥️</span><span data-i18n="header.feature4">Free · Download Ready</span></span>
+            <span class="status-right">Ctrl+Enter 生成</span>
+        </footer>
+    </div>
+
+    <!-- 浮层：快捷键一览 / 关于共用一个卡片 -->
+    <div class="app-modal" id="appModal">
+        <div class="app-modal-card">
+            <h3 id="appModalTitle"></h3>
+            <div id="appModalBody"></div>
+            <button type="button" id="appModalClose">关闭</button>
+        </div>
+    </div>
+
+    <!-- 浮层：输出设置（格式 / 质量，选择即时保存） -->
+    <div class="app-modal" id="settingsModal">
+        <div class="app-modal-card settings-card">
+            <h3>输出设置</h3>
+            <p class="form-hint">输出格式</p>
+            <div class="seg-row" id="formatRow">
+                <button type="button" class="seg-btn" data-format="mp3">MP3</button>
+                <button type="button" class="seg-btn" data-format="wav">WAV</button>
+                <button type="button" class="seg-btn" data-format="ogg">OGG</button>
+            </div>
+            <p class="form-hint">输出质量</p>
+            <div class="seg-row" id="qualityRow"></div>
+            <div class="modal-actions">
+                <button type="button" class="btn-primary" id="settingsConfirm">确定</button>
+                <button type="button" id="settingsCancel">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 浮层：轻提示（桌面版 WebView 不弹 alert，所有校验提示统一走这里） -->
+    <div class="app-modal" id="noticeModal">
+        <div class="app-modal-card notice-card">
+            <p id="noticeText"></p>
+            <button type="button" id="noticeClose">知道了</button>
+        </div>
+    </div>
+
+    <!-- 编辑区右键菜单 -->
+    <div id="ctx">
+        <div data-ctx="cut">剪切</div>
+        <div data-ctx="copy">复制</div>
+        <div data-ctx="pasteText">粘贴为纯文本</div>
+        <hr>
+        <div data-ctx="pause">插入停顿…</div>
+        <div data-ctx="para">插入副语言…</div>
+        <div data-ctx="speak">朗读选中文字</div>
+    </div>
+
+    <script>
+        // 由 Worker 侧常量注入，前后端共用同一份目录数据
+        const VOICE_DATA = /*__DATA:VOICE_CATALOG__*/;
+        const STYLE_LABEL_MAP = /*__DATA:STYLE_LABELS__*/;
+        const PARA_LABEL_MAP = /*__DATA:PARALINGUISTIC_LABELS__*/;
+        const HD_STYLES = /*__DATA:HD_STYLES__*/;
+        const HD_OMNI_STYLES = /*__DATA:HD_OMNI_STYLES__*/;
+        const PARALINGUISTICS = /*__DATA:PARALINGUISTICS__*/;
+        const TEXT_PLACEHOLDERS = /*__DATA:TEXT_PLACEHOLDERS__*/;
+        const MULTITALKER_SPEAKERS = /*__DATA:MULTITALKER_SPEAKERS__*/;
+        const STYLES_UNKNOWN = /*__DATA:STYLES_UNKNOWN__*/;
+        const PROMOTION = /*__DATA:PROMOTION__*/;
+        // 运行环境：网页版 web / 桌面版 desktop，决定是否显示自绘窗口按钮
+        const RUNTIME = /*__DATA:RUNTIME__*/;
+
+        let selectedFile = null;
+        let currentInputMethod = 'text'; // 'text' or 'file'
+        let currentMode = 'tts'; // 'tts' or 'transcription'
+        // 待开发：语音转文字（选中音频文件 / 自定义 Token）
+        // let selectedAudioFile = null;
+        // let transcriptionToken = null;
+        let currentLanguage = 'en'; // 默认语言
+
+        // 国际化翻译数据
+        const translations = {
+            en: {
+                'page.title': 'Sonora - Desktop Voice Studio',
+                'page.description': 'Sonora is a desktop voice studio: 379 voices across 9 languages and 23 accents, plus multi-speaker dialogues. Speech to text is coming soon. Completely free.',
+                'page.keywords': 'text to speech,AI voice synthesis,desktop TTS,voice generator,free voice tools,speech to text coming soon,multi speaker dialogue',
+                'header.title': 'Sonora',
+                'header.subtitle': 'Desktop Voice Studio',
+                'header.feature1': '300+ Voices',
+                'header.feature2': '9 Languages · 23 Accents',
+                'header.feature3': '8 Voice Families',
+                'header.feature4': 'Free · Download Ready',
+                'mode.tts': 'Text to Speech',
+                'mode.transcription': 'Speech to Text',
+                'stt.todo': 'Speech to text is coming soon',
+                'stt.todoHint': 'This feature is under development and will show up here once it is ready.'
+            },
+            zh: {
+                'page.title': 'Sonora 声界 - 桌面语音工作台',
+                'page.description': '声界 Sonora 是一台桌面语音工作台：9 种语言、23 个口音、379 副嗓音，支持文字转语音与多人对话，语音转文字开发中，完全免费。',
+                'page.keywords': '文字转语音,AI语音合成,桌面TTS,语音生成器,免费语音工具,语音转文字（开发中）,多人对话配音',
+                'header.title': '声界 Sonora',
+                'header.subtitle': '桌面语音工作台',
+                'header.feature1': '300+ 副嗓音',
+                'header.feature2': '9 种语言 · 23 个口音',
+                'header.feature3': '8 类音色家族',
+                'header.feature4': '完全免费 · 支持下载',
+                'mode.tts': '文字转语音',
+                'mode.transcription': '语音转文字',
+                'stt.todo': '功能开发中，敬请期待',
+                'stt.todoHint': '语音转文字正在开发，完成后会出现在这里。'
+            },
+            ja: {
+                'page.title': 'Sonora - デスクトップ音声スタジオ',
+                'page.description': 'Sonora はデスクトップ音声スタジオです。9 言語 23 アクセント 379 音声での読み上げと複数話者の対話合成が使えます。音声の文字起こしは開発中です。すべて無料です。',
+                'page.keywords': 'テキスト読み上げ,AI音声合成,デスクトップTTS,音声ジェネレーター,無料音声ツール,音声テキスト変換（開発中）,複数話者対話',
+                'header.title': 'Sonora',
+                'header.subtitle': 'デスクトップ音声スタジオ',
+                'header.feature1': '300+ 音声',
+                'header.feature2': '9 言語 · 23 アクセント',
+                'header.feature3': '8 つの音声ファミリー',
+                'header.feature4': '完全無料 · ダウンロード対応',
+                'mode.tts': 'テキスト読み上げ',
+                'mode.transcription': '音声テキスト変換',
+                'stt.todo': '機能は開発中です。お楽しみに',
+                'stt.todoHint': '音声テキスト変換は開発中です。完成するとここに表示されます。'
+            },
+            ko: {
+                'page.title': 'Sonora - 데스크톱 음성 스튜디오',
+                'page.description': 'Sonora는 데스크톱 음성 스튜디오입니다. 9개 언어, 23개 악센트, 379개 음성으로 읽어 주고 여러 화자 대화 합성을 지원합니다. 음성 텍스트 변환은 개발 중이며 모두 무료입니다.',
+                'page.keywords': '텍스트 음성 변환,AI 음성 합성,데스크톱 TTS,음성 생성기,무료 음성 도구,음성 텍스트 변환(개발 중),다중 화자 대화',
+                'header.title': 'Sonora',
+                'header.subtitle': '데스크톱 음성 스튜디오',
+                'header.feature1': '300+개 음성',
+                'header.feature2': '9개 언어 · 23개 악센트',
+                'header.feature3': '8가지 음성 패밀리',
+                'header.feature4': '완전 무료 · 다운로드 지원',
+                'mode.tts': '텍스트 음성 변환',
+                'mode.transcription': '음성 텍스트 변환',
+                'stt.todo': '기능 준비 중입니다. 곧 만나보실 수 있습니다',
+                'stt.todoHint': '음성 텍스트 변환은 개발 중이며, 완성되면 여기에 표시됩니다.'
+            },
+            es: {
+                'page.title': 'Sonora - Estudio de voz de escritorio',
+                'page.description': 'Sonora es un estudio de voz de escritorio: 379 voces en 9 idiomas y 23 acentos, y diálogos con varios hablantes. La conversión de voz a texto está en desarrollo. Todo gratis.',
+                'page.keywords': 'texto a voz,síntesis de voz IA,TTS de escritorio,generador de voz,herramientas de voz gratis,voz a texto (en desarrollo),diálogo con varios hablantes',
+                'header.title': 'Sonora',
+                'header.subtitle': 'Estudio de voz de escritorio',
+                'header.feature1': '300+ voces',
+                'header.feature2': '9 idiomas · 23 acentos',
+                'header.feature3': '8 familias de voz',
+                'header.feature4': 'Gratis · Con descarga',
+                'mode.tts': 'Texto a Voz',
+                'mode.transcription': 'Voz a Texto',
+                'stt.todo': 'Función en desarrollo, muy pronto',
+                'stt.todoHint': 'La conversión de voz a texto está en desarrollo y aparecerá aquí cuando esté lista.'
+            },
+            fr: {
+                'page.title': 'Sonora - Studio vocal de bureau',
+                'page.description': 'Sonora est un studio vocal de bureau : 379 voix en 9 langues et 23 accents et dialogues multi-locuteurs. La transcription audio vers texte est en cours de développement. Tout est gratuit.',
+                'page.keywords': 'texte vers parole,synthèse vocale IA,TTS de bureau,générateur vocal,outils vocaux gratuits,parole vers texte (en développement),dialogue multi-locuteurs',
+                'header.title': 'Sonora',
+                'header.subtitle': 'Studio vocal de bureau',
+                'header.feature1': '300+ voix',
+                'header.feature2': '9 langues · 23 accents',
+                'header.feature3': '8 familles de voix',
+                'header.feature4': 'Gratuit · Téléchargeable',
+                'mode.tts': 'Texte vers Parole',
+                'mode.transcription': 'Parole vers Texte',
+                'stt.todo': 'Fonction en développement, bientôt disponible',
+                'stt.todoHint': 'La transcription audio vers texte est en cours de développement et apparaîtra ici.'
+            },
+            de: {
+                'page.title': 'Sonora - Desktop-Sprachstudio',
+                'page.description': 'Sonora ist ein Sprachstudio für den Desktop: 379 Stimmen aus 9 Sprachen und 23 Akzenten sowie Dialoge mit mehreren Sprechern. Sprache zu Text ist in Entwicklung. Alles kostenlos.',
+                'page.keywords': 'Text zu Sprache,KI-Sprachsynthese,Desktop-TTS,Sprachgenerator,kostenlose Sprachtools,Sprache zu Text (in Entwicklung),Dialog mit mehreren Sprechern',
+                'header.title': 'Sonora',
+                'header.subtitle': 'Desktop-Sprachstudio',
+                'header.feature1': '300+ Stimmen',
+                'header.feature2': '9 Sprachen · 23 Akzente',
+                'header.feature3': '8 Stimmen-Familien',
+                'header.feature4': 'Kostenlos · Zum Download',
+                'mode.tts': 'Text zu Sprache',
+                'mode.transcription': 'Sprache zu Text',
+                'stt.todo': 'Funktion in Entwicklung, bald verfügbar',
+                'stt.todoHint': 'Sprache zu Text ist in Entwicklung und erscheint hier, sobald es fertig ist.'
+            },
+            ru: {
+                'page.title': 'Sonora - Настольная голосовая студия',
+                'page.description': 'Sonora - настольная голосовая студия: 379 голосов на 9 языках и 23 акцентах и диалоги с несколькими говорящими. Распознавание речи в текст в разработке. Всё бесплатно.',
+                'page.keywords': 'текст в речь,ИИ синтез речи,настольный TTS,генератор голоса,бесплатные голосовые инструменты,речь в текст (в разработке),диалог нескольких говорящих',
+                'header.title': 'Sonora',
+                'header.subtitle': 'Настольная голосовая студия',
+                'header.feature1': '300+ голосов',
+                'header.feature2': '9 языков · 23 акцента',
+                'header.feature3': '8 семейств голосов',
+                'header.feature4': 'Бесплатно · Загрузка',
+                'mode.tts': 'Текст в Речь',
+                'mode.transcription': 'Речь в Текст',
+                'stt.todo': 'Функция в разработке, скоро',
+                'stt.todoHint': 'Распознавание речи в текст в разработке и появится здесь, когда будет готово.'
+            }
+        };
+
+        // 语言名在 8 份词典里完全一致，统一放这里，词典里不再重复
+        const LANG_NAMES = {
+            en: 'English', zh: '中文', ja: '日本語', ko: '한국어',
+            es: 'Español', fr: 'Français', de: 'Deutsch', ru: 'Русский'
+        };
+
+        // 取词：词典优先，语言名兜底（data-i18n="lang.xx" 与 "lang.current" 由这里补）
+        function t(key) {
+            const dict = translations[currentLanguage] || {};
+            if (dict[key]) return dict[key];
+            if (key === 'lang.current') return LANG_NAMES[currentLanguage] || 'English';
+            if (key.indexOf('lang.') === 0) return LANG_NAMES[key.slice(5)] || '';
+            return '';
+        }
+
+        // 国际化功能
+        function detectLanguage() {
+            // 检测浏览器语言
+            const browserLang = navigator.language || navigator.userLanguage;
+            const shortLang = browserLang.split('-')[0];
+            
+            // 检查是否支持该语言
+            if (translations[shortLang]) {
+                return shortLang;
+            }
+            
+            // 默认返回英语
+            return 'en';
+        }
+
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            localStorage.setItem('sonora-language', lang);
+            
+            // 更新页面语言属性
+            document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
+            
+            // 应用翻译
+            applyTranslations();
+            
+            // 更新语言切换器
+            updateLanguageSwitcher();
+        }
+
+        function applyTranslations() {
+            // 更新所有带有 data-i18n 属性的元素
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const text = t(element.getAttribute('data-i18n'));
+                if (text) element.textContent = text;
+            });
+
+            // 更新 meta 标签
+            document.querySelectorAll('[data-i18n-content]').forEach(element => {
+                const text = t(element.getAttribute('data-i18n-content'));
+                if (text) element.setAttribute('content', text);
+            });
+
+            // 更新页面标题
+            const title = t('page.title');
+            if (title) document.title = title;
+        }
+
+        function updateLanguageSwitcher() {
+            const langFlags = {
+                'en': '🇺🇸',
+                'zh': '🇨🇳',
+                'ja': '🇯🇵',
+                'ko': '🇰🇷',
+                'es': '🇪🇸',
+                'fr': '🇫🇷',
+                'de': '🇩🇪',
+                'ru': '🇷🇺'
+            };
+            
+            document.getElementById('currentLangFlag').textContent = langFlags[currentLanguage];
+            document.getElementById('currentLangName').textContent = t('lang.current');
+            
+            // 更新选中状态
+            document.querySelectorAll('.language-option').forEach(option => {
+                option.classList.remove('active');
+                if (option.getAttribute('data-lang') === currentLanguage) {
+                    option.classList.add('active');
+                }
+            });
+        }
+
+        // 初始化页面
+        // ==========================================================
+        // 语音三级联动：语言 → 语音 → 风格
+        // ==========================================================
+        const STYLE_NONE = '';                    // 「默认（中性）」，不发送 express-as
+        const STYLE_DEGREES = [0.5, 1, 1.5, 2];   // 滑块 0/1/2/3 对应的 styledegree
+        const GENDER_TEXT = { f: '女声', m: '男声', n: '中性' };
+
+        // 扁平索引：语音 id → { voice, group, lang }
+        const FLAT_VOICES = {};
+        for (const lang of VOICE_DATA) {
+            for (const group of lang.groups) {
+                for (const voice of group.voices) {
+                    FLAT_VOICES[voice.id] = { voice, group, lang };
+                }
+            }
+        }
+
+        // 全量风格（用于把不支持的项也列出来并置灰）
+        const ALL_STYLES = (() => {
+            const set = new Set();
+            for (const id in FLAT_VOICES) {
+                const list = stylesOfVoice(id);
+                if (list) list.forEach(s => set.add(s));
+            }
+            return [...set].sort();
+        })();
+
+        // 语音支持的风格：null = 未知（不限制，不置灰）；[] = 完全不支持
+        function stylesOfVoice(voiceId) {
+            const entry = FLAT_VOICES[voiceId];
+            if (!entry) return null;
+            const { voice, group } = entry;
+            // 副语言（[laughter] / [sighing] 等）不是 style，而是直接写进文本的标记，
+            // 由下方 renderParalinguistics() 以按钮形式插入文本框。
+            if (group.styleSet === 'hd') return HD_STYLES;
+            if (group.styleSet === 'omni') return HD_OMNI_STYLES;
+            if (!voice.styles) return [];
+            if (voice.styles === STYLES_UNKNOWN) return null;
+            return voice.styles.split(' ').filter(Boolean);
+        }
+
+        function styleLabel(value) {
+            return PARA_LABEL_MAP[value] || STYLE_LABEL_MAP[value] || value;
+        }
+
+        function addOption(parent, value, label, disabled) {
+            const opt = document.createElement('option');
+            opt.value = value;
+            opt.textContent = label;
+            opt.disabled = !!disabled;
+            parent.appendChild(opt);
+        }
+
+        function addOptGroup(select, label, values, disabled) {
+            if (!values.length) return;
+            const group = document.createElement('optgroup');
+            group.label = label;
+            values.forEach(v => addOption(group, v, styleLabel(v), disabled));
+            select.appendChild(group);
+        }
+
+        // 一级语言（lang）与二级口音（tab）；同一语言下有多个变体才展示二级
+        let currentLang = VOICE_DATA[0].lang;
+        let currentLangTab = VOICE_DATA[0].tab;
+
+        // 两级页签共用：同样的 .lang-tab 样式与动画
+        function makeLangTab(text, active, onClick) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'lang-tab' + (active ? ' active' : '');
+            btn.textContent = text;
+            btn.addEventListener('click', onClick);
+            return btn;
+        }
+
+        // 一级：按 lang 去重，保持目录顺序
+        function renderLangTabs() {
+            const box = document.getElementById('langTabs');
+            const langs = VOICE_DATA.filter((item, i) => VOICE_DATA.findIndex(x => x.lang === item.lang) === i);
+            box.innerHTML = '';
+            for (const item of langs) {
+                const btn = makeLangTab(item.langLabel, item.lang === currentLang, function() {
+                    currentLang = item.lang;
+                    [...box.children].forEach(c => c.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderAccentTabs();
+                });
+                box.appendChild(btn);
+            }
+        }
+
+        // 二级：当前语言的口音变体；单变体或对话模式下清空（CSS :empty 自动隐藏）
+        // 对话模式所有口音共用同一组对话音色，再选口音没有意义
+        function renderAccentTabs() {
+            const box = document.getElementById('accentTabs');
+            const items = VOICE_DATA.filter(item => item.lang === currentLang);
+            box.innerHTML = '';
+            if (!items.some(item => item.tab === currentLangTab)) currentLangTab = items[0].tab;
+
+            if (currentInputMethod !== 'dialogue' && items.length > 1) {
+                for (const item of items) {
+                    const btn = makeLangTab(item.tabLabel, item.tab === currentLangTab, function() {
+                        currentLangTab = item.tab;
+                        [...box.children].forEach(c => c.classList.remove('active'));
+                        btn.classList.add('active');
+                        renderVoices(currentLangTab);
+                    });
+                    box.appendChild(btn);
+                }
+            }
+            renderVoices(currentLangTab);
+        }
+
+        // 对话音色只在部分变体提供（如 en-US）；当前变体没有时回落到同语言的其它变体
+        // 粤语等语言官方没有对话音色，此时返回空数组 —— 语音下拉不显示任何选项，属预期行为
+        function multitalkerGroups(lang) {
+            const own = lang.groups.filter(g => g.family === 'multitalker');
+            if (own.length) return own;
+            const fallback = VOICE_DATA.find(item => item.lang === lang.lang
+                && item.groups.some(g => g.family === 'multitalker'));
+            return fallback ? fallback.groups.filter(g => g.family === 'multitalker') : [];
+        }
+
+        function renderVoices(tabId) {
+            const lang = VOICE_DATA.find(l => l.tab === tabId) || VOICE_DATA[0];
+            // 占位文案跟随所选语言（contenteditable 用 data-placeholder + CSS 显示）
+            const textEditor = document.getElementById('text');
+            textEditor.dataset.placeholder = TEXT_PLACEHOLDERS[lang.lang] || '';
+            refreshEditorPlaceholder(textEditor);
+            // 对话模式只列多人语音，其余模式排除多人语音
+            const groups = currentInputMethod === 'dialogue'
+                ? multitalkerGroups(lang)
+                : lang.groups.filter(g => g.family !== 'multitalker');
+            const select = document.getElementById('voice');
+            select.innerHTML = '';
+            for (const group of groups) {
+                const optGroup = document.createElement('optgroup');
+                optGroup.label = group.label;
+                const accent = group.accent || lang.accent || '';
+                for (const voice of group.voices) {
+                    const genderText = GENDER_TEXT[voice.gender] || '';
+                    const tagText = voice.tag ? '·' + voice.tag : '';
+                    const accentText = accent ? '·' + accent : '';
+                    const label = voice.name + '（' + genderText + tagText + accentText + '）';
+                    addOption(optGroup, voice.id, label, false);
+                }
+                select.appendChild(optGroup);
+            }
+            renderStyles(select.value);
+            renderDialogueRoles(select.value);
+        }
+
+        function renderStyles(voiceId) {
+            const select = document.getElementById('style');
+            const hint = document.getElementById('styleHint');
+            const previous = select.value;
+            const supported = stylesOfVoice(voiceId);
+
+            select.innerHTML = '';
+            addOption(select, STYLE_NONE, '默认（中性）', false);
+
+            if (supported === null) {
+                // 风格未知：全部可选，不做置灰，避免误伤
+                addOptGroup(select, '风格', ALL_STYLES, false);
+                hint.textContent = '该语音风格未收录，若无效服务端会自动忽略';
+            } else if (supported.length === 0) {
+                hint.textContent = '该语音不支持风格调节，将使用默认中性语音';
+            } else {
+                const ok = new Set(supported);
+                addOptGroup(select, '可用风格', ALL_STYLES.filter(s => ok.has(s)), false);
+                addOptGroup(select, '该语音不支持', ALL_STYLES.filter(s => !ok.has(s)), true);
+                hint.textContent = '';
+            }
+
+            // 切换语音后，若原先选中的风格不再支持则回落到「默认」
+            const selectable = [...select.options].filter(o => !o.disabled).map(o => o.value);
+            select.value = selectable.includes(previous) ? previous : STYLE_NONE;
+            syncStyleDegree();
+            syncParalinguisticState(voiceId);
+        }
+
+        // 未选风格时，风格强度滑块无意义
+        const STYLE_DEGREE_LABELS = ['轻微', '标准', '增强', '强烈'];
+
+        function syncStyleDegree() {
+            const slider = document.getElementById('styleDegree');
+            slider.disabled = document.getElementById('style').value === STYLE_NONE;
+            const out = document.getElementById('degreeValue');
+            if (out) out.textContent = STYLE_DEGREE_LABELS[Number(slider.value)] || '';
+        }
+
+        // 语速 / 音调档位：上限 + 显示名（沿用原下拉里的图标与叫法）
+        const SPEED_TIERS = [[0.25, '🐌 很慢'], [0.75, '🚶 慢速'], [1.25, '⚡ 正常'], [1.75, '🏃 快速'], [Infinity, '💨 极速']];
+        const PITCH_TIERS = [[-30, '📉 很低沉'], [-10, '📊 低沉'], [10, '🎵 标准'], [30, '📈 高亢'], [Infinity, '🎶 很高亢']];
+
+        function tierNameOf(tiers, value) {
+            return (tiers.find(t => value < t[0]) || tiers[tiers.length - 1])[1];
+        }
+
+        // 滑块连续调节，标题右侧实时显示「档位 + 具体数值」
+        function syncSpeedPitch() {
+            const speed = parseFloat(document.getElementById('speed').value);
+            const pitch = parseInt(document.getElementById('pitch').value, 10);
+            document.getElementById('speedValue').textContent =
+                tierNameOf(SPEED_TIERS, speed) + ' ' + speed.toFixed(2) + 'x';
+            document.getElementById('pitchValue').textContent =
+                tierNameOf(PITCH_TIERS, pitch) + ' ' + (pitch > 0 ? '+' : '') + pitch + 'Hz';
+        }
+
+        function currentStyleDegree() {
+            return STYLE_DEGREES[Number(document.getElementById('styleDegree').value)];
+        }
+
+        // ===== 可编辑区芯片（停顿 / 副语言 / 角色）=====
+        // 三种芯片共用 CHIP_KINDS 类型表：造芯片、反查片段、粘贴解析都读它
+        // 芯片插入后是整体（contenteditable=false），只能整体删除，改不了中间
+        let activeEditor = null;   // 最后一次获得焦点的可编辑区
+
+        // ⚠️ 本段代码位于 HTML_PAGE 模板字符串内，任何反斜杠转义都会被模板求值吃掉：
+        // 换行转义会变成真换行、空白转义会退化成字母 s（注释里写了也一样出事），
+        // 所以换行与空白一律用字符码拼，正则用 new RegExp 构造，绝不写字面量转义。
+        const NL = String.fromCharCode(10);                     // 换行
+        const CR = String.fromCharCode(13);                     // 回车
+        const WS = String.fromCharCode(32, 9, 10, 12, 13, 11);  // 空格 / Tab / LF / FF / CR / VT
+        // 行首角色标记 a: / A: / a：，前后允许空白
+        const ROLE_PREFIX_RE = new RegExp('^[' + WS + ']*([abAB])[' + WS + ']*[:：][' + WS + ']*');
+        // 方括号标记 [xxx]：粘贴时还原成芯片；反斜杠与括号都用字符码拼（转义会被模板吃掉）
+        const BS = String.fromCharCode(92);                     // 反斜杠
+        const LB = String.fromCharCode(91);                     // [
+        const RB = String.fromCharCode(93);                     // ]
+        const MARK_RE = new RegExp(BS + LB + '([^' + BS + RB + ']+)' + BS + RB, 'g');
+        // 待开发：音频文件扩展名（语音转文字用）
+        // const EXT_AUDIO_RE = /[.](mp3|wav|m4a|flac|aac|ogg|webm|amr|3gp)$/i;
+
+        // 毫秒 → 显示文本：不足 1 秒用毫秒，否则用秒
+        function formatPauseText(ms) {
+            if (ms >= 1000) {
+                return (ms % 1000 === 0 ? String(ms / 1000) : (ms / 1000).toFixed(1)) + 's';
+            }
+            return ms + 'ms';
+        }
+
+        // 芯片类型表：属性名 / 显示文本 / 悬停提示 / 片段形态，一处定义、三处复用
+        const CHIP_KINDS = {
+            pause: {
+                attr: 'data-pause',
+                label: ms => '[停顿 ' + formatPauseText(ms) + ']',
+                hint: ms => '停顿 ' + formatPauseText(ms),
+                segment: v => ({ type: 'pause', ms: Number(v) || 0 })
+            },
+            // 副语言显示英文原文 [laughter]，悬停显示中文名
+            para: {
+                attr: 'data-para',
+                label: t => '[' + t + ']',
+                hint: t => PARA_LABEL_MAP[t] || t,
+                segment: v => ({ type: 'para', tag: v })
+            },
+            // 角色显示 A: / B:，解析时等价于行首文本前缀
+            role: {
+                attr: 'data-role',
+                label: k => k.toUpperCase() + ':',
+                hint: k => '说话人 ' + k.toUpperCase(),
+                segment: v => ({ type: 'role', key: v === 'b' ? 'b' : 'a' })
+            }
+        };
+
+        // 统一造芯片：contenteditable=false，只能整体删除，改不了中间
+        function makeChip(kind, value) {
+            const spec = CHIP_KINDS[kind];
+            const chip = document.createElement('span');
+            chip.className = 'chip ' + kind;
+            chip.setAttribute('contenteditable', 'false');
+            chip.setAttribute(spec.attr, String(value));
+            chip.textContent = spec.label(value);
+            chip.title = spec.hint(value);
+            return chip;
+        }
+
+        // 元素上带芯片属性 → 对应片段；否则返回 null
+        function chipSegmentOf(el) {
+            if (!el.getAttribute) return null;
+            for (const kind in CHIP_KINDS) {
+                const raw = el.getAttribute(CHIP_KINDS[kind].attr);
+                if (raw !== null && raw !== undefined) return CHIP_KINDS[kind].segment(raw);
+            }
+            return null;
+        }
+
+        // 「2s / 2.5s / 500ms / 500 / 停顿 2s」→ 毫秒；不是时长返回 0（无单位与 ms 都按毫秒）
+        function parsePauseMs(text) {
+            const t = text.split('停顿').join('').trim();
+            const m = t.match(new RegExp('^([0-9]+(?:[.][0-9]+)?)(ms|s)?$'));
+            if (!m) return 0;
+            const value = parseFloat(m[1]);
+            return m[2] === 's' ? Math.round(value * 1000) : Math.round(value);
+        }
+
+        // 方括号内容 → 芯片：先认副语言（多人模式无效，需 allowPara），再认停顿；都认不出返回 null
+        function markToChip(inner, allowPara) {
+            const tag = inner.trim().toLowerCase();
+            if (allowPara && PARALINGUISTICS.indexOf(tag) >= 0) return makeChip('para', tag);
+            const ms = parsePauseMs(tag);
+            return ms > 0 ? makeChip('pause', ms) : null;
+        }
+
+        // 一行文本 → 文本节点 + 标记芯片（未识别的方括号原样保留）
+        function appendWithMarks(frag, line, allowPara) {
+            let last = 0;
+            let m = null;
+            MARK_RE.lastIndex = 0;
+            while ((m = MARK_RE.exec(line)) !== null) {
+                const chip = markToChip(m[1], allowPara);
+                if (!chip) continue;
+                if (m.index > last) frag.appendChild(document.createTextNode(line.slice(last, m.index)));
+                frag.appendChild(chip);
+                last = m.index + m[0].length;
+            }
+            if (last < line.length) frag.appendChild(document.createTextNode(line.slice(last)));
+        }
+
+        // 纯文本 → 富文本节点：还原换行；多人语音下把行首 a: / A:（不分大小写、全半角冒号）解析成角色芯片；
+        // 正文里的停顿标记解析成停顿芯片；副语言标记只在非多人模式解析（MultiTalker 上无效）
+        function buildRichNodes(text, parseRoles) {
+            const frag = document.createDocumentFragment();
+            // 先抹掉 CR（兼容 Windows 的 CRLF），再按 LF 切行
+            String(text).split(CR).join('').split(NL).forEach((line, i) => {
+                if (i > 0) frag.appendChild(document.createElement('br'));
+                if (parseRoles) {
+                    const m = line.match(ROLE_PREFIX_RE);
+                    if (m) {
+                        frag.appendChild(makeChip('role', m[1].toLowerCase()));
+                        line = line.slice(m[0].length);
+                    }
+                }
+                appendWithMarks(frag, line, !parseRoles);
+            });
+            return frag;
+        }
+
+        // 在编辑区光标处插入节点（芯片或整段节点）；没有有效光标时追加到末尾
+        function insertAtCaret(editor, node) {
+            if (!editor || !node) return;
+            editor.focus();
+            const sel = window.getSelection();
+            let range = null;
+            if (sel && sel.rangeCount > 0) {
+                const r = sel.getRangeAt(0);
+                if (editor.contains(r.commonAncestorContainer)) range = r;
+            }
+            if (!range) {
+                range = document.createRange();
+                range.selectNodeContents(editor);
+                range.collapse(false);
+            }
+            // DocumentFragment 插入后会被清空，先记住末节点当光标锚点
+            const anchor = node.nodeType === 11 ? node.lastChild : node;
+            range.deleteContents();
+            range.insertNode(node);
+            if (anchor) {
+                range.setStartAfter(anchor);
+                range.collapse(true);
+            }
+            if (sel) {
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+            refreshEditorPlaceholder(editor);
+        }
+
+        // 把芯片插到当前编辑区的光标处
+        function insertMark(kind, value) {
+            insertAtCaret(currentEditor(), makeChip(kind, value));
+        }
+
+        // 可编辑区 → 片段数组：{ type: 'text' | 'pause' | 'para' | 'role' }
+        function collectSegments(root) {
+            const segs = [];
+            function walk(node) {
+                for (const child of node.childNodes) {
+                    if (child.nodeType === 3) {
+                        if (child.nodeValue) segs.push({ type: 'text', value: child.nodeValue });
+                        continue;
+                    }
+                    if (child.nodeType !== 1) continue;
+                    if (child.tagName === 'BR') {
+                        segs.push({ type: 'text', value: NL });
+                        continue;
+                    }
+                    const chip = chipSegmentOf(child);
+                    if (chip) {
+                        segs.push(chip);
+                        continue;
+                    }
+                    // 回车可能生成 <div>/<p>，补回换行，避免多行文本粘成一行
+                    if ((child.tagName === 'DIV' || child.tagName === 'P') && segs.length) {
+                        segs.push({ type: 'text', value: NL });
+                    }
+                    walk(child);
+                }
+            }
+            if (root) walk(root);
+            return segs;
+        }
+
+        function segmentsHaveContent(segs) {
+            return segs.some(s => s.type !== 'text' || s.value.trim() !== '');
+        }
+
+        // 片段 → 纯文本（停顿不占字符，副语言保留原文，角色标记还原成 A: / B:）
+        function segmentsToPlainText(segs) {
+            return segs.map(s => {
+                if (s.type === 'text') return s.value;
+                if (s.type === 'para') return '[' + s.tag + ']';
+                if (s.type === 'role') return (s.key === 'b' ? 'B' : 'A') + ':';
+                return '';
+            }).join('');
+        }
+
+        function refreshEditorPlaceholder(el) {
+            if (!el) return;
+            el.classList.toggle('is-empty', !segmentsHaveContent(collectSegments(el)));
+        }
+
+        // 统一挂载可编辑区行为：记录焦点、刷新占位、粘贴一律走纯文本 → 富文本节点
+        // 粘贴时会还原成芯片：[停顿 2s] / [500ms] / [500] 停顿（两种模式都认）、
+        // [laughter] 等副语言（多人模式无效，故不解析）以及 parseRoles = true 时行首的 a: / A: 角色
+        function attachRichEditor(el, parseRoles) {
+            if (!el) return;
+            el.addEventListener('focus', () => { activeEditor = el; });
+            el.addEventListener('click', () => { activeEditor = el; });
+            el.addEventListener('input', () => refreshEditorPlaceholder(el));
+            el.addEventListener('paste', e => {
+                e.preventDefault();
+                const text = e.clipboardData ? e.clipboardData.getData('text/plain') : '';
+                if (text) insertAtCaret(el, buildRichNodes(text, parseRoles));
+            });
+            refreshEditorPlaceholder(el);
+        }
+
+        // 芯片插入目标：优先当前可见的编辑区，避免切页签后插到隐藏的文本框里
+        function currentEditor() {
+            if (activeEditor && activeEditor.offsetParent !== null) return activeEditor;
+            return currentInputMethod === 'dialogue'
+                ? document.getElementById('dialogueText')
+                : document.getElementById('text');
+        }
+
+        // 右栏停顿滑块：右侧数值格本身就是插入按钮，随滑块显示 ＋500ms / ＋1s
+        function syncPauseValue() {
+            const ms = Number(document.getElementById('pauseLength').value) || 0;
+            document.getElementById('insertPauseBtn').textContent = '＋' + formatPauseText(ms);
+        }
+
+        // 副语言标记：以按钮形式把 [laughter] 等插入到光标处（不是 style）
+        function renderParalinguistics() {
+            const box = document.getElementById('paraButtons');
+            if (!box) return;
+            box.innerHTML = '';
+            for (const tag of PARALINGUISTICS) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'para-btn';
+                btn.dataset.tag = tag;
+                btn.textContent = PARA_LABEL_MAP[tag] || tag;
+                btn.title = '[' + tag + ']';
+                btn.addEventListener('click', () => insertMark('para', tag));
+                box.appendChild(btn);
+            }
+        }
+
+        // 副语言生效范围：Flash 一律无效；中文语音仅 Omni 有效，其它语种 HD 与 Omni 都有效
+        function paralinguisticSupport(voiceId) {
+            const entry = FLAT_VOICES[voiceId];
+            const family = entry && entry.group.family;
+            const ok = family === 'dragonHDOmni'
+                || (family === 'dragonHD' && currentLang !== 'zh');
+            let hint = '点击插入标记（如 [laughter]）。';
+            if (!ok) {
+                if (family === 'dragonHDFlash') hint = 'Neural-HD-Flash 不支持副语言标记。';
+                else if (family === 'dragonHD') hint = '中文语音仅 Neural-HD-Omni 支持副语言标记。';
+                else hint = '当前语音不支持副语言标记，仅 Neural-HD/Omni 系列支持。';
+            }
+            return { ok, hint };
+        }
+
+        function syncParalinguisticState(voiceId) {
+            const wrap = document.getElementById('paraInsert');
+            if (!wrap) return;
+            const { ok, hint: text } = paralinguisticSupport(voiceId);
+            wrap.classList.toggle('disabled', !ok);
+            wrap.querySelectorAll('.para-btn').forEach(btn => { btn.disabled = !ok; });
+            const hint = document.getElementById('paraHint');
+            if (hint) hint.textContent = text;
+        }
+
+        function initializeVoiceControls() {
+            attachRichEditor(document.getElementById('text'));
+            attachRichEditor(document.getElementById('dialogueText'), true);
+            renderLangTabs();
+            renderParalinguistics();
+            renderAccentTabs();
+            document.getElementById('voice').addEventListener('change', e => {
+                renderStyles(e.target.value);
+                // 切换语音后角色 A / B 的说话人与风格列表要跟着换
+                renderDialogueRoles(e.target.value);
+            });
+            document.getElementById('style').addEventListener('change', syncStyleDegree);
+            document.getElementById('speed').addEventListener('input', syncSpeedPitch);
+            document.getElementById('pitch').addEventListener('input', syncSpeedPitch);
+            syncSpeedPitch();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化国际化
+            initializeI18n();
+            
+            // 初始化其他功能
+            initializeVoiceControls();
+            initializeInputMethodTabs();
+            initializeFileUpload();
+            initializeModeSwitcher();
+            // 待开发：语音转文字（上传音频与 Token 配置的初始化）
+            // initializeAudioUpload();
+            // initializeTokenConfig();
+            initializeLanguageSwitcher();
+            initializeSchemeSwitch();
+            initializePlayer();
+            initializeContextMenu();
+            initializeAppShell();
+            initializeAudioSettings();
+            initializeNotice();
+        });
+
+        // 初始化输入方式切换（单人语音 / 多人语音 / 上传文件）
+        function initializeInputMethodTabs() {
+            const tabs = {
+                text: document.getElementById('textInputTab'),
+                file: document.getElementById('fileUploadTab'),
+                dialogue: document.getElementById('dialogueTab')
+            };
+            const areas = {
+                text: document.getElementById('textInputArea'),
+                file: document.getElementById('fileUploadArea'),
+                dialogue: document.getElementById('dialogueArea')
+            };
+
+            // 多人语音下只有语速与停顿生效，风格 / 强度 / 音调 / 副语言隐藏
+            const hideInDialogue = ['styleGroup', 'degreeGroup', 'speedGroup', 'pitchGroup', 'paraGroup'];
+
+            function activate(method) {
+                currentInputMethod = method;
+                for (const key in tabs) {
+                    tabs[key].classList.toggle('active', key === method);
+                    // 用 flex 让编辑区在面板里撑满剩余高度（面板内部滚动）
+                    areas[key].style.display = key === method ? 'flex' : 'none';
+                }
+                const isDialogue = method === 'dialogue';
+                for (const id of hideInDialogue) {
+                    const el = document.getElementById(id);
+                    if (el) el.style.display = isDialogue ? 'none' : '';
+                }
+                // 上传文件没有可编辑的正文，插入工具条整条收起
+                document.getElementById('insertToolbar').style.display = method === 'file' ? 'none' : '';
+                // 对话模式要切成对话语音，普通模式要切回全部语音
+                renderAccentTabs();
+                syncDialogueRolesVisibility();
+                updateCharCount();
+            }
+
+            tabs.text.addEventListener('click', () => activate('text'));
+            tabs.file.addEventListener('click', () => activate('file'));
+            tabs.dialogue.addEventListener('click', () => activate('dialogue'));
+
+            document.getElementById('insertPauseBtn').addEventListener('click',
+                () => insertMark('pause', document.getElementById('pauseLength').value));
+            document.getElementById('pauseLength').addEventListener('input', syncPauseValue);
+            syncPauseValue();
+
+            for (const id of ['speedA', 'speedB']) {
+                document.getElementById(id).addEventListener('input', syncRoleValues);
+            }
+
+            // A / B 标签点击即把角色标记插到文本框光标处；mousedown 阻止抢焦点以保住光标
+            for (const key of ['A', 'B']) {
+                const btn = document.getElementById('insertRole' + key);
+                if (!btn) continue;
+                btn.addEventListener('mousedown', e => e.preventDefault());
+                btn.addEventListener('click', () => insertMark('role', key.toLowerCase()));
+            }
+
+            // 上传文件勾选「按多人语音解析」时，右栏才露出角色卡
+            const fileAsDialogue = document.getElementById('fileAsDialogue');
+            if (fileAsDialogue) fileAsDialogue.addEventListener('change', syncDialogueRolesVisibility);
+
+            for (const id of ['text', 'dialogueText']) {
+                const editor = document.getElementById(id);
+                if (editor) editor.addEventListener('input', updateCharCount);
+            }
+            document.getElementById('styleDegree').addEventListener('input', syncStyleDegree);
+            updateCharCount();
+        }
+
+        // 片段流 → 按换行切成「行」，芯片（停顿）跟随其所在行
+        function splitSegmentsIntoLines(segs) {
+            const lines = [[]];
+            for (const seg of segs) {
+                if (seg.type !== 'text') {
+                    lines[lines.length - 1].push(seg);
+                    continue;
+                }
+                String(seg.value).split(NL).forEach((part, i) => {
+                    if (i > 0) lines.push([]);
+                    if (part) lines[lines.length - 1].push({ type: 'text', value: part });
+                });
+            }
+            return lines;
+        }
+
+        // 单个富文本编辑区 → [{ key, segments }]
+        // 行首用「角色芯片」或手写 A: / B: 指定说话人，不加前缀的行并入上一句
+        function collectDialogueTurns() {
+            const turns = [];
+            let lastKey = 'a';
+
+            for (const rawLine of splitSegmentsIntoLines(collectSegments(document.getElementById('dialogueText')))) {
+                if (!segmentsHaveContent(rawLine)) continue;
+
+                // 行首的角色芯片即说话人标记；出现在行中的一律丢弃
+                let key = null;
+                const line = [];
+                for (const seg of rawLine) {
+                    if (seg.type === 'role') {
+                        if (!line.length && !key) key = seg.key;
+                        continue;
+                    }
+                    // 行首的空文本片段（如标记后的空格）直接丢掉
+                    if (!line.length && seg.type === 'text' && seg.value.trim() === '') continue;
+                    line.push(seg);
+                }
+
+                // 手写的 A: / B: 前缀（全半角冒号都认）
+                if (!key && line.length && line[0].type === 'text') {
+                    const m = line[0].value.match(ROLE_PREFIX_RE);
+                    if (m) {
+                        key = m[1].toLowerCase();
+                        const rest = line[0].value.slice(m[0].length);
+                        if (rest) line[0] = { type: 'text', value: rest };
+                        else line.shift();
+                    }
+                }
+
+                // 只插了标记还没写内容：记住说话人，但不产生空轮次
+                if (!segmentsHaveContent(line)) {
+                    if (key) lastKey = key;
+                    continue;
+                }
+
+                if (key) {
+                    lastKey = key;
+                    turns.push({ key: key, segments: line });
+                } else if (turns.length) {
+                    // 无前缀：并入上一句（补回换行）
+                    const prev = turns[turns.length - 1];
+                    prev.segments.push({ type: 'text', value: NL });
+                    for (const seg of line) prev.segments.push(seg);
+                } else {
+                    turns.push({ key: lastKey, segments: line });
+                }
+            }
+
+            return turns.filter(t => segmentsHaveContent(t.segments));
+        }
+
+        // 角色卡与工具条上的 A / B 插入按钮，只在「多人语音」或「上传文件 + 按多人语音解析」时出现
+        function syncDialogueRolesVisibility() {
+            const check = document.getElementById('fileAsDialogue');
+            const show = currentInputMethod === 'dialogue'
+                || (currentInputMethod === 'file' && !!(check && check.checked));
+            for (const id of ['dialogueRolesGroup', 'roleInsertGroup']) {
+                const el = document.getElementById(id);
+                if (el) el.style.display = show ? '' : 'none';
+            }
+        }
+
+        // 说话人下拉：option 的 value 用接口要求的小写 id，显示用规范名（Ada / 晓晓 …）
+        // 能沿用原来的选择就沿用，否则回落到 fallbackIndex 指定的那个
+        function fillSpeakers(id, speakers, fallbackIndex) {
+            const sel = document.getElementById(id);
+            const prev = sel.value;
+            sel.innerHTML = '';
+            speakers.forEach(s => addOption(sel, s.id, s.name, false));
+            const keep = speakers.some(s => s.id === prev);
+            sel.value = keep ? prev : speakers[Math.min(fallbackIndex, speakers.length - 1)].id;
+        }
+
+        // 角色 A / B 的说话人下拉：跟随当前选中的对话语音
+        function renderDialogueRoles(voiceId) {
+            let speakers = MULTITALKER_SPEAKERS[voiceId] || [];
+            // 非对话语音（如上传文件模式）：回落到当前语言的对话音色，避免下拉为空
+            if (!speakers.length && !document.getElementById('speakerA').options.length) {
+                const lang = VOICE_DATA.find(l => l.tab === currentLangTab) || VOICE_DATA[0];
+                const group = (lang.groups || []).find(g => g.family === 'multitalker');
+                const fallback = group && group.voices[0]
+                    ? group.voices[0].id
+                    : Object.keys(MULTITALKER_SPEAKERS)[0];
+                speakers = MULTITALKER_SPEAKERS[fallback] || [];
+            }
+            if (speakers.length) {
+                // 默认取前两个（一女一男更符合对话习惯）
+                fillSpeakers('speakerA', speakers, 0);
+                fillSpeakers('speakerB', speakers, 1);
+            }
+            syncRoleValues();
+        }
+
+        // 刷新角色 A / B 的语速数值（与语速标签同行显示）
+        // 注意：不能用 或运算符 兜底成 1 —— 滑块最左端是 0，会被当成假值而错显示成 1.00x
+        function syncRoleValues() {
+            for (const role of ['A', 'B']) {
+                const raw = parseFloat(document.getElementById('speed' + role).value);
+                const speed = Number.isFinite(raw) ? raw : 1;
+                document.getElementById('role' + role + 'Value').textContent = speed.toFixed(2) + 'x';
+            }
+        }
+
+        // 组装某个角色的合成参数（实测只有语速对多人对话生效）
+        function roleOpts(role) {
+            return { speed: document.getElementById('speed' + role).value };
+        }
+
+        // 初始化文件上传功能
+        // 上传区元素 id：txt 与音频两块结构相同，只差 id
+        const FILE_IDS = { zone: 'fileDropZone', input: 'fileInput', info: 'fileInfo', name: 'fileName', size: 'fileSize', remove: 'fileRemoveBtn' };
+        // 待开发：语音转文字的上传区元素 id
+        // const AUDIO_IDS = { zone: 'audioDropZone', input: 'audioFileInput', info: 'audioFileInfo', name: 'audioFileName', size: 'audioFileSize', remove: 'audioFileRemoveBtn' };
+
+        // 上传区通用行为：点击选择 + 拖拽 + 移除
+        function setupDropZone(ids, onSelect, onClear) {
+            const zone = document.getElementById(ids.zone);
+            const input = document.getElementById(ids.input);
+            const info = document.getElementById(ids.info);
+
+            zone.addEventListener('click', () => input.click());
+            input.addEventListener('change', e => {
+                const file = e.target.files[0];
+                if (file) onSelect(file, ids);
+            });
+            zone.addEventListener('dragover', e => {
+                e.preventDefault();
+                zone.classList.add('dragover');
+            });
+            zone.addEventListener('dragleave', e => {
+                e.preventDefault();
+                zone.classList.remove('dragover');
+            });
+            zone.addEventListener('drop', e => {
+                e.preventDefault();
+                zone.classList.remove('dragover');
+                const file = e.dataTransfer.files[0];
+                if (file) onSelect(file, ids);
+            });
+            document.getElementById(ids.remove).addEventListener('click', () => {
+                onClear();
+                input.value = '';
+                info.style.display = 'none';
+                zone.style.display = 'block';
+            });
+        }
+
+        // 校验通过后回显文件信息
+        function showFileInfo(file, ids) {
+            document.getElementById(ids.zone).style.display = 'none';
+            document.getElementById(ids.info).style.display = 'flex';
+            document.getElementById(ids.name).textContent = file.name;
+            document.getElementById(ids.size).textContent = formatFileSize(file.size);
+        }
+
+        function initializeFileUpload() {
+            setupDropZone(FILE_IDS, handleFileSelect, () => { selectedFile = null; });
+        }
+
+        // 处理文件选择
+        function handleFileSelect(file, ids) {
+            // 验证文件类型
+            if (!file.type.includes('text/') && !file.name.toLowerCase().endsWith('.txt')) {
+                showNotice('请选择txt格式的文本文件');
+                return;
+            }
+
+            // 验证文件大小
+            if (file.size > 500 * 1024) {
+                showNotice('文件大小不能超过500KB');
+                return;
+            }
+
+            selectedFile = file;
+            showFileInfo(file, ids);
+        }
+
+        // 生成 / 转录成功后延迟展示推广组件（未在 PROMOTION 中启用则直接跳过）
+        function showPromotion() {
+            if (!PROMOTION.enabled) return;
+            setTimeout(() => {
+                const box = document.getElementById('promotionBox');
+                box.style.display = 'block';
+                box.classList.add('fade-in');
+            }, 1000);
+        }
+
+        // 格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // 表单提交处理
+        document.getElementById('ttsForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const voice = document.getElementById('voice').value;
+            const speed = document.getElementById('speed').value;
+            const pitch = document.getElementById('pitch').value;
+            const style = document.getElementById('style').value;
+            
+            const generateBtn = document.getElementById('generateBtn');
+            const resultContainer = document.getElementById('result');
+            const loading = document.getElementById('loading');
+            const success = document.getElementById('success');
+            const error = document.getElementById('error');
+            
+            // 验证输入
+            if (currentInputMethod === 'text') {
+                if (!segmentsHaveContent(collectSegments(document.getElementById('text')))) {
+                    showNotice('请输入要转换的文本内容');
+                    return;
+                }
+            } else if (currentInputMethod === 'file') {
+                if (!selectedFile) {
+                    showNotice('请选择要上传的txt文件');
+                    return;
+                }
+            } else if (currentInputMethod === 'dialogue') {
+                if (!collectDialogueTurns().length) {
+                    showNotice('请输入对话内容：每行一句，行首用 A: 或 B: 指定说话人');
+                    return;
+                }
+            }
+            
+            // 重置状态
+            resultContainer.style.display = 'block';
+            loading.style.display = 'block';
+            success.style.display = 'none';
+            error.style.display = 'none';
+            generateBtn.disabled = true;
+            generateBtn.textContent = '生成中...';
+            setProgress(true, 35);
+            
+            try {
+                let response;
+                let textLength = 0;
+                
+                // 更新加载提示
+                const loadingText = document.getElementById('loadingText');
+                const progressInfo = document.getElementById('progressInfo');
+                
+                if (currentInputMethod === 'text') {
+                    // 手动输入文本（可能包含停顿 / 副语言芯片）
+                    const segments = collectSegments(document.getElementById('text'));
+                    const text = segmentsToPlainText(segments);
+                    textLength = text.length;
+                    
+                    // 长文本换个提示；进度信息一律只报字数（时长估不准，不再显示）
+                    loadingText.textContent = textLength > 3000
+                        ? '正在处理长文本，请耐心等待...'
+                        : '正在生成语音，请稍候...';
+                    progressInfo.textContent = '文本长度: ' + textLength + ' 字符';
+                    
+                    // 纯文本时 segments 与 input 完全重复，只在含芯片时才带上，省掉一半请求体
+                    const payload = {
+                        input: text,
+                        voice: voice,
+                        speed: parseFloat(speed),
+                        pitch: pitch,
+                        style: style,
+                        styledegree: currentStyleDegree(),
+                        outputFormat: audioFormat
+                    };
+                    if (segments.some(s => s.type !== 'text')) payload.segments = segments;
+
+                    response = await fetch('/v1/audio/speech', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                } else if (currentInputMethod === 'dialogue') {
+                    // 多人语音：从单个富文本框按行解析出轮次
+                    const turns = collectDialogueTurns();
+                    textLength = turns.reduce((n, t) => n + segmentsToPlainText(t.segments).length, 0);
+                    loadingText.textContent = '正在生成多人语音，请稍候...';
+                    progressInfo.textContent = '共 ' + turns.length + ' 句，' + textLength + ' 字符';
+
+                    response = await fetch('/v1/audio/speech', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            dialogue: true,
+                            turns: turns,
+                            voice: voice,
+                            speakerA: document.getElementById('speakerA').value,
+                            speakerB: document.getElementById('speakerB').value,
+                            optsA: roleOpts('A'),
+                            optsB: roleOpts('B'),
+                            outputFormat: audioFormat
+                        })
+                    });
+                } else {
+                    // 文件上传
+                    loadingText.textContent = '正在处理上传的文件...';
+                    progressInfo.textContent = '文件: ' + selectedFile.name + ' (' + formatFileSize(selectedFile.size) + ')';
+                    
+                    const formData = new FormData();
+                    formData.append('file', selectedFile);
+                    formData.append('voice', voice);
+                    formData.append('speed', speed);
+                    formData.append('pitch', pitch);
+                    formData.append('style', style);
+                    formData.append('styledegree', String(currentStyleDegree()));
+                    formData.append('outputFormat', audioFormat);
+                    // 上传的 txt 同样可以按 a: / b: 行格式走多人对话
+                    if (document.getElementById('fileAsDialogue').checked) {
+                        formData.append('dialogue', '1');
+                        formData.append('speakerA', document.getElementById('speakerA').value);
+                        formData.append('speakerB', document.getElementById('speakerB').value);
+                        formData.append('optsA', JSON.stringify(roleOpts('A')));
+                        formData.append('optsB', JSON.stringify(roleOpts('B')));
+                    }
+                    
+                    response = await fetch('/v1/audio/speech', {
+                        method: 'POST',
+                        body: formData
+                    });
+                }
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error?.message || '生成失败');
+                }
+                setProgress(true, 75);
+                
+                const audioBlob = await audioBlobOf(response);
+                const audioUrl = URL.createObjectURL(audioBlob);
+                
+                // 显示音频播放器
+                const audioPlayer = document.getElementById('audioPlayer');
+                const downloadBtn = document.getElementById('downloadBtn');
+                
+                audioPlayer.src = audioUrl;
+                downloadBtn.href = audioUrl;
+                downloadBtn.download = 'speech.' + audioExtension(audioFormat);
+                setProgress(true, 100);
+                
+                loading.style.display = 'none';
+                success.style.display = 'block';
+                
+                showPromotion();
+                
+            } catch (err) {
+                loading.style.display = 'none';
+                error.style.display = 'block';
+                
+                // 根据错误类型显示不同的提示
+                if (err.message.includes('Too many subrequests')) {
+                    error.textContent = '错误: 文本过长导致请求过多，请缩短文本内容或分段处理';
+                } else if (err.message.includes('频率限制') || err.message.includes('429')) {
+                    error.textContent = '错误: 请求过于频繁，请稍后再试';
+                } else if (err.message.includes('分块数量') && err.message.includes('超过限制')) {
+                    error.textContent = '错误: ' + err.message;
+                } else {
+                    error.textContent = '错误: ' + err.message;
+                }
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.textContent = '生成语音';
+                setProgress(false, 0);
+            }
+        });
+
+        // ===== 进度条（照 design/01 的 .progress）=====
+        function setProgress(run, percent) {
+            const bar = document.getElementById('progress');
+            const fill = document.getElementById('progressFill');
+            if (bar) bar.classList.toggle('run', run);
+            if (fill) fill.style.width = percent + '%';
+        }
+
+        function updateCharCount() {
+            const editor = document.getElementById(currentInputMethod === 'dialogue' ? 'dialogueText' : 'text');
+            const out = document.getElementById('charCount');
+            if (!editor || !out) return;
+            const chars = editor.textContent.split('').filter(ch => WS.indexOf(ch) < 0).length;
+            out.textContent = chars + ' 字';
+        }
+
+        // ===== 播放器：圆形按钮 + 可拖进度条（不要波形）=====
+        function clockOf(seconds) {
+            const total = isFinite(seconds) && seconds > 0 ? Math.floor(seconds) : 0;
+            const s = total % 60;
+            return Math.floor(total / 60) + ':' + (s < 10 ? '0' : '') + s;
+        }
+
+        function initializePlayer() {
+            const audio = document.getElementById('audioPlayer');
+            const btn = document.getElementById('playBtn');
+            const seek = document.getElementById('seek');
+            const time = document.getElementById('playTime');
+            if (!audio || !btn || !seek || !time) return;
+            let seeking = false;
+
+            btn.addEventListener('click', () => {
+                if (audio.paused) audio.play();
+                else audio.pause();
+            });
+            audio.addEventListener('play', () => { btn.textContent = '❚❚'; });
+            audio.addEventListener('pause', () => { btn.textContent = '⯈'; });
+            audio.addEventListener('ended', () => { btn.textContent = '⯈'; audio.currentTime = 0; });
+            audio.addEventListener('loadedmetadata', () => {
+                time.textContent = clockOf(audio.currentTime) + ' / ' + clockOf(audio.duration);
+            });
+            audio.addEventListener('timeupdate', () => {
+                if (seeking || !audio.duration) return;
+                seek.value = String(Math.round(audio.currentTime / audio.duration * 1000));
+                time.textContent = clockOf(audio.currentTime) + ' / ' + clockOf(audio.duration);
+            });
+            // 拖动时只更新时间码，松手才真正跳转，避免与 timeupdate 回写打架
+            seek.addEventListener('input', () => {
+                seeking = true;
+                if (audio.duration) {
+                    time.textContent = clockOf(audio.duration * seek.value / 1000) + ' / ' + clockOf(audio.duration);
+                }
+            });
+            seek.addEventListener('change', () => {
+                if (audio.duration) audio.currentTime = audio.duration * seek.value / 1000;
+                seeking = false;
+            });
+        }
+
+        // ===== 明暗模式（不是主题切换，只有浅 / 深两态）=====
+        function applyScheme(dark) {
+            document.documentElement.classList.toggle('dark', dark);
+            try { localStorage.setItem('sonora-scheme', dark ? 'dark' : 'light'); } catch (ignored) { }
+            const btn = document.getElementById('schemeBtn');
+            if (btn) btn.textContent = dark ? '浅色模式' : '深色模式';
+        }
+
+        function initializeSchemeSwitch() {
+            const btn = document.getElementById('schemeBtn');
+            if (!btn) return;
+            btn.addEventListener('click', () => applyScheme(!document.documentElement.classList.contains('dark')));
+            applyScheme(document.documentElement.classList.contains('dark'));
+        }
+
+        // ===== 编辑区右键菜单 =====
+        function initializeContextMenu() {
+            const menu = document.getElementById('ctx');
+            if (!menu) return;
+            for (const id of ['text', 'dialogueText']) {
+                const editor = document.getElementById(id);
+                if (!editor) continue;
+                editor.addEventListener('contextmenu', event => {
+                    event.preventDefault();
+                    menu.style.left = Math.min(event.clientX, window.innerWidth - 200) + 'px';
+                    menu.style.top = Math.min(event.clientY, window.innerHeight - 240) + 'px';
+                    menu.classList.add('show');
+                });
+            }
+            menu.addEventListener('click', event => {
+                const item = event.target.closest('[data-ctx]');
+                if (item) runContextAction(item.dataset.ctx);
+            });
+            document.addEventListener('click', event => {
+                if (!menu.contains(event.target)) menu.classList.remove('show');
+            });
+        }
+
+        function runContextAction(action) {
+            const editor = document.getElementById(currentInputMethod === 'dialogue' ? 'dialogueText' : 'text');
+            editor.focus();
+            if (action === 'cut') document.execCommand('cut');
+            else if (action === 'copy') document.execCommand('copy');
+            else if (action === 'pasteText') pasteAsPlainText();
+            else if (action === 'pause') insertMark('pause', document.getElementById('pauseLength').value);
+            else if (action === 'para') {
+                const first = document.querySelector('#paraButtons button');
+                if (first) first.click();
+            } else if (action === 'speak') {
+                const selected = String(window.getSelection()).trim();
+                if (selected) speakSelection(selected);
+            }
+        }
+
+        function pasteAsPlainText() {
+            if (!navigator.clipboard || !navigator.clipboard.readText) return;
+            navigator.clipboard.readText().then(text => {
+                if (text) document.execCommand('insertText', false, text);
+            }).catch(ignored => { });
+        }
+
+        // 朗读选中文字：拿选中文本单独合成一次，结果复用同一个播放条
+        async function speakSelection(text) {
+            const progress = document.getElementById('progress');
+            if (progress) progress.classList.add('run');
+            try {
+                const response = await fetch('/v1/audio/speech', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        input: text,
+                        voice: document.getElementById('voice').value,
+                        speed: parseFloat(document.getElementById('speed').value),
+                        pitch: document.getElementById('pitch').value,
+                        style: document.getElementById('style').value,
+                        styledegree: currentStyleDegree(),
+                        outputFormat: audioFormat
+                    })
+                });
+                if (!response.ok) return;
+                const audio = document.getElementById('audioPlayer');
+                const url = URL.createObjectURL(await audioBlobOf(response));
+                audio.src = url;
+                const downloadBtn = document.getElementById('downloadBtn');
+                downloadBtn.href = url;
+                downloadBtn.download = 'speech.' + audioExtension(audioFormat);
+                document.getElementById('success').style.display = 'block';
+                audio.play();
+            } catch (ignored) { }
+            if (progress) progress.classList.remove('run');
+        }
+
+        // ===== 输出设置：格式 / 质量 =====
+        // 只列通用播放器都能放的三种容器；每一档都对应一个微软格式名
+        const AUDIO_FORMATS = {
+            mp3: [
+                ['最低', 'audio-16khz-32kbitrate-mono-mp3'],
+                ['低', 'audio-24khz-48kbitrate-mono-mp3'],
+                ['中等', 'audio-24khz-96kbitrate-mono-mp3'],
+                ['高', 'audio-24khz-160kbitrate-mono-mp3'],
+                ['最高', 'audio-48khz-192kbitrate-mono-mp3']
+            ],
+            wav: [
+                ['低', 'raw-16khz-16bit-mono-pcm'],
+                ['中等', 'raw-24khz-16bit-mono-pcm'],
+                ['最高', 'raw-48khz-16bit-mono-pcm']
+            ],
+            ogg: [
+                ['低', 'ogg-16khz-16bit-mono-opus'],
+                ['中等', 'ogg-24khz-16bit-mono-opus'],
+                ['最高', 'ogg-48khz-16bit-mono-opus']
+            ]
+        };
+        const DEFAULT_AUDIO_FORMAT = 'audio-24khz-96kbitrate-mono-mp3';
+
+        // 格式名 → { 容器, 档位下标 }：界面回显与坏值校验都用它
+        const AUDIO_ENTRIES = {};
+        for (const container in AUDIO_FORMATS) {
+            AUDIO_FORMATS[container].forEach((row, index) => {
+                AUDIO_ENTRIES[row[1]] = { container: container, index: index };
+            });
+        }
+
+        let audioFormat = DEFAULT_AUDIO_FORMAT;
+        try {
+            const saved = localStorage.getItem('sonora-audio-format');
+            if (saved && AUDIO_ENTRIES[saved]) audioFormat = saved;
+        } catch (ignored) { }
+
+        // 弹窗里先选到 pendingFormat：确定才生效，取消就丢弃
+        let pendingFormat = audioFormat;
+
+        function audioFormatEntry(format) {
+            return AUDIO_ENTRIES[format] || AUDIO_ENTRIES[DEFAULT_AUDIO_FORMAT];
+        }
+
+        function setAudioFormat(format) {
+            audioFormat = AUDIO_ENTRIES[format] ? format : DEFAULT_AUDIO_FORMAT;
+            try { localStorage.setItem('sonora-audio-format', audioFormat); } catch (ignored) { }
+            syncAudioFormatUI();
+        }
+
+        // 换容器时落在「中等」，三个容器的档位语义保持一致
+        function mediumIndexOf(container) {
+            const rows = AUDIO_FORMATS[container];
+            for (let i = 0; i < rows.length; i++) {
+                if (rows[i][0] === '中等') return i;
+            }
+            return 0;
+        }
+
+        function syncAudioFormatUI() {
+            const found = audioFormatEntry(pendingFormat);
+            document.querySelectorAll('#formatRow .seg-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.format === found.container);
+            });
+            const qualityRow = document.getElementById('qualityRow');
+            qualityRow.innerHTML = '';
+            AUDIO_FORMATS[found.container].forEach((row, index) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = index === found.index ? 'seg-btn active' : 'seg-btn';
+                btn.textContent = row[0];
+                btn.addEventListener('click', () => {
+                    pendingFormat = row[1];
+                    syncAudioFormatUI();
+                });
+                qualityRow.appendChild(btn);
+            });
+        }
+
+        function initializeAudioSettings() {
+            const modal = document.getElementById('settingsModal');
+            document.getElementById('settingsBtn').addEventListener('click', () => {
+                pendingFormat = audioFormat;
+                syncAudioFormatUI();
+                modal.classList.add('show');
+            });
+            document.getElementById('settingsConfirm').addEventListener('click', () => {
+                setAudioFormat(pendingFormat);
+                modal.classList.remove('show');
+            });
+            document.getElementById('settingsCancel').addEventListener('click', () => modal.classList.remove('show'));
+            document.querySelectorAll('#formatRow .seg-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const container = btn.dataset.format;
+                    if (audioFormatEntry(pendingFormat).container === container) return;
+                    pendingFormat = AUDIO_FORMATS[container][mediumIndexOf(container)][1];
+                    syncAudioFormatUI();
+                });
+            });
+        }
+
+        // WAV 选项拿回来的是裸 PCM：补 44 字节 RIFF 头，播放与导出才是标准 wav
+        function wavBlobOf(blob, format) {
+            const match = /^raw-([0-9]+)khz-16bit-mono-pcm$/.exec(format);
+            if (!match) return blob;
+            const sampleRate = Number(match[1]) * 1000;
+            const header = new ArrayBuffer(44);
+            const view = new DataView(header);
+            const writeTag = (offset, tag) => {
+                for (let i = 0; i < tag.length; i++) view.setUint8(offset + i, tag.charCodeAt(i));
+            };
+            const dataSize = blob.size;
+            writeTag(0, 'RIFF');
+            view.setUint32(4, 36 + dataSize, true);
+            writeTag(8, 'WAVE');
+            writeTag(12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, 1, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * 2, true);
+            view.setUint16(32, 2, true);
+            view.setUint16(34, 16, true);
+            writeTag(36, 'data');
+            view.setUint32(40, dataSize, true);
+            return new Blob([header, blob], { type: 'audio/wav' });
+        }
+
+        async function audioBlobOf(response) {
+            return wavBlobOf(await response.blob(), audioFormat);
+        }
+
+        // 导出扩展名跟着选择的容器走
+        function audioExtension(format) {
+            if (format.indexOf('raw-') === 0) return 'wav';
+            if (format.indexOf('ogg-') === 0) return 'ogg';
+            if (format.indexOf('webm-') === 0) return 'webm';
+            return 'mp3';
+        }
+
+        // ===== 页内轻提示：桌面版 WebView 不弹 alert，所有校验提示统一走这里 =====
+        function showNotice(message) {
+            document.getElementById('noticeText').textContent = message;
+            document.getElementById('noticeModal').classList.add('show');
+        }
+
+        function initializeNotice() {
+            const modal = document.getElementById('noticeModal');
+            document.getElementById('noticeClose').addEventListener('click', () => modal.classList.remove('show'));
+        }
+
+        // 初始化模式切换器
+        function initializeModeSwitcher() {
+            document.getElementById('ttsMode').addEventListener('click', () => switchMode('tts'));
+            document.getElementById('transcriptionMode').addEventListener('click', () => switchMode('transcription'));
+        }
+
+        // 应用外壳：侧边栏帮助弹窗、编辑框右上角的撤销重做、窗口按钮（后者仅桌面版）
+        function initializeAppShell() {
+            const desktop = RUNTIME === 'desktop';
+            const modal = document.getElementById('appModal');
+            const editorOf = () => document.getElementById(currentInputMethod === 'dialogue'
+                ? 'dialogueText'
+                : 'text');
+
+            // 状态栏的运行方式与「关于」共用同一份文字
+            const runtimeText = desktop ? '桌面版 · 本机服务' : '网页版';
+            document.getElementById('runtimeLabel').textContent = runtimeText;
+
+            // 语音规模直接取状态栏里那几项，避免同一组数字写两遍
+            const scaleText = Array.from(document.querySelectorAll('.app-statusbar .feature-item'))
+                .map(item => item.textContent.trim())
+                .filter(Boolean)
+                .join(' · ');
+
+            function showModal(title, rows) {
+                document.getElementById('appModalTitle').textContent = title;
+                const body = document.getElementById('appModalBody');
+                body.innerHTML = '';
+                const list = document.createElement('dl');
+                for (const [term, value] of rows) {
+                    const dt = document.createElement('dt');
+                    dt.textContent = term;
+                    const dd = document.createElement('dd');
+                    dd.textContent = value;
+                    list.appendChild(dt);
+                    list.appendChild(dd);
+                }
+                body.appendChild(list);
+                modal.classList.add('show');
+            }
+
+            // 侧边栏「帮助」：快捷键与关于合成一张卡片
+            document.getElementById('helpBtn').addEventListener('click', () => showModal('帮助', [
+                ['Ctrl+Enter', '生成语音'],
+                ['Ctrl+Z / Ctrl+Y', '撤销 / 重做'],
+                ['Esc', '关闭弹窗与右键菜单'],
+                ['应用', 'Sonora 声界'],
+                ['运行方式', runtimeText],
+                ['语音规模', scaleText]
+            ]));
+
+            // 编辑框右上角的撤销 / 重做：mousedown 阻止抢焦点以保住光标
+            for (const [id, command] of [['undoBtn', 'undo'], ['redoBtn', 'redo']]) {
+                const btn = document.getElementById(id);
+                if (!btn) continue;
+                btn.addEventListener('mousedown', event => event.preventDefault());
+                btn.addEventListener('click', () => {
+                    editorOf().focus();
+                    document.execCommand(command);
+                });
+            }
+
+            // 弹窗只能点卡片上的按钮关：点外面与 Esc 都不关
+            document.getElementById('appModalClose').addEventListener('click', () => modal.classList.remove('show'));
+
+            if (desktop) initializeWindowControls();
+        }
+
+        // 窗口按钮与标题栏拖拽：桌面版走本机接口，不依赖 Tauri IPC
+        function windowControl(action) {
+            return fetch('/__window/' + action, { method: 'POST' }).catch(() => { });
+        }
+
+        function initializeWindowControls() {
+            const controls = document.getElementById('windowControls');
+            controls.hidden = false;
+            controls.querySelectorAll('[data-window]').forEach(button => {
+                button.addEventListener('click', () => windowControl(button.dataset.window));
+            });
+            const titlebar = document.querySelector('.app-titlebar');
+            // 语言切换器是 div：不放行的话点击会被系统级拖拽吞掉，下拉再也打不开
+            const titlebarInteractive = 'button, .language-switcher';
+            titlebar.addEventListener('mousedown', event => {
+                if (event.button !== 0 || event.target.closest(titlebarInteractive)) return;
+                windowControl('drag');
+            });
+            titlebar.addEventListener('dblclick', event => {
+                if (event.target.closest(titlebarInteractive)) return;
+                windowControl('maximize');
+            });
+        }
+
+        // 切换功能模式
+        function switchMode(mode) {
+            const ttsMode = document.getElementById('ttsMode');
+            const transcriptionMode = document.getElementById('transcriptionMode');
+            const mainContent = document.querySelector('.main-content');
+            const transcriptionContainer = document.getElementById('transcriptionContainer');
+            const promotionBox = document.getElementById('promotionBox');
+
+            currentMode = mode;
+
+            if (mode === 'tts') {
+                // 切换到TTS模式
+                ttsMode.classList.add('active');
+                transcriptionMode.classList.remove('active');
+                mainContent.style.display = 'block';
+                transcriptionContainer.style.display = 'none';
+            } else {
+                // 切换到语音转录模式
+                transcriptionMode.classList.add('active');
+                ttsMode.classList.remove('active');
+                mainContent.style.display = 'none';
+                transcriptionContainer.style.display = 'block';
+            }
+
+            // 隐藏推广组件
+            promotionBox.style.display = 'none';
+        }
+
+        /* ===== 待开发：语音转文字（上传音频 / Token 配置 / 转录请求 / 结果操作；恢复时删掉这对注释标记） =====
+        // 初始化音频上传功能
+        function initializeAudioUpload() {
+            setupDropZone(AUDIO_IDS, handleAudioFileSelect, () => { selectedAudioFile = null; });
+        }
+
+        // 处理音频文件选择
+        function handleAudioFileSelect(file, ids) {
+            // 验证文件类型
+            const allowedTypes = [
+                'audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/m4a', 'audio/flac', 'audio/aac',
+                'audio/ogg', 'audio/webm', 'audio/amr', 'audio/3gpp'
+            ];
+
+            const isValidType = allowedTypes.some(type =>
+                file.type.includes(type) ||
+                file.name.toLowerCase().match(EXT_AUDIO_RE)
+            );
+
+            if (!isValidType) {
+                showNotice('请选择音频格式的文件（mp3、wav、m4a、flac、aac、ogg、webm、amr、3gp）');
+                return;
+            }
+
+            // 验证文件大小（限制为10MB）
+            if (file.size > 10 * 1024 * 1024) {
+                showNotice('音频文件大小不能超过10MB');
+                return;
+            }
+
+            selectedAudioFile = file;
+            showFileInfo(file, ids);
+        }
+
+        // 初始化Token配置
+        function initializeTokenConfig() {
+            const tokenRadios = document.querySelectorAll('input[name="tokenOption"]');
+            const tokenInput = document.getElementById('tokenInput');
+
+            tokenRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'custom') {
+                        tokenInput.style.display = 'block';
+                        tokenInput.required = true;
+                    } else {
+                        tokenInput.style.display = 'none';
+                        tokenInput.required = false;
+                        tokenInput.value = '';
+                    }
+                });
+            });
+        }
+
+        // 处理语音转录表单提交
+        document.getElementById('transcriptionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const transcribeBtn = document.getElementById('transcribeBtn');
+            const transcriptionResult = document.getElementById('transcriptionResult');
+            const transcriptionLoading = document.getElementById('transcriptionLoading');
+            const transcriptionSuccess = document.getElementById('transcriptionSuccess');
+            const transcriptionError = document.getElementById('transcriptionError');
+            
+            // 验证音频文件
+            if (!selectedAudioFile) {
+                showNotice('请选择要转录的音频文件');
+                return;
+            }
+            
+            // 获取Token配置
+            const tokenOption = document.querySelector('input[name="tokenOption"]:checked').value;
+            const customToken = document.getElementById('tokenInput').value;
+            
+            if (tokenOption === 'custom' && !customToken.trim()) {
+                showNotice('请输入自定义Token');
+                return;
+            }
+            
+            // 重置状态
+            transcriptionResult.style.display = 'block';
+            transcriptionLoading.style.display = 'block';
+            transcriptionSuccess.style.display = 'none';
+            transcriptionError.style.display = 'none';
+            transcribeBtn.disabled = true;
+            transcribeBtn.textContent = '转录中...';
+            
+            // 更新加载提示
+            const loadingText = document.getElementById('transcriptionLoadingText');
+            const progressInfo = document.getElementById('transcriptionProgressInfo');
+            loadingText.textContent = '正在转录音频，请稍候...';
+            progressInfo.textContent = '文件: ' + selectedAudioFile.name + ' (' + formatFileSize(selectedAudioFile.size) + ')';
+            
+            try {
+                // 构建FormData
+                const formData = new FormData();
+                formData.append('file', selectedAudioFile);
+                
+                if (tokenOption === 'custom') {
+                    formData.append('token', customToken);
+                }
+                
+                const response = await fetch('/v1/audio/transcriptions', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error?.message || '转录失败');
+                }
+                
+                const result = await response.json();
+                
+                // 显示转录结果
+                document.getElementById('transcriptionText').value = result.text || '';
+                transcriptionLoading.style.display = 'none';
+                transcriptionSuccess.style.display = 'block';
+                
+                showPromotion();
+                
+            } catch (err) {
+                transcriptionLoading.style.display = 'none';
+                transcriptionError.style.display = 'block';
+                transcriptionError.textContent = '错误: ' + err.message;
+            } finally {
+                transcribeBtn.disabled = false;
+                transcribeBtn.innerHTML = '<span>🎧</span><span>开始语音转录</span>';
+            }
+        });
+
+        // 复制转录结果
+        document.getElementById('copyTranscriptionBtn').addEventListener('click', function() {
+            const transcriptionText = document.getElementById('transcriptionText');
+            transcriptionText.select();
+            document.execCommand('copy');
+            
+            // 临时改变按钮文本
+            const originalText = this.innerHTML;
+            this.innerHTML = '<span>✅</span><span>已复制</span>';
+            setTimeout(() => {
+                this.innerHTML = originalText;
+            }, 2000);
+        });
+
+        // 编辑转录结果
+        document.getElementById('editTranscriptionBtn').addEventListener('click', function() {
+            const transcriptionText = document.getElementById('transcriptionText');
+            const isReadonly = transcriptionText.readOnly;
+            
+            if (isReadonly) {
+                transcriptionText.readOnly = false;
+                transcriptionText.focus();
+                this.innerHTML = '<span>💾</span><span>保存编辑</span>';
+            } else {
+                transcriptionText.readOnly = true;
+                this.innerHTML = '<span>✏️</span><span>编辑文本</span>';
+            }
+        });
+
+        // 转为语音功能
+        document.getElementById('useForTtsBtn').addEventListener('click', function() {
+            const transcriptionText = document.getElementById('transcriptionText').value;
+            
+            if (!transcriptionText.trim()) {
+                showNotice('转录结果为空，无法转换为语音');
+                return;
+            }
+            
+            // 切换到TTS模式
+            switchMode('tts');
+            
+            // 将转录文本填入TTS输入区
+            const backfillEditor = document.getElementById('text');
+            backfillEditor.innerText = transcriptionText;
+            refreshEditorPlaceholder(backfillEditor);
+            
+            // 滚动到TTS区域
+            document.querySelector('.main-content').scrollIntoView({ behavior: 'smooth' });
+        });
+        ===== 待开发结束 ===== */
+
+        // 初始化国际化
+        function initializeI18n() {
+            // 检查本地存储中的语言设置
+            const savedLang = localStorage.getItem('sonora-language');
+            
+            if (savedLang && translations[savedLang]) {
+                currentLanguage = savedLang;
+            } else {
+                // 自动检测浏览器语言
+                currentLanguage = detectLanguage();
+            }
+            
+            // 应用语言设置
+            setLanguage(currentLanguage);
+        }
+
+        // 初始化语言切换器
+        function initializeLanguageSwitcher() {
+            const languageBtn = document.getElementById('languageBtn');
+            const languageDropdown = document.getElementById('languageDropdown');
+
+            // 切换下拉菜单显示/隐藏
+            languageBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                languageDropdown.classList.toggle('show');
+            });
+
+            // 点击页面其他地方时隐藏下拉菜单
+            document.addEventListener('click', function() {
+                languageDropdown.classList.remove('show');
+            });
+
+            // 语言选择
+            document.querySelectorAll('.language-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const selectedLang = this.getAttribute('data-lang');
+                    setLanguage(selectedLang);
+                    languageDropdown.classList.remove('show');
+                });
+            });
+        }
+    </script>
+</body>
+</html>

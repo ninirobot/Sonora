@@ -1,13 +1,16 @@
-name = "tts-voice-magic"
+# 名字决定部署后的 *.workers.dev 域名：改名等于换一个新地址，旧 worker 会留在
+# Cloudflare 面板里，可自行删除。Cloudflare 只接受小写，所以这里写 sonora。
+name = "sonora"
 main = "index.js"
-compatibility_date = "2024-01-15"
+# 运行时的行为按这个日期解释，建议别落后一个版本以上
+compatibility_date = "2026-09-01"
 compatibility_flags = ["nodejs_compat"]
 
 [env.production]
-name = "tts-voice-magic"
+name = "sonora"
 
 [env.staging]
-name = "tts-voice-magic-staging"
+name = "sonora-staging"
 
 # 变量配置（如果需要的话）
 [vars]

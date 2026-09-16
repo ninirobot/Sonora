@@ -1,310 +1,469 @@
-# 🎙️ VoiceCraft - AI驱动的语音处理平台
+# Sonora · 声界
 
-一个功能强大的AI语音处理平台，集成了文字转语音(TTS)和语音转文字(STT)双向功能。基于Microsoft Edge TTS和硅基流动API，支持20+种语音选项，为用户提供完整的语音处理解决方案。
->
-> 直接使用: https://tts.wangwangit.com
+把文字读出来。
 
-<img width="2512" height="1284" alt="image" src="https://github.com/user-attachments/assets/570961ef-b189-480f-833e-7877ce38f19d" />
+Sonora 是一台语音工作台，合成走微软 Edge TTS。9 种语言、23 个口音、300+ 副嗓音，一个窗口里调完就能导出。（语音转文字还在开发中，入口会先占个位。）
 
+两种形态共用同一套界面和语音目录：
 
-## ✨ 特性
+- **网页版** —— 一个 Cloudflare Worker 文件，部署完就有网址。
+- **Windows 桌面版** —— 一个 exe，双击即用，不用自己部署服务。
 
-### 🎯 核心功能
-- 🗣️ **文字转语音(TTS)** - 基于Microsoft Edge TTS，支持20+种中文语音
-- 🎧 **语音转文字(STT)** - 集成硅基流动API，高精度语音识别
-- 🔄 **双向处理** - 智能模式切换，语音与文字无缝转换
-- 🌍 **多语言支持** - 支持中文、英文、日文、韩文、西班牙文、法文、德文、俄文
+两边都顺带开着 OpenAI 风格的接口（`POST /v1/audio/speech`），自己的脚本也能直接调。
 
-### 🎨 用户体验
-- ⚡ **秒速生成** - 快速生成高质量语音文件和转录文本
-- 🆓 **完全免费** - 无需注册，无使用限制
-- 📱 **响应式设计** - 完美适配桌面端和移动端
-- 🎛️ **丰富参数** - 支持语速、音调、语音风格等多种调节
-- 📥 **支持下载** - 生成的音频可直接下载为 MP3 格式
-- 📋 **便捷操作** - 转录结果可复制、编辑，支持转为语音功能
+---
 
-### 🔧 技术特性
-- 🔗 **API 兼容** - 兼容 OpenAI TTS API 格式
-- 🎵 **多音频格式** - 支持mp3、wav、m4a、flac、aac等9种音频格式
-- 🔐 **灵活配置** - 支持默认Token和自定义Token配置
-- 🎨 **现代化UI** - 优雅的卡片式设计，直观的模式切换
+## 能做什么
 
-## 🚀 一键部署
+**文本转语音**
 
-### 点击按钮，一键部署到 CloudFlare Workers,
+三种输入：单人文本、A/B 多人对话、上传 txt。正文里可以插停顿（0–5 秒可调）和副语言（笑声、咳嗽、换气、叹气等），从别处粘贴带 `[停顿 2s]`、`[laughter]` 这类标记的文本会自动还原成可编辑的芯片。语速、音调、风格、风格强度都能调，输出支持 MP3 / WAV / OGG。长文按句切分再拼回一段音频，生成后可试听或导出。
 
-[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/wangwangit/tts)
+**语音转文字（开发中）**
 
+左侧的「转录」入口保留着，点进去是一句「功能开发中，敬请期待」。上传音频拿到文本、结果复制编辑、一键送进合成这些都会在后续版本里补上，接口 `POST /v1/audio/transcriptions` 现在返回 501。
 
+**界面**
 
-## 🎯 使用方法
+左边一列切换「语音合成 / 语音转文字 / 设置」，右边是参数面板，底部状态栏显示运行方式与当前格式。界面有 8 种语言，首次打开按浏览器语言自动选。
 
-### 🌐 网页界面使用
+---
 
-#### 文字转语音模式
-1. 访问部署后的 Worker 域名
-2. 确保当前为"文字转语音"模式（默认模式）
-3. 选择输入方式：手动输入或上传txt文件
-4. 在文本框中输入要转换的文字，或上传txt文件
-5. 选择喜欢的语音、语速、音调、语音风格等参数
-6. 点击"开始生成语音"按钮
-7. 播放生成的音频或下载 MP3 文件
+## 快速开始
 
-#### 语音转文字模式
-1. 点击页面顶部的"语音转文字"按钮切换模式
-2. 上传音频文件（支持mp3、wav、m4a等9种格式，最大10MB）
-3. 选择Token配置：使用默认Token或输入自定义硅基流动Token
-4. 点击"开始语音转录"按钮
-5. 查看转录结果，支持复制、编辑或直接转为语音
+### 网页版
 
-#### 🌍 多语言切换
-- 点击右上角的语言切换器
-- 支持中文、English、日本語、한국어、Español、Français、Deutsch、Русский
-- 自动记住用户的语言偏好
+[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/ninirobot/Sonora)
 
-### 🔌 API 调用
-
-#### 文字转语音 API
-
-```javascript
-// JavaScript 调用示例
-const response = await fetch('https://your-worker.workers.dev/v1/audio/speech', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-        input: "你好，这是一个测试",
-        voice: "zh-CN-XiaoxiaoNeural",
-        speed: 1.0,
-        pitch: "0",
-        style: "general"
-    })
-});
-
-const audioBlob = await response.blob();
-```
+或者手动部署：
 
 ```bash
-# cURL 调用示例
-curl -X POST "https://your-worker.workers.dev/v1/audio/speech" \
+npm install -g wrangler
+wrangler login
+wrangler deploy        # 输出的 *.workers.dev 域名即可访问，不用配任何密钥
+```
+
+本地调试用 `wrangler dev`，默认 http://localhost:8787 。
+
+### Windows 桌面版
+
+环境装一次就够：[Rust](https://rustup.rs)、Visual Studio 生成工具（勾选「使用 C++ 的桌面开发」），然后：
+
+```powershell
+cargo install tauri-cli --version "^2" --locked
+cd desktop
+.\build.ps1            # 调试运行用 .\build.ps1 -Dev
+```
+
+产物是 `desktop\target\release\sonora.exe`，单个文件约 3.9MB，双击即用，不写注册表，直接拷给别人就能跑。
+
+> 桌面版只是省掉了「自己部署一个服务」，合成仍然需要联网。
+
+---
+
+## 怎么用
+
+1. 顶部选语言，需要时再选口音，两者决定右边的嗓音列表。
+2. 输入或粘贴文本；要停顿、笑声就在光标处插入。
+3. 右边选嗓音，调语速、音调、风格，点生成，试听或导出。
+
+多人对话模式下，每行开头写 `A:` / `B:` 指定说话人，两个角色可以各配一个嗓音和语速。
+
+左侧的「转录」是语音转文字的入口，目前点进去只有一句「功能开发中，敬请期待」，功能做好之前不用管它。
+
+---
+
+## 语音规模
+
+下面这份清单由 `node scripts/gen-voice-stats.mjs` 从 `data/voices.json` 现算生成，改完语音目录跑一次脚本就会重写。
+
+<!-- VOICE_STATS:START -->
+> 本节由 `node scripts/gen-voice-stats.mjs` 从 `data/voices.json` 现算并写入，**不要手改**；
+> 改完语音目录跑一次脚本即可。`node scripts/check-copy.mjs` 会校验文档与页面里的数字是否还对得上。
+
+| 指标 | 数值 |
+| --- | --- |
+| 语言 | 9 |
+| 口音 | 23 |
+| 语音条目 | 386 |
+| 去重语音 id | 379 |
+| 音色家族 | 8 |
+| 多人对话模型 | 3 |
+
+「语音条目」按下拉里的条数算：同一副嗓子在多个语言页签下各占一条，所以比去重 id 多。
+多人对话是 3 个模型（`en-` / `zh-` / `fr-Multitalker`）挂在多个语言页签下，共 10 个入口。
+
+**家族分布**（按语音条目计）
+
+| 家族 | 数量 | 说明 |
+| --- | --- | --- |
+| 标准 | 186 | 经典 Neural 语音，风格按语音逐条列 |
+| 多语言 | 51 | MultilingualNeural，一副嗓子说多国语言 |
+| Neural-HD | 52 | LLM 驱动的 HD 语音，共用 62 项模型级风格表 |
+| Neural-HD-Omni | 15 | HD 的 Omni 版本，风格 61 项（不含 whispering） |
+| Neural-HD-Flash | 18 | HD 的低延迟版本，仅中文与英文 |
+| MAI-Voice-2 | 42 | 另一套 HD 语音，含 ·Flash 低延迟变体 |
+| 方言 | 12 | 中文方言、吴语与台湾国语 |
+| 多人语音 | 10 | 按轮次合成对话，同一批模型挂在多个语言页签下 |
+
+**完整清单**（语言 → 口音 → 分组 → 语音）
+
+<details><summary><b>中文 zh（2 个口音）</b></summary>
+
+#### 中文 · 普通话（`zh-CN`）
+
+| 分组 | 数量 | 语音 |
+| --- | --- | --- |
+| 标准 | 24 | 晓晓、云希、云扬、晓伊、云健、晓辰、晓涵、晓梦、晓墨、晓秋、晓柔、晓睿、晓双、晓萱、晓颜、晓悠、晓甄、云枫、云皓、云杰、云夏、云野、云泽、晓晓·方言 |
+| 多语言 | 8 | 晓晓、晓辰、晓双、晓悠、晓雨、云帆、云霄、云逸 |
+| Neural-HD | 2 | 晓辰、云帆 |
+| Neural-HD-Omni | 3 | 晓月、云琪、Maroonallegro |
+| Neural-HD-Flash | 15 | 晓晓、晓晓2、晓辰、晓伊、晓雨、晓涵、晓可、晓双、晓悠、云希、云逸、云霄、云汉、云夏、云野 |
+| MAI-Voice-2 | 8 | Bo、Bo·Flash、Mei、Mei·Flash、Wei、Wei·Flash、Lan、Lan·Flash |
+| 多人语音 | 2 | 英文对话、中文对话 |
+
+#### 中文 · 方言（`zh-CN`）
+
+| 分组 | 数量 | 语音 |
+| --- | --- | --- |
+| 地方方言 | 7 | 云琪·广西、云登·河南、晓北·辽宁、云彪·辽宁、晓妮·陕西、云翔·山东、云希·四川 |
+| 吴语 | 2 | 晓彤、云哲 |
+| 台湾国语 | 3 | 晓臻、云杰、晓雨 |
+
+</details>
+
+<details><summary><b>粤语 yue（1 个口音）</b></summary>
+
+#### 粤语 · 粤语（`zh-HK`）
+
+| 分组 | 数量 | 语音 |
+| --- | --- | --- |
+| 粤语·繁体（香港） | 3 | 晓曼、晓佳、云龙 |
+| 粤语·简体（广东） | 2 | 晓敏、云松 |
+
+</details>
+
+<details><summary><b>English en（14 个口音）</b></summary>
+
+#### English · US（`en-US`）
+
+| 分组 | 数量 | 语音 |
+| --- | --- | --- |
+| 标准 | 31 | Aria、Jenny、Guy、Davis、Jane、Jason、Sara、Tony、Nancy、Ava、Kai、Luna、Andrew、Emma、Brian、Amber、Ana、Ashley、Brandon、Christopher、Cora、Elizabeth、Eric、Jacob、Michelle、Monica、Roger、Steffan、AIGenerate1、AIGenerate2、Blue |
+| 多语言 | 29 | Andrew、Phoebe、Davis、Derek、Nancy、Serena、Ava、Amanda、Adam、Emma、Brian、Cora、Christopher、Brandon、Dustin、Evelyn、Jenny、Lewis、Lola、Ryan、Samuel、Steffan、Alloy Turbo、Echo Turbo、Fable Turbo、Onyx Turbo、Nova Turbo、Shimmer Turbo、Ash Turbo |
+| Neural-HD | 30 | Ava、Andrew、Adam、Alloy、Aria、Bree、Brian、Davis、Emma、Emma2、Jane、Jenny、Nova、Phoebe、Serena、Steffan、Andrew2、Andrew3、Ava3、Evelyn、Jimmie、Juno、Mila、Tessa、Tiana、Tyler、Vance、Andrew-Preview、Ava-Preview、Serena-Preview |
+| Neural-HD-Omni | 10 | Andrew、Caleb、Dana、Lewis、Phoebe、Ava、Emma、Blushzephyr、Goldenspark、Jelly |
+| Neural-HD-Flash | 3 | Jimmie、Tiana、Tyler |
+| MAI-Voice-2 | 12 | Ethan、Ethan·Flash、Olivia、Olivia·Flash、Harper、Harper·Flash、Grant、Grant·Flash、Iris、Iris·Flash、Jasper、Jasper·Flash |
+| 多人语音 | 1 | 英文对话 |
+
+#### English · UK（`en-GB`）
+
+| 分组 | 数量 | 语音 |
+| --- | --- | --- |
+| 标准 | 14 | Sonia、Ryan、Libby、Abbi、Bella、Hollie、Maisie、Olivia、Alfie、Elliot、Ethan、Noah、Oliver、Thomas |
+| 多语言 | 2 | Ada、Ollie |
+| Neural-HD | 4 | Ada、Sonia、Ollie、Ryan |
+
+#### English · AU（`en-AU`）
+
+| 分组 | 数量 | 语音 |
+| --- | --- | --- |
+| 标准 | 14 | Natasha、Annette、Carly、Elsie、Freya、Joanne、Kim、Tina、William、Darren、Duncan、Ken、Neil、Tim |
+| 多语言 | 1 | William |
+| Neural-HD-Omni | 2 | Cyanspark、Siennatopaz |
+| MAI-Voice-2 | 2 | Isla、Isla·Flash |
+
+#### English · IN（`en-IN`）
+
+| 分组 | 数量 | 语音 |
+| --- | --- | --- |
+| 标准 | 14 | Neerja、Aarti、Aashi、Ananya、Kavya、Aarav、Arjun、Kunal、Prabhat、Rehaan、Aarti·Indic、Neerja·Indic、Arjun·Indic、Prabhat·Indic |
+| Neural-HD | 6 | Diya、Meera、Aarti、Neerja、Lavanya、Arjun |
+
+#### English · CA（`en-CA`）
+
+| 分组 | 数量 | 语音 |
+| --- | --- | --- |
+| 标准 | 2 | Clara、Liam |
+
+#### English · IE（`en-IE`）
+
+| 分组 | 数量 | 语音 |
+| --- | --- | --- |
+| 标准 | 2 | Emily、Connor |
+
+#### English · NZ（`en-NZ`）
+
+| 分组 | 数量 | 语音 |
+| --- | --- | --- |
+| 标准 | 2 | Molly、Mitchell |
+
+#### English · SG（`en-SG`）
+
+| 分组 | 数量 | 语音 |
+| --- | --- | --- |
+| 标准 | 2 | Luna、Wayne |
+
+#### English · HK（`en-HK`）
+
+| 分组 | 数量 | 语音 |
+| --- | --- | --- |
+| 标准 | 2 | Yan、Sam |
+
+#### English · ZA（`en-ZA`）
+
+| 分组 | 数量 | 语音 |
+| --- | --- | --- |
+| 标准 | 2 | Leah、Luke |
+
+#### English · PH（`en-PH`）
+
+| 分组 | 数量 | 语音 |
+| --- | --- | --- |
+| 标准 | 2 | Rosa、James |
+
+#### English · KE（`en-KE`）
+
+| 分组 | 数量 | 语音 |
+| --- | --- | --- |
+| 标准 | 2 | Asilia、Chilemba |
+
+#### English · NG（`en-NG`）
+
+| 分组 | 数量 | 语音 |
+| --- | --- | --- |
+| 标准 | 2 | Ezinne、Abeo |
+
+#### English · TZ（`en-TZ`）
+
+| 分组 | 数量 | 语音 |
+| --- | --- | --- |
+| 标准 | 2 | Imani、Elimu |
+
+</details>
+
+<details><summary><b>日本語 ja（1 个口音）</b></summary>
+
+#### 日本語 · 日本語（`ja-JP`）
+
+| 分组 | 数量 | 语音 |
+| --- | --- | --- |
+| 标准 | 7 | Nanami、Keita、Aoi、Daichi、Mayu、Naoki、Shiori |
+| 多语言 | 1 | Masaru |
+| Neural-HD | 2 | Nanami、Masaru |
+| MAI-Voice-2 Flash | 2 | Haruto、Sakura |
+| 多人语音 | 1 | 英文对话 |
+
+</details>
+
+<details><summary><b>한국어 ko（1 个口音）</b></summary>
+
+#### 한국어 · 한국어（`ko-KR`）
+
+| 分组 | 数量 | 语音 |
+| --- | --- | --- |
+| 标准 | 9 | InJoon、SunHi、BongJin、GookMin、Hyunsu、JiMin、SeoHyeon、SoonBok、YuJin |
+| 多语言 | 1 | Hyunsu |
+| Neural-HD | 2 | SunHi、Hyunsu |
+| MAI-Voice-2 | 4 | Haena、Haena·Flash、Junho、Junho·Flash |
+| 多人语音 | 1 | 英文对话 |
+
+</details>
+
+<details><summary><b>Français fr（1 个口音）</b></summary>
+
+#### Français · Français（`fr-FR`）
+
+| 分组 | 数量 | 语音 |
+| --- | --- | --- |
+| 标准 | 14 | Denise、Henri、Alain、Brigitte、Celeste、Claude、Coralie、Eloise、Jacqueline、Jerome、Josephine、Maurice、Yves、Yvette |
+| 多语言 | 3 | Vivienne、Remy、Lucien |
+| Neural-HD | 2 | Vivienne、Remy |
+| MAI-Voice-2 | 4 | Marc、Marc·Flash、Soleil、Soleil·Flash |
+| 多人语音 | 2 | 法语对话、英文对话 |
+
+</details>
+
+<details><summary><b>Español es（1 个口音）</b></summary>
+
+#### Español · Español（`es-ES`）
+
+| 分组 | 数量 | 语音 |
+| --- | --- | --- |
+| 标准 | 16 | Alvaro、Elvira、Abril、Arnau、Dario、Elias、Estrella、Irene、Laia、Lia、Nil、Saul、Teo、Triana、Vera、Ximena |
+| 多语言 | 4 | Arabella、Isidora、Tristan、Ximena |
+| Neural-HD | 2 | Ximena、Tristan |
+| MAI-Voice-2 | 2 | Marta、Marta·Flash |
+| 多人语音 | 1 | 英文对话 |
+
+</details>
+
+<details><summary><b>Русский ru（1 个口音）</b></summary>
+
+#### Русский · Русский（`ru-RU`）
+
+| 分组 | 数量 | 语音 |
+| --- | --- | --- |
+| 标准 | 3 | Svetlana、Dmitry、Dariya |
+| MAI-Voice-2 | 4 | Lev、Lev·Flash、Masha、Masha·Flash |
+| 多人语音 | 1 | 英文对话 |
+
+</details>
+
+<details><summary><b>Deutsch de（1 个口音）</b></summary>
+
+#### Deutsch · Deutsch（`de-DE`）
+
+| 分组 | 数量 | 语音 |
+| --- | --- | --- |
+| 标准 | 15 | Conrad、Katja、Amala、Bernd、Christoph、Elke、Gisela、Kasper、Killian、Klarissa、Klaus、Louisa、Maja、Ralf、Tanja |
+| 多语言 | 2 | Seraphina、Florian |
+| Neural-HD | 2 | Seraphina、Florian |
+| MAI-Voice-2 | 4 | Klaus、Klaus·Flash、Mia、Mia·Flash |
+| 多人语音 | 1 | 英文对话 |
+
+</details>
+<!-- VOICE_STATS:END -->
+
+---
+
+## HTTP 接口
+
+三个路由：`GET /`（页面）、`POST /v1/audio/speech`（合成）、`POST /v1/audio/transcriptions`（转录，开发中），全部支持 CORS。
+
+### 合成语音
+
+```bash
+curl -X POST "https://<your-worker>.workers.dev/v1/audio/speech" \
   -H "Content-Type: application/json" \
   -d '{
-    "input": "你好，这是一个测试",
+    "input": "你好，这是一段测试文本。",
     "voice": "zh-CN-XiaoxiaoNeural",
     "speed": 1.0,
     "pitch": "0",
-    "style": "general"
+    "style": "cheerful",
+    "styledegree": 1
   }' \
   --output speech.mp3
 ```
 
-#### 语音转文字 API
+| 字段 | 默认值 | 说明 |
+| --- | --- | --- |
+| `input` | — | 待合成文本（用 `dialogue` / `segments` 时可省） |
+| `voice` | `zh-CN-XiaoxiaoNeural` | 嗓音 id |
+| `speed` | `1.0` | 语速，0–2 |
+| `pitch` | `"0"` | 音调，-50 ~ 50 |
+| `volume` | `"0"` | 音量 |
+| `style` | `""` | 风格，留空则不发送 |
+| `styledegree` | 服务端默认 | 风格强度，常用 `0.5 / 1 / 1.5 / 2` |
+| `outputFormat` | `audio-24khz-96kbitrate-mono-mp3` | Edge TTS 的输出格式标识 |
+| `segments` | — | 结构化片段（停顿 / 副语言） |
+| `dialogue` / `turns` / `speakerA` / `speakerB` / `optsA` / `optsB` | — | 多人对话用，见下 |
 
-```javascript
-// JavaScript 调用示例
-const formData = new FormData();
-formData.append('file', audioFile); // 音频文件
-formData.append('token', 'your-siliconflow-token'); // 可选，不提供则使用默认token
+成功直接返回音频字节，失败返回：
 
-const response = await fetch('https://your-worker.workers.dev/v1/audio/transcriptions', {
-    method: 'POST',
-    body: formData
-});
-
-const result = await response.json();
-console.log(result.text); // 转录结果
+```json
+{ "error": { "message": "文本内容过长", "type": "invalid_request_error", "param": "file", "code": "text_too_long" } }
 ```
+
+带上停顿与副语言，`segments` 里出现非 `text` 类型就走片段合成，芯片边界不会被切分：
+
+```json
+{
+  "voice": "en-US-Ava:DragonHDLatestNeural",
+  "segments": [
+    { "type": "text", "value": "Nice to meet you." },
+    { "type": "pause", "duration": 800 },
+    { "type": "para", "value": "laughter" },
+    { "type": "text", "value": "Let us begin." }
+  ]
+}
+```
+
+`pause` 的 `duration` 单位是毫秒。
+
+多人对话（`turns` 可直接给结构化轮次，不给 `input` 时必须有）：
+
+```json
+{
+  "dialogue": true,
+  "voice": "en-Multitalker:DragonHDLatestNeural",
+  "speakerA": "ava",
+  "speakerB": "andrew",
+  "optsA": { "speed": 1.1 },
+  "optsB": { "speed": 0.95 },
+  "input": "A: How is the new model?\nB: Faster than I expected."
+}
+```
+
+### 上传 txt 合成
+
+`Content-Type: multipart/form-data`，字段同 JSON 版，另加 `file`：
 
 ```bash
-# cURL 调用示例
-curl -X POST "https://your-worker.workers.dev/v1/audio/transcriptions" \
-  -F "file=@audio.mp3" \
-  -F "token=your-siliconflow-token"
+curl -X POST "https://<your-worker>.workers.dev/v1/audio/speech" \
+  -F "file=@script.txt" \
+  -F "voice=zh-CN-XiaoxiaoNeural" \
+  -F "speed=1.0" \
+  --output speech.mp3
 ```
 
-## 🎨 支持的语音
+按对话解析时追加 `dialogue=1`、`speakerA`、`speakerB`、`optsA`、`optsB`（后两个是 JSON 字符串）。
 
-### 女声
-- `zh-CN-XiaoxiaoNeural` - 晓晓 (温柔)
-- `zh-CN-XiaoyiNeural` - 晓伊 (甜美)
-- `zh-CN-XiaochenNeural` - 晓辰 (知性)
-- `zh-CN-XiaohanNeural` - 晓涵 (优雅)
-- `zh-CN-XiaomengNeural` - 晓梦 (梦幻)
-- `zh-CN-XiaomoNeural` - 晓墨 (文艺)
-- `zh-CN-XiaoqiuNeural` - 晓秋 (成熟)
-- `zh-CN-XiaoruiNeural` - 晓睿 (智慧)
-- `zh-CN-XiaoshuangNeural` - 晓双 (活泼)
-- `zh-CN-XiaoxuanNeural` - 晓萱 (清新)
-- `zh-CN-XiaoyanNeural` - 晓颜 (柔美)
-- `zh-CN-XiaoyouNeural` - 晓悠 (悠扬)
-- `zh-CN-XiaozhenNeural` - 晓甄 (端庄)
+### 语音转文字（开发中）
 
-### 男声
-- `zh-CN-YunxiNeural` - 云希 (清朗)
-- `zh-CN-YunyangNeural` - 云扬 (阳光)
-- `zh-CN-YunjianNeural` - 云健 (稳重)
-- `zh-CN-YunfengNeural` - 云枫 (磁性)
-- `zh-CN-YunhaoNeural` - 云皓 (豪迈)
-- `zh-CN-YunxiaNeural` - 云夏 (热情)
-- `zh-CN-YunyeNeural` - 云野 (野性)
-- `zh-CN-YunzeNeural` - 云泽 (深沉)
+路由 `POST /v1/audio/transcriptions` 先占着位，目前不转发任何请求，直接返回 501：
 
-## ⚙️ API 参数
-
-### 🗣️ 文字转语音 API 参数
-
-| 参数 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `input` | string | - | 要转换的文本内容（必填） |
-| `voice` | string | `zh-CN-XiaoxiaoNeural` | 语音选择 |
-| `speed` | number | `1.0` | 语速 (0.5-2.0) |
-| `pitch` | string | `"0"` | 音调 (-50 到 50) |
-| `style` | string | `"general"` | 语音风格 |
-| `volume` | string | `"0"` | 音量调节 |
-
-### 🎧 语音转文字 API 参数
-
-| 参数 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `file` | File | - | 音频文件（必填，支持多种格式） |
-| `token` | string | 默认内置 | 硅基流动API Token（可选） |
-
-#### 支持的音频格式
-- **文件格式**: mp3, wav, m4a, flac, aac, ogg, webm, amr, 3gp
-- **文件大小**: 最大 10MB
-- **模型**: FunAudioLLM/SenseVoiceSmall（自动使用）
-
-### 支持的语音风格
-
-- `general` - 通用风格
-- `assistant` - 智能助手
-- `chat` - 聊天对话
-- `customerservice` - 客服专业
-- `newscast` - 新闻播报
-- `affectionate` - 亲切温暖
-- `calm` - 平静舒缓
-- `cheerful` - 愉快欢乐
-- `gentle` - 温和柔美
-- `lyrical` - 抒情诗意
-- `serious` - 严肃正式
-
-## 🛠️ 技术架构
-
-### 🔧 核心技术
-- **前端**: 现代化 HTML5 + CSS3 + 原生JavaScript
-- **后端**: Cloudflare Workers（边缘计算）
-- **TTS引擎**: Microsoft Edge TTS（20+种中文语音）
-- **STT引擎**: 硅基流动 FunAudioLLM/SenseVoiceSmall
-- **国际化**: 内置8种语言支持，自动检测浏览器语言
-
-### 🎨 设计架构
-- **设计系统**: CSS变量 + 响应式布局
-- **UI框架**: 无依赖，纯原生实现
-- **交互设计**: 双向模式切换，直观的用户体验
-- **API设计**: RESTful API，兼容OpenAI格式
-
-### 🔒 安全与性能
-- **无服务器**: 基于Cloudflare Workers，全球边缘部署
-- **数据安全**: 所有处理在边缘完成，无数据存储
-- **高可用**: 全球CDN加速，99.9%可用性
-- **零配置**: 开箱即用，无需额外配置
-
-## 🎨 设计特色
-
-### 🎯 用户界面
-- **双模式设计**: 水平布局的模式切换器，消除界面空白
-- **现代化 UI**: 采用简洁的卡片式设计
-- **国际化界面**: 8种语言无缝切换，右上角语言选择器
-- **响应式布局**: 完美适配各种设备尺寸
-- **微交互**: 丰富的悬停效果和动画
-
-### 🎨 视觉体验
-- **统一风格**: 新旧功能视觉一致，无违和感
-- **智能切换**: 根据模式动态显示相关界面元素
-- **无渐变设计**: 使用纯色设计，更加专业
-- **可访问性**: 支持键盘导航和屏幕阅读器
-
-## 📱 移动端优化
-
-### 🔄 适配策略
-- **模式切换**: 移动端垂直布局，桌面端水平布局
-- **触摸友好**: 按钮尺寸针对移动端优化
-- **文件上传**: 支持拖拽和点击两种方式
-- **性能优化**: 针对移动设备的网络和性能优化
-
-### 📋 功能适配
-- **音频上传**: 移动端优化的文件选择界面
-- **结果展示**: 移动端友好的转录结果展示
-- **语言切换**: 移动端下拉菜单适配
-
-## 🔧 开发
-
-### 本地开发
-
-```bash
-# 克隆项目
-git clone <your-repo>
-
-# 安装 Wrangler CLI
-npm install -g wrangler
-
-# 本地开发
-wrangler dev
+```json
+{ "error": { "message": "语音转文字功能开发中，敬请期待", "type": "api_error", "param": null, "code": "not_implemented" } }
 ```
 
-### 项目结构
-
-```
-├── index.js          # 主要代码文件
-├── README.md         # 项目文档
-└── wrangler.toml     # Cloudflare Workers 配置
-```
-
-## 🤝 贡献
-
-欢迎提交 Issue 和 Pull Request！
-
-## 📄 许可证
-
-MIT License
-
-## 🌟 更新日志
-
-### v2.0.0 - 重大更新
-- 🎉 **新增语音转文字功能** - 集成硅基流动API，支持高精度语音识别
-- 🌍 **多语言国际化** - 支持8种语言，自动检测浏览器语言
-- 🎨 **品牌升级** - 更名为VoiceCraft，全新的AI语音处理平台
-- 🔄 **双向处理** - 智能模式切换，语音与文字无缝转换
-- 📱 **界面优化** - 水平布局的模式切换器，更好的空间利用
-- 🔧 **错误修复** - 修复文本包含特殊字符时的XML转义问题
-
-### v1.x.x - 历史版本
-- 基础的文字转语音功能
-- Microsoft Edge TTS集成
-- 响应式设计
-
-## 🙏 致谢
-
-- **Microsoft Edge TTS** - 提供高质量的语音合成服务
-- **硅基流动** - 提供先进的语音识别API
-- **Cloudflare Workers** - 提供无服务器计算平台
-- **开源社区** - 感谢所有贡献者和用户的支持
-
-## 📞 联系我们
-
-关注公众号「一只会飞的旺旺」获取更多 AI 工具和技术分享：
-
-- 🔥 最新 AI 工具推荐和使用教程
-- 🚀 前沿技术解析和实战案例  
-- 💎 独家资源和工具源码分享
-- 💬 技术问题答疑和交流社群
+功能做好之后再补上传音频的用法。
 
 ---
 
-**🎙️ VoiceCraft - 让语音处理更智能，让创意更有声音！** 
+## 限制与已知表现
 
-*从文字到语音，从语音到文字，AI驱动的完整语音处理解决方案。*
+| 项目 | 限制 |
+| --- | --- |
+| 上传 txt | ≤ 500KB、≤ 10000 字符 |
+| 上传音频（开发中） | 计划 ≤ 10MB |
+| 长文本 | 每组 ≤ 1500 字符，最多 40 组 |
+| 对话音色 | 一段对话只有 2 个槽位，第三人及之后回落到第二人的音色 |
+| 多人对话语言 | 仅英文内容稳定；中文对话请选 `en-Multitalker`，`zh-Multitalker` 的说话人指派会乱序 |
 
+- **风格**：只对英文内容听得出来，中文选了也基本没差别；服务端遇到不支持的风格会静默回落到中性。
+- **副语言**：Omni 系列各语言（含中文）可用，HD 系列在中文以外可用，Flash 系列不生效。
+- **语速 / 停顿**：对所有音色都有效；风格、强度、音调对多人对话无效。
 
+---
 
+## 目录结构
+
+```
+├── index.js        # 网页版入口：路由、SSML 构造、页面渲染
+├── data/           # 语音目录与文案（网页版与桌面版共用）
+│   ├── voices.json #   语音目录、对话音色名单与 locale
+│   └── labels.json #   风格中文名、副语言、界面文案
+├── src/
+│   └── index.html  # 整页界面
+├── desktop/        # Windows 桌面版（Tauri 2 + Rust）
+├── scripts/        # 小工具：页面自检、语音统计、文案守护
+├── wrangler.toml   # Cloudflare Workers 配置
+└── LICENSE         # MIT
+```
+
+改语音目录只改 `data/voices.json`，网页版与桌面版同时生效；改完跑一次 `node scripts/gen-voice-stats.mjs` 更新上面的清单。
+
+---
+
+## 项目来源
+
+感谢 [wangwangit/tts](https://github.com/wangwangit/tts)（MIT）最早的单文件 Worker ＋ Edge TTS 思路，上游版权署名保留在 [LICENSE](./LICENSE) 中。
+
+---
+
+## 许可证
+
+[MIT](./LICENSE)
