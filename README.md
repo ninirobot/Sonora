@@ -87,8 +87,8 @@ cd desktop
 | --- | --- |
 | 语言 | 9 |
 | 口音 | 23 |
-| 语音条目 | 386 |
-| 去重语音 id | 379 |
+| 语音条目 | 387 |
+| 去重语音 id | 380 |
 | 音色家族 | 8 |
 | 多人对话模型 | 3 |
 
@@ -99,7 +99,7 @@ cd desktop
 
 | 家族 | 数量 | 说明 |
 | --- | --- | --- |
-| 标准 | 186 | 经典 Neural 语音，风格按语音逐条列 |
+| 标准 | 187 | 经典 Neural 语音，风格按语音逐条列 |
 | 多语言 | 51 | MultilingualNeural，一副嗓子说多国语言 |
 | Neural-HD | 52 | LLM 驱动的 HD 语音，共用 62 项模型级风格表 |
 | Neural-HD-Omni | 15 | HD 的 Omni 版本，风格 61 项（不含 whispering） |
@@ -180,7 +180,7 @@ cd desktop
 
 | 分组 | 数量 | 语音 |
 | --- | --- | --- |
-| 标准 | 14 | Neerja、Aarti、Aashi、Ananya、Kavya、Aarav、Arjun、Kunal、Prabhat、Rehaan、Aarti·Indic、Neerja·Indic、Arjun·Indic、Prabhat·Indic |
+| 标准 | 15 | Neerja、Neerja·Expressive、Aarti、Aashi、Ananya、Kavya、Aarav、Arjun、Kunal、Prabhat、Rehaan、Aarti·Indic、Neerja·Indic、Arjun·Indic、Prabhat·Indic |
 | Neural-HD | 6 | Diya、Meera、Aarti、Neerja、Lavanya、Arjun |
 
 #### English · CA（`en-CA`）

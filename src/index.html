@@ -3628,7 +3628,7 @@
                 
                 audioPlayer.src = audioUrl;
                 downloadBtn.href = audioUrl;
-                downloadBtn.download = 'speech.' + audioExtension(audioFormat);
+                downloadBtn.download = 'speech-' + (voiceFileTag(voice) || 'audio') + '.' + audioExtension(audioFormat);
                 setProgress(true, 100);
                 
                 loading.style.display = 'none';
@@ -3801,7 +3801,7 @@
                 audio.src = url;
                 const downloadBtn = document.getElementById('downloadBtn');
                 downloadBtn.href = url;
-                downloadBtn.download = 'speech.' + audioExtension(audioFormat);
+                downloadBtn.download = 'speech-' + (voiceFileTag(document.getElementById('voice').value) || 'audio') + '.' + audioExtension(audioFormat);
                 document.getElementById('success').style.display = 'block';
                 audio.play();
             } catch (ignored) { }
@@ -3946,6 +3946,15 @@
             if (format.indexOf('ogg-') === 0) return 'ogg';
             if (format.indexOf('webm-') === 0) return 'webm';
             return 'mp3';
+        }
+
+        // 导出文件名带音色简称：en-US-Jenny:DragonHDLatestNeural → speech-JennyDragonHD
+        function voiceFileTag(id) {
+            return String(id || '')
+                .replace(/^[a-z]{2}-[A-Za-z]{2,}-/, '')
+                .replace('MAI-Voice-2', 'MAIV2')
+                .replace(/LatestNeural|Neural/g, '')
+                .replace(/[^A-Za-z0-9]/g, '');
         }
 
         // ===== 页内轻提示：桌面版 WebView 不弹 alert，所有校验提示统一走这里 =====

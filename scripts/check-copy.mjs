@@ -114,6 +114,12 @@ check(!!webUa, 'index.js 里找不到 EDGE_UA 常量');
 check(!!desktopUa, 'desktop/src/auth.rs 里找不到 USER_AGENT 常量');
 check(webUa === desktopUa, '网页版与桌面版的浏览器标识不一致：\n  index.js: ' + webUa + '\n  auth.rs : ' + desktopUa);
 
+// 令牌请求曾把 UA 写死成旧版本、正好躲过上面的常量比对：这里把 index.js 里
+// 所有硬编码的 Edge 版本号都抓出来，不许出现与 EDGE_UA 不同的版本
+const staleVersions = [...new Set(read('index.js').match(/Edg\/[\d.]+/g) || [])]
+    .filter(version => !String(webUa).includes(version));
+check(staleVersions.length === 0, 'index.js 里还有没跟着 EDGE_UA 走的旧 Edge 标识：' + staleVersions.join('、'));
+
 // ---------------------------------------------------------------------------
 if (problems.length) {
     console.error('文案自检未通过：');

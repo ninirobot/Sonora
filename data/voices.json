@@ -1515,6 +1515,11 @@
               "styles": "cheerful empathetic newscast"
             },
             {
+              "id": "en-IN-NeerjaExpressiveNeural",
+              "name": "Neerja·Expressive",
+              "gender": "f"
+            },
+            {
               "id": "en-IN-AartiNeural",
               "name": "Aarti",
               "gender": "f"
