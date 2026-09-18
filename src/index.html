@@ -746,7 +746,7 @@
             border: 1px solid var(--line-strong);
             border-radius: 6px;
             background: rgba(255, 255, 255, 0.75);
-            line-height: 2.05;
+            line-height: 2.25;
             font-size: 14px;
             cursor: text;
             transition: 0.16s ease;
@@ -769,51 +769,83 @@
             pointer-events: none;
         }
 
-        /* 芯片：整体不可编辑，只能整体删除 */
+        /* 芯片：整体不可编辑，只能整体删除
+           对齐要点：inline-block + vertical-align: baseline —— inline-block 的基线就是内部文字基线，
+           与正文严格同基线（用 inline-flex + middle 会让字母比正文低 1-2px）；
+           高度 28px 配 line-height 26px（扣掉上下各 1px 描边）使文字在芯片内居中 */
         .chip {
             display: inline-block;
-            margin: 0 2px;
-            padding: 1px 8px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 600;
+            height: 28px;
+            line-height: 26px;
+            margin: 0 3px;
+            padding: 0 8px;
+            border: 1px solid transparent;
+            border-radius: 6px;
+            /* 停顿 / 副语言比正文小一档且不加粗：跟 14px 的正文放一起才不抢戏
+               （基线对齐由 vertical-align: baseline 保证，与字号无关） */
+            font-size: 12.5px;
+            font-weight: 500;
             white-space: nowrap;
             user-select: none;
             cursor: default;
-            background: #e0e7ff;
-            color: #3730a3;
+            vertical-align: baseline;
         }
 
-        .chip.para {
-            background: #dcfce7;
-            color: #166534;
+        /* 停顿：只用一个紫蓝色，与副语言六色区分开 */
+        .chip.pause {
+            background: #eaf1fa;
+            color: #215d92;
+            border-color: #c6dcf0;
         }
 
-        /* 角色芯片（A: / B:）：放大加粗 + 按角色配色，一眼看出说话人切换 */
+        /* 副语言：六个标记各一色，统一「极淡底 + 深色字 + 同系描边」（照 design/01 的 chip 观感） */
+        .chip.para[data-para="laughter"] { background: #fdf0dc; color: #8a5300; border-color: #f4dcb2; }
+        .chip.para[data-para="coughing"] { background: #fdeaef; color: #a3325c; border-color: #f6c9d6; }
+        .chip.para[data-para="throat_clearing"] { background: #dcf3f1; color: #0f6a68; border-color: #b5e2df; }
+        .chip.para[data-para="breathing"] { background: #ece9fb; color: #5b3fa8; border-color: #d5cdf5; }
+        .chip.para[data-para="sighing"] { background: #eef4dd; color: #53691a; border-color: #d9e5bc; }
+        .chip.para[data-para="yawning"] { background: #f5ece3; color: #7c4a2a; border-color: #e6d2c0; }
+
+        /* 角色芯片（A: / B:）：竖长方形 + 极细同色描边，冒号必须保留（识别靠它） */
         .chip.role {
-            margin: 0 6px 0 0;
-            padding: 2px 9px;
-            border: 1px solid currentColor;
-            border-radius: 7px;
+            min-width: 25px;
+            margin: 0 3px 0 0;
+            padding: 0 6px;
             font-size: 14px;
             font-weight: 700;
-            letter-spacing: 0.01em;
         }
 
         .chip.role[data-role="a"] {
-            background: #dbeafe;
+            background: #e3edfd;
             color: #1d4ed8;
+            border-color: #bcd3fa;
         }
 
         .chip.role[data-role="b"] {
-            background: #d1fae5;
+            background: #e2f6ec;
             color: #047857;
+            border-color: #bce7d2;
         }
 
-        /* 多人语音：角色卡（说话人 + 语速同卡，A / B 标签兼任插入按钮） */
+        /* 多人语音：角色卡（说话人 + 语速同卡，A / B 徽标兼任插入按钮） */
         .dialogue-roles {
             display: grid;
             gap: 8px;
+        }
+
+        /* 「对话角色」标题行：右侧一句小字提示徽标可点 */
+        .dialogue-roles-head {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+        .dialogue-roles-head .form-label {
+            margin-bottom: 5px;
+        }
+        .roles-tip {
+            margin-left: auto;
+            font-size: 11px;
+            color: var(--text-secondary);
         }
 
         .dialogue-role {
@@ -824,9 +856,9 @@
             background: var(--background-color);
         }
 
-        /* 角色配色：A 蓝 / B 绿，竖条、标签、语速数值、工具条按钮共用同一个变量 */
-        .role-a { --role-color: #2563eb; }
-        .role-b { --role-color: #059669; }
+        /* 角色配色：A 蓝 / B 绿，竖条、徽标、选择框聚焦、语速数值共用同一套变量（与正文芯片同色） */
+        .role-a { --role-color: #1d4ed8; --role-soft: #e3edfd; --role-border: #bcd3fa; }
+        .role-b { --role-color: #047857; --role-soft: #e2f6ec; --role-border: #bce7d2; }
 
         .dialogue-role::before {
             content: '';
@@ -845,34 +877,6 @@
             gap: 8px;
         }
 
-        /* A / B 标签：既是角色标识，也是「在光标处插入标记」的按钮 */
-        .role-tag {
-            flex: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 32px;
-            height: 27px;
-            padding: 0 9px;
-            border: none;
-            border-radius: 8px;
-            background: var(--role-color);
-            color: #fff;
-            font-family: inherit;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .role-tag:hover {
-            filter: brightness(0.88);
-        }
-
-        .role-tag:active {
-            transform: scale(0.94);
-        }
-
         /* 语速标签小字 */
         .role-row-label {
             flex: none;
@@ -880,11 +884,12 @@
             color: var(--text-secondary);
         }
 
-        /* 说话人下拉：收窄并靠右，不再拉满整行 */
+        /* 说话人下拉：拉满剩余宽度，高度与徽标齐平 */
         .role-head .form-select {
-            flex: none;
-            width: 132px;
-            margin-left: auto;
+            flex: 1;
+            min-width: 0;
+            height: 30px;
+            padding: 0 8px;
         }
 
         /* 语速：标签 + 滑块 + 数值同一行，数值不再另起小字 */
@@ -911,20 +916,56 @@
             color: var(--role-color);
         }
 
-        /* 角色卡里的 A / B 静态徽标（插入按钮已移到输入框上方的工具条） */
+        /* 角色卡里的 A / B 徽标：竖长方形 25×30，本身就是「在光标处插入标记」的按钮 */
         .role-badge {
+            position: relative;
             flex: none;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-width: 32px;
-            height: 27px;
-            padding: 0 9px;
-            border-radius: 8px;
-            background: var(--role-color);
-            color: #fff;
-            font-size: 13px;
+            min-width: 25px;
+            height: 30px;
+            padding: 0 6px;
+            border: 1px solid var(--role-border);
+            border-radius: 6px;
+            background: var(--role-soft);
+            color: var(--role-color);
+            font-family: inherit;
+            font-size: 13.5px;
             font-weight: 700;
+            cursor: pointer;
+            transition: all 0.16s ease;
+        }
+
+        /* 右上角小圆 ＋：一眼看出徽标能点，点了是「插入」 */
+        .role-badge::after {
+            content: '+';
+            position: absolute;
+            right: -4px;
+            top: -4px;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            background: var(--card);
+            border: 1px solid var(--role-border);
+            color: var(--role-color);
+            font-size: 11px;
+            line-height: 11px;
+            text-align: center;
+            box-shadow: 0 1px 2px rgb(15 25 45 / 0.14);
+        }
+
+        .role-badge:hover {
+            background: var(--role-color);
+            border-color: var(--role-color);
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 0 0 4px var(--role-soft), 0 2px 6px rgb(15 25 45 / 0.16);
+        }
+
+        .role-badge:active {
+            transform: scale(0.95);
+            box-shadow: none;
         }
 
         .dialogue-file-check {
@@ -1513,20 +1554,6 @@
             font-size: 11.5px;
         }
 
-        /* 角色标记（A / B）跟着副语言块排一行 */
-        .insert-toolbar .role-insert {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .insert-toolbar .role-tag {
-            min-width: 34px;
-            height: 26px;
-            font-size: 12px;
-            padding: 0 8px;
-        }
-
         /* 窄屏：侧边栏收窄、状态栏精简。文稿与语音始终左右排，不再折成上下 */
         @media (max-width: 1024px) {
             .container {
@@ -1841,6 +1868,17 @@
             border-color: var(--line-strong);
             color: var(--text-primary);
         }
+        /* 深色下的芯片：底改半透明、字提亮，色相与浅色保持一致 */
+        html.dark .chip.pause { background: rgba(15, 108, 189, 0.24); color: #a9cdf0; border-color: rgba(15, 108, 189, 0.4); }
+        html.dark .chip.para[data-para="laughter"] { background: rgba(217, 119, 6, 0.22); color: #f0c489; border-color: rgba(217, 119, 6, 0.42); }
+        html.dark .chip.para[data-para="coughing"] { background: rgba(225, 29, 72, 0.22); color: #f4a8bf; border-color: rgba(225, 29, 72, 0.42); }
+        html.dark .chip.para[data-para="throat_clearing"] { background: rgba(13, 148, 136, 0.22); color: #8fded8; border-color: rgba(13, 148, 136, 0.42); }
+        html.dark .chip.para[data-para="breathing"] { background: rgba(124, 58, 237, 0.22); color: #c9b6fb; border-color: rgba(124, 58, 237, 0.42); }
+        html.dark .chip.para[data-para="sighing"] { background: rgba(101, 132, 40, 0.22); color: #cfe08a; border-color: rgba(101, 132, 40, 0.42); }
+        html.dark .chip.para[data-para="yawning"] { background: rgba(146, 64, 14, 0.22); color: #e3b48f; border-color: rgba(146, 64, 14, 0.42); }
+        html.dark .chip.role[data-role="a"] { background: rgba(29, 78, 216, 0.26); color: #b6cbfa; border-color: rgba(29, 78, 216, 0.45); }
+        html.dark .chip.role[data-role="b"] { background: rgba(4, 120, 87, 0.26); color: #9fdfc2; border-color: rgba(4, 120, 87, 0.45); }
+        html.dark .role-badge { background: rgba(255, 255, 255, 0.08); }
 
         /* ==================================================================
            手机（≤720px）：单列 + 整页滚动。桌面窗口最小 960px，断点永不命中
@@ -2141,17 +2179,17 @@
                                         <div class="para-btns" id="paraButtons"></div>
                                     </div>
                                 </div>
-                                <div class="role-insert" id="roleInsertGroup" style="display: none;">
-                                    <button type="button" class="role-tag role-a" id="insertRoleA" title="在光标处插入 A: 标记">A</button>
-                                    <button type="button" class="role-tag role-b" id="insertRoleB" title="在光标处插入 B: 标记">B</button>
-                                </div>
                             </div>
                             <div class="form-group" id="dialogueRolesGroup" style="display: none;">
-                                <label class="form-label">对话角色</label>
+                                <div class="dialogue-roles-head">
+                                    <label class="form-label">对话角色</label>
+                                    <span class="roles-tip">点字母插入 A: / B:</span>
+                                </div>
                                 <div class="dialogue-roles">
                                     <div class="dialogue-role role-a">
                                         <div class="role-head">
-                                            <span class="role-badge">A</span>
+                                            <button type="button" class="role-badge" id="insertRoleA"
+                                                    title="在光标处插入 A: 标记">A</button>
                                             <select class="form-select" id="speakerA"></select>
                                         </div>
                                         <div class="role-row">
@@ -2162,7 +2200,8 @@
                                     </div>
                                     <div class="dialogue-role role-b">
                                         <div class="role-head">
-                                            <span class="role-badge">B</span>
+                                            <button type="button" class="role-badge" id="insertRoleB"
+                                                    title="在光标处插入 B: 标记">B</button>
                                             <select class="form-select" id="speakerB"></select>
                                         </div>
                                         <div class="role-row">
@@ -3341,7 +3380,7 @@
             const check = document.getElementById('fileAsDialogue');
             const show = currentInputMethod === 'dialogue'
                 || (currentInputMethod === 'file' && !!(check && check.checked));
-            for (const id of ['dialogueRolesGroup', 'roleInsertGroup']) {
+            for (const id of ['dialogueRolesGroup']) {
                 const el = document.getElementById(id);
                 if (el) el.style.display = show ? '' : 'none';
             }
@@ -3349,11 +3388,17 @@
 
         // 说话人下拉：option 的 value 用接口要求的小写 id，显示用规范名（Ada / 晓晓 …）
         // 能沿用原来的选择就沿用，否则回落到 fallbackIndex 指定的那个
+        // 说话人下拉的显示名：补上性别（Ada（女声）），与普通音色下拉同一口径
+        function speakerLabel(s) {
+            const gender = GENDER_TEXT[s.gender] || '';
+            return gender ? s.name + '（' + gender + '）' : s.name;
+        }
+
         function fillSpeakers(id, speakers, fallbackIndex) {
             const sel = document.getElementById(id);
             const prev = sel.value;
             sel.innerHTML = '';
-            speakers.forEach(s => addOption(sel, s.id, s.name, false));
+            speakers.forEach(s => addOption(sel, s.id, speakerLabel(s), false));
             const keep = speakers.some(s => s.id === prev);
             sel.value = keep ? prev : speakers[Math.min(fallbackIndex, speakers.length - 1)].id;
         }
@@ -3371,9 +3416,13 @@
                 speakers = MULTITALKER_SPEAKERS[fallback] || [];
             }
             if (speakers.length) {
-                // 默认取前两个（一女一男更符合对话习惯）
+                // A 取第一个；B 尽量取性别不同的那个 —— 一女一男更符合对话习惯
+                // （早期直接取前两个，en 的 Ada + Ava 两个都是女声，与这里想表达的不符）
+                const firstGender = speakers[0].gender;
+                let bIndex = speakers.findIndex((s, i) => i > 0 && s.gender && s.gender !== firstGender);
+                if (bIndex < 0) bIndex = Math.min(1, speakers.length - 1);
                 fillSpeakers('speakerA', speakers, 0);
-                fillSpeakers('speakerB', speakers, 1);
+                fillSpeakers('speakerB', speakers, bIndex);
             }
             syncRoleValues();
         }

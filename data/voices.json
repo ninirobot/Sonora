@@ -2708,55 +2708,67 @@
     "en-Multitalker:DragonHDLatestNeural": [
       {
         "id": "ada",
-        "name": "Ada"
+        "name": "Ada",
+        "gender": "f"
       },
       {
         "id": "ava",
-        "name": "Ava"
+        "name": "Ava",
+        "gender": "f"
       },
       {
         "id": "emma",
-        "name": "Emma"
+        "name": "Emma",
+        "gender": "f"
       },
       {
         "id": "jane",
-        "name": "Jane"
+        "name": "Jane",
+        "gender": "f"
       },
       {
         "id": "andrew",
-        "name": "Andrew"
+        "name": "Andrew",
+        "gender": "m"
       },
       {
         "id": "brian",
-        "name": "Brian"
+        "name": "Brian",
+        "gender": "m"
       },
       {
         "id": "davis",
-        "name": "Davis"
+        "name": "Davis",
+        "gender": "m"
       },
       {
         "id": "steffan",
-        "name": "Steffan"
+        "name": "Steffan",
+        "gender": "m"
       }
     ],
     "fr-Multitalker:DragonHDLatestNeural": [
       {
         "id": "vivienne",
-        "name": "Vivienne"
+        "name": "Vivienne",
+        "gender": "f"
       },
       {
         "id": "remy",
-        "name": "Remy"
+        "name": "Remy",
+        "gender": "m"
       }
     ],
     "zh-Multitalker:DragonHDLatestNeural": [
       {
         "id": "xiaoxiao",
-        "name": "晓晓"
+        "name": "晓晓",
+        "gender": "f"
       },
       {
         "id": "yunxiao",
-        "name": "云霄"
+        "name": "云霄",
+        "gender": "m"
       }
     ]
   },
