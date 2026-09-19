@@ -1,6 +1,9 @@
 # 项目记忆 / 编辑会话数据
 .codebuddy/
 
+# Kilo 配置与计划文件
+.kilo/
+
 # Cloudflare Wrangler 本地缓存与构建产物
 .wrangler/
 .dev.vars
