@@ -1014,9 +1014,10 @@
             background: linear-gradient(180deg, #1277cf, #0f6cbd);
             color: #fff;
             border: 0;
-            padding: 11px;
+            /* 生成与导出两个按钮同尺寸：9px / 13px（导出按钮原来就是这档） */
+            padding: 9px;
             font: inherit;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             border-radius: 6px;
             cursor: pointer;
@@ -1663,9 +1664,14 @@
             background: rgba(15, 108, 189, 0.1);
         }
 
-        /* 结果区：收进右栏底部，只占一条，不再抢占编辑区 */
+        /* 结果区：收进右栏底部，只占一条，不再抢占编辑区
+           上面那条老规则给了 24px 内边距 + 边框，这里必须显式清掉，否则播放器、
+           进度条和历史卡片都被挤窄 */
         .result-container {
             margin-top: 10px;
+            padding: 0;
+            border: 0;
+            background: none;
         }
         /* 原生 audio 只作音源，界面由 .player 自绘 */
         .audio-player {
@@ -1716,11 +1722,9 @@
             font-variant-numeric: tabular-nums;
         }
 
-        /* 导出音频：与「生成语音」同风格，只是它其实是下载链接 */
+        /* 导出音频：与「生成语音」同风格同尺寸，只是它其实是下载链接 */
         #success .btn-primary {
             margin-top: 8px;
-            padding: 9px;
-            font-size: 13px;
             text-decoration: none;
         }
 
@@ -1756,10 +1760,11 @@
             font-size: 12px;
         }
 
-        /* 生成进度条 */
+        /* 生成进度条：上下间距都对齐结果区的 10px，条本身才落在两个按钮中间
+           （只写 margin-top 的话，下方会与 #result 的 margin-top 合并成 10px，条就偏上了） */
         .progress {
             height: 4px;
-            margin-top: 8px;
+            margin: 10px 0;
             border-radius: 3px;
             background: rgba(0, 0, 0, 0.08);
             overflow: hidden;
@@ -1776,6 +1781,59 @@
             background: linear-gradient(90deg, #0f6cbd, #39b0f5);
             transition: width 0.12s linear;
         }
+        /* 不确定态：后端一次返回整段音频，拿不到分块进度，用滑动条代替假的百分比 */
+        .progress.indeterminate i {
+            width: 34%;
+            transition: none;
+            animation: progressSlide 1.1s ease-in-out infinite;
+        }
+        @keyframes progressSlide {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(294%); }
+        }
+
+        /* 音色区：标题行图标组 + 按需展开的搜索框 */
+        .voice-head { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
+        .voice-head h3 { margin: 0 auto 0 0; }
+        .tts-settings .voice-head .icon-btn.on { border-color: var(--accent); color: var(--accent); background: rgba(15, 108, 189, 0.1); }
+        .tts-settings .voice-head .icon-btn.playing { border-color: var(--accent); background: var(--accent); color: #fff; }
+        /* 收藏星：跟 emoji 同系的金黄 */
+        .tts-settings .voice-head .icon-btn.starred { border-color: #f5b301; color: #f5b301; }
+        .voice-head .icon-btn.starred svg path { fill: currentColor; }
+        .voice-head .icon-btn .ico-stop { display: none; }
+        .voice-head .icon-btn.playing .ico-play { display: none; }
+        .voice-head .icon-btn.playing .ico-stop { display: block; }
+        .voice-search { position: relative; display: flex; align-items: center; margin-bottom: 5px; }
+        .voice-search > svg { position: absolute; left: 8px; color: var(--text-secondary); pointer-events: none; }
+        .voice-search input { width: 100%; height: 32px; padding: 0 28px 0 25px; border: 1px solid var(--line-strong); border-radius: 6px; font: inherit; font-size: 12.5px; color: var(--text-primary); background: var(--card); transition: 0.16s ease; }
+        .voice-search input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgb(15 108 189 / 0.16); }
+        .voice-search-clear { position: absolute; right: 6px; width: 17px; height: 17px; display: flex; align-items: center; justify-content: center; padding: 0; border: 0; border-radius: 50%; background: rgba(0, 0, 0, 0.08); color: var(--text-secondary); font: inherit; font-size: 11px; line-height: 1; cursor: pointer; }
+        html.dark .voice-search-clear { background: rgba(255, 255, 255, 0.14); }
+        .voice-empty { padding: 9px 10px; border: 1px dashed var(--line-strong); border-radius: 6px; font-size: 12px; color: var(--text-secondary); }
+        /* 多人语音：说话人下拉右侧的试听按钮，与下拉同高 */
+        .role-head .role-audition { flex: none; width: 28px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--card); color: var(--text-secondary); cursor: pointer; transition: 0.16s ease; }
+        .role-head .role-audition:hover { border-color: var(--accent); color: var(--accent); }
+        .role-head .role-audition.playing { border-color: var(--accent); background: var(--accent); color: #fff; }
+        .role-head .role-audition .ico-stop { display: none; }
+        .role-head .role-audition.playing .ico-play { display: none; }
+        .role-head .role-audition.playing .ico-stop { display: block; }
+
+        /* 生成中：主按钮原地变「停止」，用 inset 阴影当边框以免高度跳动 */
+        .btn-primary.stopping { background: var(--card); color: var(--text-secondary); box-shadow: inset 0 0 0 1px var(--line-strong); }
+        .retry-btn { display: block; width: 100%; margin-top: 8px; padding: 8px; font: inherit; font-size: 13px; font-weight: 600; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--card); color: var(--text-primary); cursor: pointer; transition: 0.16s ease; }
+        .retry-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* 最近生成：横排小卡，最新那条高亮 */
+        .history { margin-top: 10px; }
+        .history-cards { display: flex; gap: 6px; }
+        .history-card { flex: 1; min-width: 0; padding: 7px 8px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--card); cursor: pointer; transition: 0.16s ease; }
+        .history-card:hover { border-color: var(--accent); }
+        .history-card.on { border-color: var(--accent); background: rgba(15, 108, 189, 0.08); }
+        .history-card .hc-name { display: block; font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .history-card .hc-time { display: block; font-size: 11px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+        .history-card .hc-actions { display: flex; gap: 4px; margin-top: 6px; }
+        .history-card .hc-btn { flex: 1; height: 24px; display: flex; align-items: center; justify-content: center; padding: 0; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--card); color: var(--text-secondary); cursor: pointer; transition: 0.16s ease; }
+        .history-card .hc-btn:hover { border-color: var(--accent); color: var(--accent); }
 
         /* 编辑区右键菜单 */
         #ctx {
@@ -1984,7 +2042,8 @@
             .form-input,
             .form-select,
             .form-textarea,
-            .rich-editor {
+            .rich-editor,
+            .voice-search input {
                 font-size: 16px;
             }
             .btn-primary {
@@ -2167,8 +2226,29 @@
                     <!-- 右栏：控制台 -->
                     <div class="tts-settings">
                         <div class="controls-grid">
-                            <h3>语音</h3>
+                            <div class="voice-head">
+                                <h3>语音</h3>
+                                <button type="button" class="icon-btn" id="voiceSearchBtn"
+                                        title="搜索语音">
+                                    <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><circle cx="7" cy="7" r="4.4" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M10.4 10.4 L14 14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                                </button>
+                                <button type="button" class="icon-btn" id="auditionBtn"
+                                        title="试听这副嗓子">
+                                    <svg class="ico-play" viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M3 6h2.2L8.5 3.4v9.2L5.2 10H3z" fill="currentColor"/><path d="M10.6 5.6a3.2 3.2 0 0 1 0 4.8" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+                                    <svg class="ico-stop" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><rect x="4.5" y="4.5" width="7" height="7" rx="1.2" fill="currentColor"/></svg>
+                                </button>
+                                <button type="button" class="icon-btn" id="starBtn"
+                                        title="收藏这副嗓子">
+                                    <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M8 2.4l1.8 3.6 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4L2.2 6.6l4-.6z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+                                </button>
+                            </div>
+                            <label class="voice-search" id="voiceSearchWrap" style="display: none;">
+                                <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><circle cx="7" cy="7" r="4.4" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M10.4 10.4 L14 14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                                <input type="text" id="voiceSearch" placeholder="搜索语音" autocomplete="off">
+                                <button type="button" class="voice-search-clear" id="voiceSearchClear" title="清除">×</button>
+                            </label>
                             <select class="form-select" id="voice"></select>
+                            <div class="voice-empty" id="voiceEmpty" style="display: none;">没有匹配的语音，换个名字或点 × 清除</div>
 
                             <!-- 副语言插入区：标题与「语音 / 参数」同级；说明与标记按钮同属一组 -->
                             <div class="insert-toolbar" id="insertToolbar">
@@ -2191,6 +2271,11 @@
                                             <button type="button" class="role-badge" id="insertRoleA"
                                                     title="在光标处插入 A: 标记">A</button>
                                             <select class="form-select" id="speakerA"></select>
+                                            <button type="button" class="role-audition" id="auditionRoleA"
+                                                    title="试听这个说话人">
+                                                <svg class="ico-play" viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M3 6h2.2L8.5 3.4v9.2L5.2 10H3z" fill="currentColor"/><path d="M10.6 5.6a3.2 3.2 0 0 1 0 4.8" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+                                                <svg class="ico-stop" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><rect x="4.5" y="4.5" width="7" height="7" rx="1.2" fill="currentColor"/></svg>
+                                            </button>
                                         </div>
                                         <div class="role-row">
                                             <span class="role-row-label">语速</span>
@@ -2203,6 +2288,11 @@
                                             <button type="button" class="role-badge" id="insertRoleB"
                                                     title="在光标处插入 B: 标记">B</button>
                                             <select class="form-select" id="speakerB"></select>
+                                            <button type="button" class="role-audition" id="auditionRoleB"
+                                                    title="试听这个说话人">
+                                                <svg class="ico-play" viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M3 6h2.2L8.5 3.4v9.2L5.2 10H3z" fill="currentColor"/><path d="M10.6 5.6a3.2 3.2 0 0 1 0 4.8" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+                                                <svg class="ico-stop" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><rect x="4.5" y="4.5" width="7" height="7" rx="1.2" fill="currentColor"/></svg>
+                                            </button>
                                         </div>
                                         <div class="role-row">
                                             <span class="role-row-label">语速</span>
@@ -2243,6 +2333,12 @@
                                        min="-50" max="50" step="1" value="0">
                                 <span class="val" id="pitchValue"></span>
                             </div>
+                            <div class="row" id="volumeGroup">
+                                <span class="row-label">音量</span>
+                                <input type="range" class="form-range" id="volume"
+                                       min="-100" max="100" step="5" value="0">
+                                <span class="val" id="volumeValue"></span>
+                            </div>
                         </div>
                     
                         <button type="submit" class="btn-primary" id="generateBtn">
@@ -2266,8 +2362,14 @@
                                 <a id="downloadBtn" class="btn-primary" download="speech.mp3">
                                     <span>导出音频</span>
                                 </a>
+                                <div class="history" id="history" style="display: none;">
+                                    <div class="history-cards" id="historyCards"></div>
+                                </div>
                             </div>
-                            <div id="error" class="error-message" style="display: none;"></div>
+                            <div id="error" class="error-message" style="display: none;">
+                                <span id="errorText"></span>
+                                <button type="button" class="retry-btn" id="retryBtn">重试</button>
+                            </div>
                         </div>
                     </div>
             </form>
@@ -2836,22 +2938,239 @@
                 ? multitalkerGroups(lang)
                 : lang.groups.filter(g => g.family !== 'multitalker');
             const select = document.getElementById('voice');
+            const previous = select.value;
             select.innerHTML = '';
+            let matched = 0;
             for (const group of groups) {
                 const optGroup = document.createElement('optgroup');
                 optGroup.label = group.label;
                 const accent = group.accent || lang.accent || '';
+                let hits = 0;
                 for (const voice of group.voices) {
+                    if (!voiceMatches(voice, group.label)) continue;
+                    hits++;
                     const genderText = GENDER_TEXT[voice.gender] || '';
                     const tagText = voice.tag ? '·' + voice.tag : '';
                     const accentText = accent ? '·' + accent : '';
                     const label = voice.name + '（' + genderText + tagText + accentText + '）';
-                    addOption(optGroup, voice.id, label, false);
+                    addOption(optGroup, voice.id, isStarred(voice.id) ? STAR_MARK + ' ' + label : label, false);
                 }
-                select.appendChild(optGroup);
+                // 整组都没命中就别挂上去，否则下拉里会留下空的分组标题
+                if (hits) select.appendChild(optGroup);
+                matched += hits;
+            }
+            // 有音色但一条都没匹配上：下拉收起，改显示一句提示
+            const empty = matched === 0 && groups.length > 0;
+            select.style.display = empty ? 'none' : '';
+            document.getElementById('voiceEmpty').style.display = empty ? 'block' : 'none';
+            // 过滤后尽量保住原来选中的那副嗓子
+            if (previous && Array.prototype.some.call(select.options, o => o.value === previous)) {
+                select.value = previous;
             }
             renderStyles(select.value);
             renderDialogueRoles(select.value);
+            syncStarButton();
+        }
+
+        // ===== 音色区：搜索 / 试听 / 收藏 =====
+        const STAR_MARK = '⭐';
+        const STARS_KEY = 'sonora-starred';
+        const PREFS_KEY = 'sonora-prefs';
+        const DRAFT_KEY = 'sonora-draft';
+        const HISTORY_LIMIT = 3;
+
+        let voiceQuery = '';
+        let starredIds = [];
+        try {
+            const saved = JSON.parse(localStorage.getItem(STARS_KEY) || '[]');
+            if (Array.isArray(saved)) starredIds = saved.filter(id => typeof id === 'string');
+        } catch (ignored) { }
+
+        function isStarred(voiceId) {
+            return starredIds.indexOf(voiceId) >= 0;
+        }
+
+        function toggleStar(voiceId) {
+            starredIds = isStarred(voiceId)
+                ? starredIds.filter(id => id !== voiceId)
+                : starredIds.concat([voiceId]);
+            try { localStorage.setItem(STARS_KEY, JSON.stringify(starredIds)); } catch (ignored) { }
+        }
+
+        // 星跟着当前选中的音色走：换音色就重新判断，不用手动取消
+        function syncStarButton() {
+            const btn = document.getElementById('starBtn');
+            const on = isStarred(document.getElementById('voice').value);
+            btn.classList.toggle('starred', on);
+            btn.title = on ? '取消收藏' : '收藏这副嗓子';
+        }
+
+        // 名字 / id / 分组名任一命中即算匹配
+        function voiceMatches(voice, groupLabel) {
+            const key = voiceQuery.trim().toLowerCase();
+            if (!key) return true;
+            return String(voice.name).toLowerCase().indexOf(key) >= 0
+                || String(voice.id).toLowerCase().indexOf(key) >= 0
+                || String(groupLabel).toLowerCase().indexOf(key) >= 0;
+        }
+
+        // 试听：每种语言两句，每次随机挑一句，免得反复听到同一句
+        const AUDITION_TEXT = {
+            zh: [
+                '你好！很高兴认识你，希望你喜欢这个声音。',
+                '先试试这句。听清楚了吗？如果合适，我们就开始吧。'
+            ],
+            yue: [
+                '你好！好高興認識你，希望你鍾意呢把聲。',
+                '試下呢句先。聽得清楚嗎？啱嘅話，我哋就開始啦。'
+            ],
+            en: [
+                'Hello! Nice to meet you. I hope you like this voice.',
+                'Let us try this one. Can you hear me clearly? If it works, we can start.'
+            ],
+            ja: [
+                'こんにちは！はじめまして、この声を気に入ってもらえるとうれしいです。',
+                'まずこの文で試してみましょう。はっきり聞こえますか？よければ始めましょう。'
+            ],
+            ko: [
+                '안녕하세요! 만나서 반갑습니다. 이 목소리가 마음에 드시면 좋겠어요.',
+                '이 문장으로 먼저 해 볼게요. 잘 들리시나요? 괜찮으면 시작할게요.'
+            ],
+            fr: [
+                'Bonjour ! Ravi de vous rencontrer. Cette voix devrait vous plaire.',
+                'Essayons cette phrase. Vous entendez bien ? Si cela vous convient, on commence.'
+            ],
+            es: [
+                '¡Hola! Encantado de conocerte. Espero que te guste esta voz.',
+                'Probemos con esta frase. ¿Me escuchas bien? Si te parece bien, empezamos.'
+            ],
+            de: [
+                'Hallo! Schön, dich kennenzulernen. Ich hoffe, diese Stimme gefällt dir.',
+                'Probieren wir diesen Satz. Hörst du mich klar? Wenn es passt, fangen wir an.'
+            ],
+            ru: [
+                'Здравствуйте! Рад познакомиться. Надеюсь, этот голос вам понравится.',
+                'Попробуем эту фразу. Вам хорошо слышно? Если подходит, начнём.'
+            ]
+        };
+
+        function auditionText() {
+            const lang = (VOICE_DATA.find(l => l.tab === currentLangTab) || VOICE_DATA[0]).lang;
+            const lines = AUDITION_TEXT[lang] || AUDITION_TEXT[String(lang).split('-')[0]] || AUDITION_TEXT.en;
+            return lines[Math.floor(Math.random() * lines.length)];
+        }
+
+        let audition = null;
+        let auditionBtn = null;
+
+        function stopAudition() {
+            if (auditionBtn) auditionBtn.classList.remove('playing');
+            auditionBtn = null;
+            const current = audition;
+            audition = null;
+            if (!current) return;
+            current.controller.abort();
+            if (current.audio) {
+                current.audio.pause();
+                URL.revokeObjectURL(current.audio.src);
+            }
+        }
+
+        // roleKey 为空 = 单人音色；'a' / 'b' = 多人语音里的某个说话人
+        async function toggleAudition(roleKey, btn) {
+            if (audition) {
+                stopAudition();
+                return;
+            }
+            const controller = new AbortController();
+            audition = { controller: controller, audio: null };
+            auditionBtn = btn;
+            btn.classList.add('playing');
+            try {
+                // 多人语音必须按轮次合成，直接丢一段纯文本给它是不对的
+                const payload = roleKey
+                    ? {
+                        dialogue: true,
+                        turns: [{ key: roleKey, segments: [{ type: 'text', value: auditionText() }] }],
+                        voice: document.getElementById('voice').value,
+                        speakerA: document.getElementById('speakerA').value,
+                        speakerB: document.getElementById('speakerB').value,
+                        outputFormat: audioFormat
+                    }
+                    : {
+                        input: auditionText(),
+                        voice: document.getElementById('voice').value,
+                        speed: 1,
+                        pitch: '0',
+                        style: '',
+                        outputFormat: audioFormat
+                    };
+                const response = await fetch('/v1/audio/speech', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    signal: controller.signal,
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) throw new Error('试听失败');
+                const audio = new Audio(URL.createObjectURL(await audioBlobOf(response)));
+                if (!audition) {
+                    URL.revokeObjectURL(audio.src);
+                    return;
+                }
+                audition.audio = audio;
+                audio.onended = stopAudition;
+                await audio.play();
+            } catch (ignored) {
+                stopAudition();
+            }
+        }
+
+        // 搜索框是开关：再点一次收起并清空；× 只清空，搜索框保持展开
+        function initializeVoiceTools() {
+            const wrap = document.getElementById('voiceSearchWrap');
+            const input = document.getElementById('voiceSearch');
+            const btn = document.getElementById('voiceSearchBtn');
+
+            btn.addEventListener('click', () => {
+                if (wrap.style.display === 'none') {
+                    wrap.style.display = '';
+                    btn.classList.add('on');
+                    input.focus();
+                    return;
+                }
+                input.value = '';
+                voiceQuery = '';
+                wrap.style.display = 'none';
+                btn.classList.remove('on');
+                renderVoices(currentLangTab);
+            });
+            input.addEventListener('input', () => {
+                voiceQuery = input.value;
+                renderVoices(currentLangTab);
+            });
+            document.getElementById('voiceSearchClear').addEventListener('click', () => {
+                input.value = '';
+                voiceQuery = '';
+                renderVoices(currentLangTab);
+                input.focus();
+            });
+            document.getElementById('starBtn').addEventListener('click', () => {
+                const id = document.getElementById('voice').value;
+                if (!id) return;
+                toggleStar(id);
+                renderVoices(currentLangTab);
+            });
+            const mainAudition = document.getElementById('auditionBtn');
+            mainAudition.addEventListener('click', () => toggleAudition('', mainAudition));
+            // 多人语音：每个说话人一个试听，听他单独说一句
+            for (const key of ['a', 'b']) {
+                const btn = document.getElementById('auditionRole' + key.toUpperCase());
+                if (btn) btn.addEventListener('click', () => toggleAudition(key, btn));
+            }
+            document.getElementById('voice').addEventListener('change', stopAudition);
+            for (const id of ['speakerA', 'speakerB']) {
+                document.getElementById(id).addEventListener('change', stopAudition);
+            }
         }
 
         function renderStyles(voiceId) {
@@ -2909,6 +3228,15 @@
                 tierNameOf(SPEED_TIERS, speed) + ' ' + speed.toFixed(2) + 'x';
             document.getElementById('pitchValue').textContent =
                 tierNameOf(PITCH_TIERS, pitch) + ' ' + (pitch > 0 ? '+' : '') + pitch + 'Hz';
+            // 音量按百分比显示；发给后端要除以 100（Edge 收的是 -1 ~ 1）
+            const volume = parseInt(document.getElementById('volume').value, 10);
+            document.getElementById('volumeValue').textContent = (volume > 0 ? '+' : '') + volume + '%';
+        }
+
+        // 音量滑块是百分比，请求里要换成 Edge 的 -1 ~ 1
+        function currentVolume() {
+            const value = parseInt(document.getElementById('volume').value, 10);
+            return (Number.isFinite(value) ? value : 0) / 100;
         }
 
         function currentStyleDegree() {
@@ -3144,6 +3472,8 @@
         // 芯片插入目标：优先当前可见的编辑区，避免切页签后插到隐藏的文本框里
         function currentEditor() {
             if (activeEditor && activeEditor.offsetParent !== null) return activeEditor;
+            // 上传 txt 没有可编辑正文，字数统计与右键菜单据此停用
+            if (currentInputMethod === 'file') return null;
             return currentInputMethod === 'dialogue'
                 ? document.getElementById('dialogueText')
                 : document.getElementById('text');
@@ -3203,6 +3533,10 @@
             renderLangTabs();
             renderParalinguistics();
             renderAccentTabs();
+            // 上次的文稿与参数先还原，再挂交互
+            restoreDraft();
+            applyPrefs();
+            initializeVoiceTools();
             document.getElementById('voice').addEventListener('change', e => {
                 renderStyles(e.target.value);
                 // 切换语音后角色 A / B 的说话人与风格列表要跟着换
@@ -3211,7 +3545,12 @@
             document.getElementById('style').addEventListener('change', syncStyleDegree);
             document.getElementById('speed').addEventListener('input', syncSpeedPitch);
             document.getElementById('pitch').addEventListener('input', syncSpeedPitch);
+            document.getElementById('volume').addEventListener('input', syncSpeedPitch);
             syncSpeedPitch();
+            // 参数与文稿：任何改动延迟写一次本地，刷新后照原样回来
+            const form = document.getElementById('ttsForm');
+            form.addEventListener('input', saveState);
+            form.addEventListener('change', saveState);
         }
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -3233,6 +3572,8 @@
             initializeAppShell();
             initializeAudioSettings();
             initializeNotice();
+            initializeResultTools();
+            initializeShortcuts();
         });
 
         // 初始化输入方式切换（单人语音 / 多人语音 / 上传文件）
@@ -3249,7 +3590,8 @@
             };
 
             // 多人语音下只有语速与停顿生效，风格 / 强度 / 音调 / 副语言隐藏
-            const hideInDialogue = ['styleGroup', 'degreeGroup', 'speedGroup', 'pitchGroup', 'paraGroup'];
+            // 多人语音只有几个模型可挑，搜索与收藏用不上；试听挪进角色卡
+            const hideInDialogue = ['styleGroup', 'degreeGroup', 'speedGroup', 'pitchGroup', 'volumeGroup', 'paraGroup', 'voiceSearchBtn', 'starBtn', 'auditionBtn'];
 
             function activate(method) {
                 currentInputMethod = method;
@@ -3265,6 +3607,13 @@
                 }
                 // 上传文件没有可编辑的正文，插入工具条整条收起
                 document.getElementById('insertToolbar').style.display = method === 'file' ? 'none' : '';
+                // 切到多人语音顺手把搜索收起来，免得留着一个看不见的过滤条件
+                if (isDialogue) {
+                    document.getElementById('voiceSearch').value = '';
+                    voiceQuery = '';
+                    document.getElementById('voiceSearchWrap').style.display = 'none';
+                    document.getElementById('voiceSearchBtn').classList.remove('on');
+                }
                 // 对话模式要切成对话语音，普通模式要切回全部语音
                 renderAccentTabs();
                 syncDialogueRolesVisibility();
@@ -3538,6 +3887,7 @@
             const speed = document.getElementById('speed').value;
             const pitch = document.getElementById('pitch').value;
             const style = document.getElementById('style').value;
+            const volume = currentVolume();
             
             const generateBtn = document.getElementById('generateBtn');
             const resultContainer = document.getElementById('result');
@@ -3568,9 +3918,13 @@
             loading.style.display = 'block';
             success.style.display = 'none';
             error.style.display = 'none';
-            generateBtn.disabled = true;
-            generateBtn.textContent = '生成中...';
-            setProgress(true, 35);
+            // 生成中主按钮原地变「停止」，保持可点，随时能中断
+            generateBtn.disabled = false;
+            generateBtn.textContent = '停止生成';
+            generateBtn.classList.add('stopping');
+            setProgress(true);
+            currentController = new AbortController();
+            const signal = currentController.signal;
             
             try {
                 let response;
@@ -3598,6 +3952,7 @@
                         voice: voice,
                         speed: parseFloat(speed),
                         pitch: pitch,
+                        volume: volume,
                         style: style,
                         styledegree: currentStyleDegree(),
                         outputFormat: audioFormat
@@ -3609,6 +3964,7 @@
                         headers: {
                             'Content-Type': 'application/json',
                         },
+                        signal: signal,
                         body: JSON.stringify(payload)
                     });
                 } else if (currentInputMethod === 'dialogue') {
@@ -3623,6 +3979,7 @@
                         headers: {
                             'Content-Type': 'application/json',
                         },
+                        signal: signal,
                         body: JSON.stringify({
                             dialogue: true,
                             turns: turns,
@@ -3644,6 +4001,7 @@
                     formData.append('voice', voice);
                     formData.append('speed', speed);
                     formData.append('pitch', pitch);
+                    formData.append('volume', String(volume));
                     formData.append('style', style);
                     formData.append('styledegree', String(currentStyleDegree()));
                     formData.append('outputFormat', audioFormat);
@@ -3658,6 +4016,7 @@
                     
                     response = await fetch('/v1/audio/speech', {
                         method: 'POST',
+                        signal: signal,
                         body: formData
                     });
                 }
@@ -3666,7 +4025,6 @@
                     const errorData = await response.json();
                     throw new Error(errorData.error?.message || '生成失败');
                 }
-                setProgress(true, 75);
                 
                 const audioBlob = await audioBlobOf(response);
                 const audioUrl = URL.createObjectURL(audioBlob);
@@ -3678,8 +4036,13 @@
                 audioPlayer.src = audioUrl;
                 downloadBtn.href = audioUrl;
                 downloadBtn.download = 'speech-' + (voiceFileTag(voice) || 'audio') + '.' + audioExtension(audioFormat);
-                setProgress(true, 100);
-                
+                pushHistory({
+                    url: audioUrl,
+                    name: downloadBtn.download,
+                    voiceName: voiceFileTag(voice) || '语音',
+                    seconds: 0
+                });
+
                 loading.style.display = 'none';
                 success.style.display = 'block';
                 
@@ -3687,37 +4050,241 @@
                 
             } catch (err) {
                 loading.style.display = 'none';
+                // 主动中断不算失败：收起加载条就行，不弹红字
+                if (err.name === 'AbortError') return;
                 error.style.display = 'block';
-                
+
                 // 根据错误类型显示不同的提示
+                const errorText = document.getElementById('errorText');
                 if (err.message.includes('Too many subrequests')) {
-                    error.textContent = '错误: 文本过长导致请求过多，请缩短文本内容或分段处理';
+                    errorText.textContent = '错误: 文本过长导致请求过多，请缩短文本内容或分段处理';
                 } else if (err.message.includes('频率限制') || err.message.includes('429')) {
-                    error.textContent = '错误: 请求过于频繁，请稍后再试';
+                    errorText.textContent = '错误: 请求过于频繁，请稍后再试';
                 } else if (err.message.includes('分块数量') && err.message.includes('超过限制')) {
-                    error.textContent = '错误: ' + err.message;
+                    errorText.textContent = '错误: ' + err.message;
                 } else {
-                    error.textContent = '错误: ' + err.message;
+                    errorText.textContent = '错误: ' + err.message;
                 }
             } finally {
+                currentController = null;
                 generateBtn.disabled = false;
                 generateBtn.textContent = '生成语音';
-                setProgress(false, 0);
+                generateBtn.classList.remove('stopping');
+                setProgress(false);
             }
         });
 
+        // 生成中主按钮变「停止」：点它就中断，别让它再走一次 submit
+        document.getElementById('generateBtn').addEventListener('click', event => {
+            if (!currentController) return;
+            event.preventDefault();
+            event.stopPropagation();
+            currentController.abort();
+        });
+
+        // ===== 结果区：最近生成 / 导出 / 重试 =====
+        const PLAY_ICON = '<svg viewBox="0 0 16 16" width="11" height="11" aria-hidden="true"><path d="M5 3.4 L12.4 8 L5 12.6 Z" fill="currentColor"/></svg>';
+        const SAVE_ICON = '<svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M8 3v7M5 8l3 3 3-3M3.5 13h9" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>';
+
+        let currentController = null;
+        let historyItems = [];
+        let currentHistory = 0;
+
+        function pushHistory(item) {
+            historyItems.unshift(item);
+            currentHistory = 0;
+            while (historyItems.length > HISTORY_LIMIT) {
+                URL.revokeObjectURL(historyItems.pop().url);
+            }
+            renderHistory();
+            // 时长要等浏览器读到元数据才知道，读到后重画一次
+            const probe = new Audio(item.url);
+            probe.addEventListener('loadedmetadata', () => {
+                item.seconds = probe.duration;
+                renderHistory();
+            });
+        }
+
+        function renderHistory() {
+            const wrap = document.getElementById('history');
+            const box = document.getElementById('historyCards');
+            wrap.style.display = historyItems.length > 1 ? '' : 'none';
+            box.innerHTML = '';
+            historyItems.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = index === currentHistory ? 'history-card on' : 'history-card';
+                card.addEventListener('click', () => selectHistory(index));
+
+                const name = document.createElement('span');
+                name.className = 'hc-name';
+                name.textContent = item.voiceName;
+                const time = document.createElement('span');
+                time.className = 'hc-time';
+                time.textContent = clockOf(item.seconds);
+
+                const actions = document.createElement('div');
+                actions.className = 'hc-actions';
+                const play = document.createElement('button');
+                play.type = 'button';
+                play.className = 'hc-btn';
+                play.title = '播放';
+                play.innerHTML = PLAY_ICON;
+                play.addEventListener('click', event => {
+                    event.stopPropagation();
+                    selectHistory(index);
+                });
+                const save = document.createElement('button');
+                save.type = 'button';
+                save.className = 'hc-btn';
+                save.title = '导出';
+                save.innerHTML = SAVE_ICON;
+                save.addEventListener('click', event => {
+                    event.stopPropagation();
+                    saveAudio(item.url, item.name);
+                });
+                actions.appendChild(play);
+                actions.appendChild(save);
+
+                card.appendChild(name);
+                card.appendChild(time);
+                card.appendChild(actions);
+                box.appendChild(card);
+            });
+        }
+
+        // 点卡片即选中并播放：蓝框跟着鼠标点走，不固定死在最新那条
+        function selectHistory(index) {
+            if (!historyItems[index]) return;
+            currentHistory = index;
+            renderHistory();
+            playHistory(historyItems[index]);
+        }
+
+        // 换当前播放源，导出按钮也跟着指向这条
+        function playHistory(item) {
+            const audio = document.getElementById('audioPlayer');
+            const downloadBtn = document.getElementById('downloadBtn');
+            document.getElementById('success').style.display = 'block';
+            audio.src = item.url;
+            downloadBtn.href = item.url;
+            downloadBtn.download = item.name;
+            audio.play();
+        }
+
+        // 桌面版弹系统「另存为」；网页版交给浏览器下载
+        async function saveAudio(url, name) {
+            if (RUNTIME !== 'desktop') {
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = name;
+                link.click();
+                return;
+            }
+            try {
+                const blob = await (await fetch(url)).blob();
+                const response = await fetch('/__save?name=' + name, { method: 'POST', body: blob });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error?.message || '导出失败');
+                if (result.saved) showNotice('已导出到 ' + result.path);
+            } catch (error) {
+                showNotice('导出失败：' + error.message);
+            }
+        }
+
+        function initializeResultTools() {
+            document.getElementById('retryBtn').addEventListener('click', () => {
+                document.getElementById('ttsForm').requestSubmit();
+            });
+        }
+
+        // ===== 参数与草稿：记住上次的设置，刷新和重开都不丢 =====
+        let stateTimer = 0;
+
+        function saveState() {
+            clearTimeout(stateTimer);
+            stateTimer = setTimeout(() => {
+                const valueOf = id => {
+                    const el = document.getElementById(id);
+                    return el ? el.value : '';
+                };
+                try {
+                    localStorage.setItem(PREFS_KEY, JSON.stringify({
+                        voice: valueOf('voice'),
+                        speed: valueOf('speed'),
+                        pitch: valueOf('pitch'),
+                        style: valueOf('style'),
+                        degree: valueOf('styleDegree'),
+                        volume: valueOf('volume')
+                    }));
+                    localStorage.setItem(DRAFT_KEY, JSON.stringify({
+                        text: document.getElementById('text').innerHTML,
+                        dialogueText: document.getElementById('dialogueText').innerHTML
+                    }));
+                } catch (ignored) { }
+            }, 500);
+        }
+
+        // 数值类一律自己判空再转：'0' 是有效值，不能靠 || 兜底
+        function setNumeric(id, value) {
+            if (value === null || value === undefined || String(value).trim() === '') return;
+            const num = Number(value);
+            if (!Number.isFinite(num)) return;
+            document.getElementById(id).value = num;
+        }
+
+        function applyPrefs() {
+            let prefs = null;
+            try { prefs = JSON.parse(localStorage.getItem(PREFS_KEY) || 'null'); } catch (ignored) { }
+            if (!prefs) return;
+            const select = document.getElementById('voice');
+            // 目录可能已调整，记住的音色不在列表里就保持默认
+            if (prefs.voice && Array.prototype.some.call(select.options, o => o.value === prefs.voice)) {
+                select.value = prefs.voice;
+                renderStyles(prefs.voice);
+                renderDialogueRoles(prefs.voice);
+            }
+            if (prefs.style) document.getElementById('style').value = prefs.style;
+            setNumeric('styleDegree', prefs.degree);
+            setNumeric('speed', prefs.speed);
+            setNumeric('pitch', prefs.pitch);
+            setNumeric('volume', prefs.volume);
+            syncSpeedPitch();
+            syncStyleDegree();
+            syncStarButton();
+        }
+
+        // 芯片是带属性的 span，整段 innerHTML 存下来能原样还原
+        function restoreDraft() {
+            let draft = null;
+            try { draft = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); } catch (ignored) { }
+            if (!draft) return;
+            for (const id of ['text', 'dialogueText']) {
+                const el = document.getElementById(id);
+                if (el && typeof draft[id] === 'string' && draft[id]) {
+                    el.innerHTML = draft[id];
+                    refreshEditorPlaceholder(el);
+                }
+            }
+        }
+
         // ===== 进度条（照 design/01 的 .progress）=====
-        function setProgress(run, percent) {
+        function setProgress(run) {
             const bar = document.getElementById('progress');
             const fill = document.getElementById('progressFill');
-            if (bar) bar.classList.toggle('run', run);
-            if (fill) fill.style.width = percent + '%';
+            if (!bar || !fill) return;
+            bar.classList.toggle('run', run);
+            bar.classList.toggle('indeterminate', run);
+            fill.style.width = run ? '' : '0';
         }
 
         function updateCharCount() {
-            const editor = document.getElementById(currentInputMethod === 'dialogue' ? 'dialogueText' : 'text');
+            const editor = currentEditor();
             const out = document.getElementById('charCount');
-            if (!editor || !out) return;
+            if (!out) return;
+            if (!editor) {
+                out.textContent = '';
+                return;
+            }
             const chars = editor.textContent.split('').filter(ch => WS.indexOf(ch) < 0).length;
             out.textContent = chars + ' 字';
         }
@@ -3804,7 +4371,8 @@
         }
 
         function runContextAction(action) {
-            const editor = document.getElementById(currentInputMethod === 'dialogue' ? 'dialogueText' : 'text');
+            const editor = currentEditor();
+            if (!editor) return;
             editor.focus();
             if (action === 'cut') document.execCommand('cut');
             else if (action === 'copy') document.execCommand('copy');
@@ -3828,8 +4396,7 @@
 
         // 朗读选中文字：拿选中文本单独合成一次，结果复用同一个播放条
         async function speakSelection(text) {
-            const progress = document.getElementById('progress');
-            if (progress) progress.classList.add('run');
+            setProgress(true);
             try {
                 const response = await fetch('/v1/audio/speech', {
                     method: 'POST',
@@ -3854,7 +4421,7 @@
                 document.getElementById('success').style.display = 'block';
                 audio.play();
             } catch (ignored) { }
-            if (progress) progress.classList.remove('run');
+            setProgress(false);
         }
 
         // ===== 输出设置：格式 / 质量 =====
@@ -4073,12 +4640,14 @@
                 if (!btn) continue;
                 btn.addEventListener('mousedown', event => event.preventDefault());
                 btn.addEventListener('click', () => {
-                    editorOf().focus();
+                    const editor = currentEditor();
+                    if (!editor) return;
+                    editor.focus();
                     document.execCommand(command);
                 });
             }
 
-            // 弹窗只能点卡片上的按钮关：点外面与 Esc 都不关
+            // 弹窗点卡片上的按钮关，Esc 也能关（快捷键统一在 initializeShortcuts）
             document.getElementById('appModalClose').addEventListener('click', () => modal.classList.remove('show'));
 
             if (desktop) { initializeWindowControls(); initializeDesktopExport(); }
@@ -4091,15 +4660,7 @@
             downloadBtn.addEventListener('click', async event => {
                 if (!downloadBtn.href) return;
                 event.preventDefault();
-                try {
-                    const audio = await (await fetch(downloadBtn.href)).blob();
-                    const response = await fetch('/__save?name=' + downloadBtn.download, { method: 'POST', body: audio });
-                    const result = await response.json();
-                    if (!response.ok) throw new Error(result.error?.message || '导出失败');
-                    if (result.saved) showNotice('已导出到 ' + result.path);
-                } catch (error) {
-                    showNotice('导出失败：' + error.message);
-                }
+                await saveAudio(downloadBtn.href, downloadBtn.download);
             });
         }
 
@@ -4375,6 +4936,31 @@
                     setLanguage(selectedLang);
                     languageDropdown.classList.remove('show');
                 });
+            });
+        }
+
+        // 浮层收起：Esc 统一走这里，弹窗 / 右键菜单 / 语言下拉一并关掉
+        function closeOverlays() {
+            document.querySelectorAll('.app-modal.show').forEach(modal => modal.classList.remove('show'));
+            const menu = document.getElementById('ctx');
+            if (menu) menu.classList.remove('show');
+            const dropdown = document.getElementById('languageDropdown');
+            if (dropdown) dropdown.classList.remove('show');
+        }
+
+        // 全局快捷键：Ctrl/Cmd+Enter 生成，Esc 关闭当前浮层
+        function initializeShortcuts() {
+            document.addEventListener('keydown', event => {
+                if (event.key === 'Escape') {
+                    closeOverlays();
+                    return;
+                }
+                if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+                    event.preventDefault();
+                    const form = document.getElementById('ttsForm');
+                    const btn = document.getElementById('generateBtn');
+                    if (form && btn && !btn.disabled) form.requestSubmit();
+                }
             });
         }
     </script>
