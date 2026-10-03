@@ -70,6 +70,14 @@ impl AppData {
         Ok(html)
     }
 
+    /// 副语言标记名（如 laughter）：名单来自 data/labels.json，与页面共用同一份
+    pub fn is_paralinguistic(&self, tag: &str) -> bool {
+        self.labels["paralinguistics"]
+            .as_array()
+            .map(|items| items.iter().any(|item| item.as_str() == Some(tag)))
+            .unwrap_or(false)
+    }
+
     /// 语音名 → locale；目录外的语音（接口直传）按前缀兜底推断
     pub fn locale_of_voice(&self, voice_id: &str) -> String {
         if let Some(locale) = self.locales.get(voice_id) {

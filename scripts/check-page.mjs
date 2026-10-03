@@ -77,7 +77,9 @@ if (backslashLines > 0) throw new Error('内联脚本仍有 ' + backslashLines +
 // 上限：语音目录与整页前端都内联进 Worker 和 exe，涨上去没人会发现。
 // 这是「早发现」的警戒线，不是硬限制——真实天花板是 Cloudflare 脚本 1 MiB（免费版，压缩后），
 // 现在离它还很远，所以调高一点留余量是安全的。
-const LIMITS = { pageChars: 240000, bundleBytes: 460000 };
+// 2026-10-03 从 240000 / 460000 抬到 250000 / 480000：当时实测已经到 237912 / 430790，
+// 只剩 2K 余量，随便加个功能就顶线。真要再抬之前，先确认 Cloudflare 那边的 1 MiB 还没近。
+const LIMITS = { pageChars: 250000, bundleBytes: 480000 };
 const bundle = ['index.js', 'data/voices.json', 'data/labels.json', 'src/index.html']
     .reduce((sum, file) => sum + statSync(join(root, file)).size, 0);
 if (page.length > LIMITS.pageChars) throw new Error('页面模板 ' + page.length + ' 字符，超过上限 ' + LIMITS.pageChars);

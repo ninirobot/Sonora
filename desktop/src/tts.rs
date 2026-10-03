@@ -7,6 +7,7 @@ use std::pin::Pin;
 use std::time::Duration;
 use tokio::task::JoinSet;
 use tokio::time::sleep;
+use base64::Engine;
 
 use crate::auth;
 use crate::ssml::{self, Segment, SegmentKind, VoiceOpts};
@@ -137,6 +138,233 @@ pub async fn dialogue_voice(
         .collect();
 
     Ok(concat(run_limited(jobs, TTS_CONCURRENCY).await?))
+}
+
+/// 听力测试的四个音色槽
+#[derive(Clone, Debug, Default)]
+pub struct ExamVoices {
+    pub cn: String,
+    pub male: String,
+    pub female: String,
+    pub mono: String,
+}
+
+/// 时间线上的一块：中文播报 / 一段男女对话 / 一段独白
+#[derive(Clone, Debug)]
+pub struct ExamBlock {
+    pub kind: String,
+    pub segments: Vec<Segment>,
+    pub turns: Vec<ExamTurn>,
+    pub repeat: usize,
+    pub gap_ms: u32,
+    /// 对话尾巴上的停顿：mstts:dialog 内部不认 break，由前端挪出来在这里补
+    pub pause_after_ms: u32,
+    pub chime: bool,
+    /// 普通模式：改用一条 speak 内多个 voice（原生模式走 mstts:dialog）
+    pub plain: bool,
+    /// 男女两句之间补的间隔，普通模式专用，0~1000ms
+    pub turn_gap_ms: u32,
+}
+
+#[derive(Clone, Debug)]
+pub struct ExamTurn {
+    pub key: String,
+    pub segments: Vec<Segment>,
+}
+
+/// 静音块也需要一个文本，纯标点几乎不发声
+const SILENCE_TEXT: &str = "。";
+/// 静音池固定用这个音色：实测「。」在 MAI / DragonHD 系列下会被读出一个怪声，Xiaoxiao 才是纯静音
+const SILENCE_VOICE: &str = "zh-CN-XiaoxiaoNeural";
+/// 结尾留白按 20s 一片反复拼
+const TAIL_SLICE_MS: u32 = 20000;
+
+/// 听力测试：逐块合成后按时间线顺序拼成一整条
+/// 微软的 MultiTalker 只有 2 个音色槽位，撑不起中文播报 + 男声 + 女声 + 独白，
+/// 所以中文与独白走单音色、对话走 en-Multitalker，各发一次请求再拼起来。
+pub async fn exam_voice(
+    mut blocks: Vec<ExamBlock>,
+    voices: ExamVoices,
+    multitalker: &str,
+    opts: &VoiceOpts,
+    opts_cn: &VoiceOpts,
+    opts_a: &VoiceOpts,
+    opts_b: &VoiceOpts,
+    opts_mono: &VoiceOpts,
+    with_chime: bool,
+    tail_ms: u32,
+) -> Result<Vec<u8>, String> {
+    if blocks.is_empty() {
+        return Err("听力内容为空，请先粘贴文稿".to_string());
+    }
+
+    // 句尾的 break 在不少音色（DragonHD / MAI 系列）下会被端点吞掉，
+    // 所以每块末尾的停顿芯片一律摘出来，交给静音池在块后拼。
+    // 块内两句之间的停顿摘不出来（它们在同一条 SSML 里），只能靠句首 break —— 见 get_multi_voice_ssml
+    for block in blocks.iter_mut() {
+        let extra = {
+            let segs = if block.kind == "dialogue" {
+                match block.turns.last_mut() {
+                    Some(turn) => &mut turn.segments,
+                    None => continue,
+                }
+            } else {
+                &mut block.segments
+            };
+            let mut ms = 0u32;
+            loop {
+                let is_tail_pause = matches!(segs.last().map(|s| s.kind), Some(SegmentKind::Pause));
+                let still_has_text = segs.iter().any(|s| s.length() > 0);
+                if !is_tail_pause || !still_has_text {
+                    break;
+                }
+                if let Some(seg) = segs.pop() {
+                    ms += seg.ms;
+                }
+            }
+            ms
+        };
+        block.pause_after_ms += extra;
+    }
+
+    // 两遍之间的间隔、对话尾巴上的停顿，各合成一次纯静音反复复用
+    let mut durations: Vec<u32> = Vec::new();
+    for block in &blocks {
+        push_duration(&mut durations, block.gap_ms);
+        push_duration(&mut durations, block.pause_after_ms);
+    }
+    if tail_ms > 0 {
+        push_duration(&mut durations, TAIL_SLICE_MS);
+    }
+
+    let client = auth::client();
+    let mut silence: std::collections::HashMap<u32, Vec<u8>> = std::collections::HashMap::new();
+    if !durations.is_empty() {
+        let jobs: Vec<(usize, AudioFuture)> = durations
+            .iter()
+            .enumerate()
+            .map(|(index, ms)| {
+                let client = client.clone();
+                let voice = SILENCE_VOICE.to_string();
+                let opts = opts.clone();
+                let ms = *ms;
+                (
+                    index,
+                    Box::pin(async move {
+                        let ssml = ssml::get_ssml(SILENCE_TEXT, &voice, &opts, ms);
+                        post_ssml(&client, &ssml, opts.output_format()).await
+                    }) as AudioFuture,
+                )
+            })
+            .collect();
+        let chunks = run_limited(jobs, TTS_CONCURRENCY).await?;
+        for (index, ms) in durations.iter().enumerate() {
+            silence.insert(*ms, chunks[index].clone());
+        }
+    }
+
+    // 一段录音整段进一个 mstts:dialog，中文播报与独白各一条普通 SSML
+    let jobs: Vec<(usize, AudioFuture)> = blocks
+        .iter()
+        .enumerate()
+        .map(|(index, block)| {
+            let client = client.clone();
+            let opts = opts.clone();
+            let opts_cn = opts_cn.clone();
+            let opts_a = opts_a.clone();
+            let opts_b = opts_b.clone();
+            let opts_mono = opts_mono.clone();
+            let voices = voices.clone();
+            let multitalker = multitalker.to_string();
+            let block = block.clone();
+            (
+                index,
+                Box::pin(async move {
+                    if block.kind == "dialogue" {
+                        let turns: Vec<Turn> = block
+                            .turns
+                            .iter()
+                            .map(|turn| Turn {
+                                key: if turn.key == "b" { "b".to_string() } else { "a".to_string() },
+                                speaker: if turn.key == "b" {
+                                    voices.female.to_lowercase()
+                                } else {
+                                    voices.male.to_lowercase()
+                                },
+                                segments: turn.segments.clone(),
+                            })
+                            .collect();
+                        if !turns.iter().any(|turn| turn.segments.iter().any(|s| s.length() > 0)) {
+                            return Err("有一段录音是空的，请检查 M: / W: 行".to_string());
+                        }
+                        // 普通模式：一条 speak 内多个 voice；原生模式照旧走 mstts:dialog
+                        let item_ssml = if block.plain {
+                            ssml::get_multi_voice_ssml(&turns, &voices.male, &voices.female, &opts_a, &opts_b, block.turn_gap_ms)
+                        } else {
+                            ssml::get_dialogue_ssml(&turns, &multitalker, &opts_a, &opts_b)
+                        };
+                        return post_ssml(&client, &item_ssml, opts.output_format()).await;
+                    }
+                    if !block.segments.iter().any(|s| s.length() > 0) {
+                        return Err("有一段文稿是空的，请检查换行".to_string());
+                    }
+                    let is_mono = block.kind == "mono";
+                    let voice = if is_mono { &voices.mono } else { &voices.cn };
+                    let item_opts = if is_mono { &opts_mono } else { &opts_cn };
+                    let ssml = ssml::get_segments_ssml(&block.segments, voice, item_opts);
+                    post_ssml(&client, &ssml, opts.output_format()).await
+                }) as AudioFuture,
+            )
+        })
+        .collect();
+    let audios = run_limited(jobs, TTS_CONCURRENCY).await?;
+
+    // 提示音只在 MP3 输出下插：WAV 拿回来的是裸 PCM，混进 MP3 字节会解不动
+    let chime = if with_chime && opts.output_format().starts_with("audio-") {
+        base64::engine::general_purpose::STANDARD
+            .decode(crate::chime::CHIME_B64)
+            .ok()
+    } else {
+        None
+    };
+
+    let mut out: Vec<u8> = Vec::new();
+    for (index, block) in blocks.iter().enumerate() {
+        // 连播两遍时提示音只响在第一遍之前
+        if block.chime {
+            if let Some(bytes) = &chime {
+                out.extend_from_slice(bytes);
+            }
+        }
+        let repeat = if block.repeat > 0 { block.repeat } else { 1 };
+        for round in 1..=repeat {
+            out.extend_from_slice(&audios[index]);
+            if round < repeat {
+                if let Some(bytes) = silence.get(&block.gap_ms) {
+                    out.extend_from_slice(bytes);
+                }
+            }
+        }
+        if let Some(bytes) = silence.get(&block.pause_after_ms) {
+            out.extend_from_slice(bytes);
+        }
+    }
+    if tail_ms > 0 {
+        let slices = ((tail_ms + TAIL_SLICE_MS - 1) / TAIL_SLICE_MS).max(1);
+        if let Some(bytes) = silence.get(&TAIL_SLICE_MS) {
+            for _ in 0..slices {
+                out.extend_from_slice(bytes);
+            }
+        }
+    }
+
+    Ok(out)
+}
+
+fn push_duration(list: &mut Vec<u32>, ms: u32) {
+    if ms > 0 && !list.contains(&ms) {
+        list.push(ms);
+    }
 }
 
 // ---------------------------------------------------------------- 单块合成
@@ -409,6 +637,7 @@ fn take_tail_silence(text: &str) -> (String, u32) {
 // ---------------------------------------------------------------- 入参解析
 
 /// 把「a: 文本 / b: 文本」的行格式解析成轮次；无前缀的行并入上一句
+/// 文本里的停顿标记顺手解析成片段（上传的 txt 只有纯文本，对话里不认副语言）
 pub fn parse_dialogue_turns(text: &str, speaker_a: &str, speaker_b: &str) -> Vec<Turn> {
     let mut turns: Vec<Turn> = Vec::new();
     let mut last = 'a';
@@ -426,25 +655,31 @@ pub fn parse_dialogue_turns(text: &str, speaker_a: &str, speaker_b: &str) -> Vec
             turns.push(Turn {
                 key: key.to_string(),
                 speaker: if key == 'a' { speaker_a.to_string() } else { speaker_b.to_string() },
-                segments: vec![Segment::text(content)],
+                segments: text_marks_or_text(&content),
             });
         } else if let Some(turn) = turns.last_mut() {
+            // 上一段是停顿 / 副语言芯片时另起一段文本，别把文字接进芯片里
             match turn.segments.last_mut() {
-                Some(segment) => {
+                Some(segment) if segment.kind == SegmentKind::Text => {
                     segment.append("\n");
                     segment.append(line);
                 }
-                None => turn.segments.push(Segment::text(line)),
+                _ => turn.segments.push(Segment::text(line)),
             }
         } else {
             turns.push(Turn {
                 key: last.to_string(),
                 speaker: if last == 'a' { speaker_a.to_string() } else { speaker_b.to_string() },
-                segments: vec![Segment::text(line)],
+                segments: text_marks_or_text(line),
             });
         }
     }
     turns
+}
+
+/// 纯文本 → 片段：有标记就用片段，没有就当一整段文本
+fn text_marks_or_text(text: &str) -> Vec<Segment> {
+    ssml::parse_text_marks(text, false).unwrap_or_else(|| vec![Segment::text(text)])
 }
 
 /// 行首的 a: / b:（全半角冒号、大小写都认）
@@ -483,6 +718,63 @@ pub fn turn_from_json(value: &Value) -> Turn {
         speaker: value.get("speaker").and_then(Value::as_str).unwrap_or("").to_string(),
         segments,
     }
+}
+
+/// 听力测试的时间线：文稿解析在前端做完了，这里只负责还原
+pub fn exam_blocks_from_json(value: Option<&Value>) -> Vec<ExamBlock> {
+    let items = match value.and_then(Value::as_array) {
+        Some(items) => items,
+        None => return Vec::new(),
+    };
+    items.iter().filter_map(exam_block_from_json).collect()
+}
+
+fn exam_block_from_json(value: &Value) -> Option<ExamBlock> {
+    let kind = json_string(value, "kind");
+    if kind.is_empty() {
+        return None;
+    }
+    let turns = value
+        .get("turns")
+        .and_then(Value::as_array)
+        .map(|items| {
+            items
+                .iter()
+                .map(|item| ExamTurn {
+                    key: json_string(item, "key"),
+                    segments: item
+                        .get("segments")
+                        .and_then(Value::as_array)
+                        .map(|segments| segments_from_json(segments))
+                        .unwrap_or_default(),
+                })
+                .filter(|turn| turn.segments.iter().any(|s| s.length() > 0))
+                .collect()
+        })
+        .unwrap_or_default();
+    Some(ExamBlock {
+        kind,
+        segments: value
+            .get("segments")
+            .and_then(Value::as_array)
+            .map(|items| segments_from_json(items))
+            .unwrap_or_default(),
+        turns,
+        repeat: json_number(value, "repeat") as usize,
+        gap_ms: json_number(value, "gapMs") as u32,
+        pause_after_ms: json_number(value, "pauseAfterMs") as u32,
+        chime: value.get("chime").and_then(Value::as_bool).unwrap_or(false),
+        plain: value.get("plain").and_then(Value::as_bool).unwrap_or(false),
+        turn_gap_ms: json_number(value, "turnGapMs") as u32,
+    })
+}
+
+fn json_string(value: &Value, key: &str) -> String {
+    value.get(key).and_then(Value::as_str).unwrap_or("").to_string()
+}
+
+fn json_number(value: &Value, key: &str) -> f64 {
+    value.get(key).and_then(Value::as_f64).unwrap_or(0.0).max(0.0)
 }
 
 fn normalize_turn(turn: Turn, speaker_a: &str, speaker_b: &str) -> Turn {

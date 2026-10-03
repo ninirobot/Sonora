@@ -282,6 +282,7 @@
             display: none;
         }
 
+
         /* 状态栏 */
         .app-statusbar {
             grid-area: 3 / 1 / 4 / 3;
@@ -581,7 +582,8 @@
         /* 三个输入区域撑满面板剩余高度，编辑器内部滚动 */
         .tts-editor #textInputArea,
         .tts-editor #dialogueArea,
-        .tts-editor #fileUploadArea {
+        .tts-editor #fileUploadArea,
+        .tts-editor #examArea {
             display: flex;
             flex: 1;
             min-height: 0;
@@ -786,7 +788,8 @@
             font-size: 12.5px;
             font-weight: 500;
             white-space: nowrap;
-            user-select: none;
+            /* 刻意不写 user-select: none —— 那样 Ctrl+A / 复制会把芯片整段跳过，文稿复制不出来。
+               不可编辑靠 contenteditable=false 就够，选中芯片也删不掉它一半 */
             cursor: default;
             vertical-align: baseline;
         }
@@ -1664,6 +1667,41 @@
             background: rgba(15, 108, 189, 0.1);
         }
 
+        /* 独白卡片：与 M / W 同一套卡片，换个中性色 */
+        .role-mono { --role-color: #5b5f67; --role-soft: #eceff3; --role-border: #d3d8de; }
+
+        /* 语音区：普通模式用 display:contents（布局与原来一模一样），
+           听力测试里加 .card 变成与 M / W 同款卡片 */
+        .voice-block {
+            display: contents;
+        }
+        /* 与 M / W 卡片等高：间距统一由 gap 给（9px，正是 .role-row 的 margin-top），
+           卡片内 .role-row 的 margin 归零；中间夹着「没有匹配的语音」时也整齐 */
+        .voice-block.card {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            position: relative;
+            padding: 10px 12px 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: var(--background-color);
+        }
+        .voice-block.card .role-row {
+            margin-top: 0;
+        }
+        .voice-block.card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 9px;
+            bottom: 9px;
+            width: 3px;
+            border-radius: 0 3px 3px 0;
+            background: var(--accent);
+        }
+        /* 卡片里就是「下拉 + 试听」一行（.role-head 自带 30px 高度），与 M / W 卡片尺寸一致 */
+
         /* 结果区：收进右栏底部，只占一条，不再抢占编辑区
            上面那条老规则给了 24px 内边距 + 边框，这里必须显式清掉，否则播放器、
            进度条和历史卡片都被挤窄 */
@@ -1811,12 +1849,12 @@
         html.dark .voice-search-clear { background: rgba(255, 255, 255, 0.14); }
         .voice-empty { padding: 9px 10px; border: 1px dashed var(--line-strong); border-radius: 6px; font-size: 12px; color: var(--text-secondary); }
         /* 多人语音：说话人下拉右侧的试听按钮，与下拉同高 */
-        .role-head .role-audition { flex: none; width: 28px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--card); color: var(--text-secondary); cursor: pointer; transition: 0.16s ease; }
-        .role-head .role-audition:hover { border-color: var(--accent); color: var(--accent); }
-        .role-head .role-audition.playing { border-color: var(--accent); background: var(--accent); color: #fff; }
-        .role-head .role-audition .ico-stop { display: none; }
-        .role-head .role-audition.playing .ico-play { display: none; }
-        .role-head .role-audition.playing .ico-stop { display: block; }
+        .role-audition { flex: none; width: 28px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--card); color: var(--text-secondary); cursor: pointer; transition: 0.16s ease; }
+        .role-audition:hover { border-color: var(--accent); color: var(--accent); }
+        .role-audition.playing { border-color: var(--accent); background: var(--accent); color: #fff; }
+        .role-audition .ico-stop { display: none; }
+        .role-audition.playing .ico-play { display: none; }
+        .role-audition.playing .ico-stop { display: block; }
 
         /* 生成中：主按钮原地变「停止」，用 inset 阴影当边框以免高度跳动 */
         .btn-primary.stopping { background: var(--card); color: var(--text-secondary); box-shadow: inset 0 0 0 1px var(--line-strong); }
@@ -2150,12 +2188,15 @@
             <div class="lang-bar">
                 <div class="lang-row">
                     <div class="lang-tabs" id="langTabs"></div>
+                    <!-- 听力测试：双人对话方式，样式就是语言页签那套 -->
+                    <div class="lang-tabs" id="examModeTabs"></div>
 
                     <!-- 输入方式：单人 / 多人 / 上传（跟语言标签同一行，靠右） -->
                     <div class="method-chips">
                         <button type="button" class="method-chip active" id="textInputTab">单人语音</button>
                         <button type="button" class="method-chip" id="dialogueTab">多人语音</button>
                         <button type="button" class="method-chip" id="fileUploadTab">上传文件</button>
+                        <button type="button" class="method-chip" id="examTab">听力测试</button>
                     </div>
                 </div>
                 <div class="lang-row accent-row">
@@ -2220,13 +2261,32 @@
                             <p class="form-hint">对话格式：每行一句话，用 A: 或 B: 开头指定说话人，不加前缀的行并入上一句。示例：<br>A: 周末你有没有做什么好玩的事？<br>B: 去了本地的市集，吃了太多小吃。<br>A: 听起来不错，下次带上我。</p>
                         </div>
 
+                        <!-- 听力测试区域 -->
+                        <div class="form-group" id="examArea" style="display: none;">
+                            <div class="form-textarea rich-editor" id="examText" contenteditable="true"
+                                 data-placeholder="粘贴听力文稿：中文提示每行一句，M: 男声、W: 女声各占一行"></div>
+                            <label class="dialogue-file-check">
+                                <input type="checkbox" id="examWithTrial">
+                                包含开头试音部分（默认从「听力考试正式开始」起）
+                            </label>
+                            <label class="dialogue-file-check">
+                                <input type="checkbox" id="examChime" checked>
+                                每段录音开始前插入「叮咚」提示音
+                            </label>
+                            <label class="dialogue-file-check">
+                                <input type="checkbox" id="examTail">
+                                结尾留 2 分钟涂卡时间
+                            </label>
+                            <p class="form-hint">格式：M: 男声、W: 女声，各占一行；中文默认用中文播报朗读；独白前需指定M: 男声或W: 女声。</p>
+                        </div>
+
                 
                     </div>
 
                     <!-- 右栏：控制台 -->
                     <div class="tts-settings">
                         <div class="controls-grid">
-                            <div class="voice-head">
+                            <div class="voice-head" id="voiceHead">
                                 <h3>语音</h3>
                                 <button type="button" class="icon-btn" id="voiceSearchBtn"
                                         title="搜索语音">
@@ -2242,13 +2302,27 @@
                                     <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M8 2.4l1.8 3.6 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4L2.2 6.6l4-.6z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
                                 </button>
                             </div>
-                            <label class="voice-search" id="voiceSearchWrap" style="display: none;">
+<label class="voice-search" id="voiceSearchWrap" style="display: none;">
                                 <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><circle cx="7" cy="7" r="4.4" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M10.4 10.4 L14 14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
                                 <input type="text" id="voiceSearch" placeholder="搜索语音" autocomplete="off">
                                 <button type="button" class="voice-search-clear" id="voiceSearchClear" title="清除">×</button>
                             </label>
-                            <select class="form-select" id="voice"></select>
-                            <div class="voice-empty" id="voiceEmpty" style="display: none;">没有匹配的语音，换个名字或点 × 清除</div>
+                            <div class="voice-block" id="voiceCard">
+                                <div class="role-head">
+                                    <select class="form-select" id="voice"></select>
+                                    <button type="button" class="role-audition" id="auditionExamCn"
+                                            title="试听中文播报">
+                                        <svg class="ico-play" viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M3 6h2.2L8.5 3.4v9.2L5.2 10H3z" fill="currentColor"/><path d="M10.6 5.6a3.2 3.2 0 0 1 0 4.8" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+                                        <svg class="ico-stop" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><rect x="4.5" y="4.5" width="7" height="7" rx="1.2" fill="currentColor"/></svg>
+                                    </button>
+                                </div>
+                                <div class="voice-empty" id="voiceEmpty" style="display: none;">没有匹配的语音，换个名字或点 × 清除</div>
+                                <div class="role-row" id="examCnSpeedRow" style="display: none;">
+                                    <span class="role-row-label">语速</span>
+                                    <input type="range" class="form-range" id="speedCn" min="0" max="2" step="0.05" value="1">
+                                    <span class="role-value" id="speedCnValue"></span>
+                                </div>
+                            </div>
 
                             <!-- 副语言插入区：标题与「语音 / 参数」同级；说明与标记按钮同属一组 -->
                             <div class="insert-toolbar" id="insertToolbar">
@@ -2262,8 +2336,8 @@
                             </div>
                             <div class="form-group" id="dialogueRolesGroup" style="display: none;">
                                 <div class="dialogue-roles-head">
-                                    <label class="form-label">对话角色</label>
-                                    <span class="roles-tip">点字母插入 A: / B:</span>
+                                    <h3 id="dialogueRolesTitle">对话角色</h3>
+                                    <span class="roles-tip" id="dialogueRolesTip">点字母插入 A: / B:</span>
                                 </div>
                                 <div class="dialogue-roles">
                                     <div class="dialogue-role role-a">
@@ -2302,7 +2376,38 @@
                                     </div>
                                 </div>
                             </div>
-                            <h3>风格</h3>
+                            <!-- 听力测试：独白单独一组（一段里只有一个人说话就是独白） -->
+                            <div class="form-group" id="examMonoGroup" style="display: none;">
+                                <h3>英文独白</h3>
+                                <div class="dialogue-role role-mono">
+                                    <div class="role-head">
+                                        <select class="form-select" id="examMono"></select>
+                                        <button type="button" class="role-audition" id="auditionExamMono"
+                                                title="试听这个独白音色">
+                                            <svg class="ico-play" viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M3 6h2.2L8.5 3.4v9.2L5.2 10H3z" fill="currentColor"/><path d="M10.6 5.6a3.2 3.2 0 0 1 0 4.8" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+                                            <svg class="ico-stop" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><rect x="4.5" y="4.5" width="7" height="7" rx="1.2" fill="currentColor"/></svg>
+                                        </button>
+                                    </div>
+                                    <div class="role-row">
+                                        <span class="role-row-label">语速</span>
+                                        <input type="range" class="form-range" id="speedMono" min="0" max="2" step="0.05" value="1">
+                                        <span class="role-value" id="speedMonoValue"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 听力测试：两遍之间的间隔（其它留白都在文稿里插停顿标记） -->
+                            <div class="row" id="examGapGroup" style="display: none;">
+                                <span class="row-label">两遍间隔</span>
+                                <input type="range" class="form-range" id="examGap" min="0" max="5" step="0.5" value="1">
+                                <span class="val" id="examGapValue"></span>
+                            </div>
+                            <!-- 普通模式专用：男女两句之间补一点停顿 -->
+                            <div class="row" id="examTurnGapGroup" style="display: none;">
+                                <span class="row-label">延迟补偿</span>
+                                <input type="range" class="form-range" id="examTurnGap" min="0" max="1000" step="100" value="0">
+                                <span class="val" id="examTurnGapValue"></span>
+                            </div>
+                            <h3 id="styleTitle">风格</h3>
                             <div class="form-group" id="styleGroup">
                                 <select class="form-select" id="style"></select>
                                 <p class="form-hint" id="styleHint"></p>
@@ -2319,7 +2424,7 @@
                                 <input type="range" class="form-range" id="pauseLength"
                                        min="0" max="5000" step="100" value="500">
                                 <button type="button" class="val val-btn" id="insertPauseBtn"
-                                        title="点击将停顿标记插到光标处">＋500ms</button>
+                                        title="点击把停顿标记插到光标处，也可直接手写（如 [停顿 2s]）">＋500ms</button>
                             </div>
                             <div class="row" id="speedGroup">
                                 <span class="row-label">语速</span>
@@ -2899,11 +3004,35 @@
         // 对话模式所有口音共用同一组对话音色，再选口音没有意义
         function renderAccentTabs() {
             const box = document.getElementById('accentTabs');
-            const items = VOICE_DATA.filter(item => item.lang === currentLang);
             box.innerHTML = '';
+
+            // 听力测试：口音页签给英文角色用。原生模式只有 8 个说话人，不需要口音
+            if (currentInputMethod === 'exam') {
+                // 主音色（中文播报）必须在这里刷：从「多人语音」切过来时下拉里还留着对话音色，
+                // 不刷就再也选不到中文嗓子。renderVoices 内部强制用 examCnLang()，
+                // 所以刷它不会把中文播报变成英文，口音页签照旧只管英文角色
+                renderVoices(examCnLang().tab);
+                if (examDialogueMode !== 'plain') return;
+                const accents = VOICE_DATA.filter(item => item.lang === 'en');
+                if (!accents.some(item => item.tab === examAccentTab)) examAccentTab = accents[0].tab;
+                for (const item of accents) {
+                    const btn = makeLangTab(item.tabLabel, item.tab === examAccentTab, function() {
+                        examAccentTab = item.tab;
+                        [...box.children].forEach(c => c.classList.remove('active'));
+                        btn.classList.add('active');
+                        renderExamRoles();
+                        saveState();
+                    });
+                    box.appendChild(btn);
+                }
+                return;
+            }
+
+            const items = VOICE_DATA.filter(item => item.lang === currentLang);
             if (!items.some(item => item.tab === currentLangTab)) currentLangTab = items[0].tab;
 
-            if (currentInputMethod !== 'dialogue' && items.length > 1) {
+            // 听力测试的四个音色槽是固定的，口音页签对它没有意义
+            if (currentInputMethod !== 'dialogue' && currentInputMethod !== 'exam' && items.length > 1) {
                 for (const item of items) {
                     const btn = makeLangTab(item.tabLabel, item.tab === currentLangTab, function() {
                         currentLangTab = item.tab;
@@ -2927,8 +3056,16 @@
             return fallback ? fallback.groups.filter(g => g.family === 'multitalker') : [];
         }
 
+        // 听力测试的语音下拉就是「中文播报」那一轨：固定列中文音色，不受语言页签影响
+        function examCnLang() {
+            const list = VOICE_DATA.filter(l => l.lang === 'zh');
+            return list.find(l => String(l.tab).toLowerCase().indexOf('zh-cn') === 0) || list[0] || VOICE_DATA[0];
+        }
+
         function renderVoices(tabId) {
-            const lang = VOICE_DATA.find(l => l.tab === tabId) || VOICE_DATA[0];
+            const lang = currentInputMethod === 'exam'
+                ? examCnLang()
+                : (VOICE_DATA.find(l => l.tab === tabId) || VOICE_DATA[0]);
             // 占位文案跟随所选语言（contenteditable 用 data-placeholder + CSS 显示）
             const textEditor = document.getElementById('text');
             textEditor.dataset.placeholder = TEXT_PLACEHOLDERS[lang.lang] || '';
@@ -2966,6 +3103,11 @@
             // 过滤后尽量保住原来选中的那副嗓子
             if (previous && Array.prototype.some.call(select.options, o => o.value === previous)) {
                 select.value = previous;
+            }
+            // 切到听力测试时上一副嗓子多半不是中文的，默认给晓晓
+            if (currentInputMethod === 'exam' && String(select.value).indexOf('zh-') !== 0) {
+                const hit = Array.prototype.some.call(select.options, o => o.value === 'zh-CN-XiaoxiaoNeural');
+                if (hit) select.value = 'zh-CN-XiaoxiaoNeural';
             }
             renderStyles(select.value);
             renderDialogueRoles(select.value);
@@ -3054,10 +3196,14 @@
             ]
         };
 
-        function auditionText() {
-            const lang = (VOICE_DATA.find(l => l.tab === currentLangTab) || VOICE_DATA[0]).lang;
+        function auditionTextOf(lang) {
             const lines = AUDITION_TEXT[lang] || AUDITION_TEXT[String(lang).split('-')[0]] || AUDITION_TEXT.en;
             return lines[Math.floor(Math.random() * lines.length)];
+        }
+
+        function auditionText() {
+            const lang = (VOICE_DATA.find(l => l.tab === currentLangTab) || VOICE_DATA[0]).lang;
+            return auditionTextOf(lang);
         }
 
         let audition = null;
@@ -3076,8 +3222,9 @@
             }
         }
 
-        // roleKey 为空 = 单人音色；'a' / 'b' = 多人语音里的某个说话人
-        async function toggleAudition(roleKey, btn) {
+        // source：'' 主音色、'a' / 'b' 对话里的某个说话人、'mono' 独白
+        // 听力测试里主音色是中文播报、独白是英文单人音色，对话固定走 en-Multitalker
+        async function toggleAudition(source, btn) {
             if (audition) {
                 stopAudition();
                 return;
@@ -3087,24 +3234,48 @@
             auditionBtn = btn;
             btn.classList.add('playing');
             try {
-                // 多人语音必须按轮次合成，直接丢一段纯文本给它是不对的
-                const payload = roleKey
-                    ? {
-                        dialogue: true,
-                        turns: [{ key: roleKey, segments: [{ type: 'text', value: auditionText() }] }],
-                        voice: document.getElementById('voice').value,
-                        speakerA: document.getElementById('speakerA').value,
-                        speakerB: document.getElementById('speakerB').value,
-                        outputFormat: audioFormat
+                const exam = currentInputMethod === 'exam';
+                let payload;
+                if (source === 'mono') {
+                    payload = {
+                        input: auditionTextOf('en'),
+                        voice: document.getElementById('examMono').value,
+                        speed: 1,
+                        pitch: '0',
+                        style: ''
+                    };
+                } else if (source) {
+                    // 普通模式下男 / 女就是普通音色，单音色试听即可；原生模式必须按轮次合成
+                    if (isPlainMode()) {
+                        payload = {
+                            input: auditionTextOf('en'),
+                            voice: document.getElementById(source === 'b' ? 'speakerB' : 'speakerA').value,
+                            speed: 1,
+                            pitch: '0',
+                            style: ''
+                        };
+                    } else {
+                        payload = {
+                            dialogue: true,
+                            turns: [{
+                                key: source,
+                                segments: [{ type: 'text', value: exam ? auditionTextOf('en') : auditionText() }]
+                            }],
+                            voice: exam ? EXAM_MULTITALKER : document.getElementById('voice').value,
+                            speakerA: document.getElementById('speakerA').value,
+                            speakerB: document.getElementById('speakerB').value
+                        };
                     }
-                    : {
-                        input: auditionText(),
+                } else {
+                    payload = {
+                        input: exam ? auditionTextOf('zh') : auditionText(),
                         voice: document.getElementById('voice').value,
                         speed: 1,
                         pitch: '0',
-                        style: '',
-                        outputFormat: audioFormat
+                        style: ''
                     };
+                }
+                payload.outputFormat = audioFormat;
                 const response = await fetch('/v1/audio/speech', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -3167,9 +3338,20 @@
                 const btn = document.getElementById('auditionRole' + key.toUpperCase());
                 if (btn) btn.addEventListener('click', () => toggleAudition(key, btn));
             }
+            // 听力测试：中文播报与独白各一个试听（M / W 用角色卡上那两个）
+            const cnAudition = document.getElementById('auditionExamCn');
+            if (cnAudition) cnAudition.addEventListener('click', () => toggleAudition('', cnAudition));
+            const monoAudition = document.getElementById('auditionExamMono');
+            if (monoAudition) monoAudition.addEventListener('click', () => toggleAudition('mono', monoAudition));
             document.getElementById('voice').addEventListener('change', stopAudition);
-            for (const id of ['speakerA', 'speakerB']) {
-                document.getElementById(id).addEventListener('change', stopAudition);
+            for (const id of ['speakerA', 'speakerB', 'examMono']) {
+                document.getElementById(id).addEventListener('change', e => {
+                    examChosen[examDialogueMode][id] = e.target.value;
+                    // 手动挑过独白就不再跟着女声变；换了女声则让独白跟上
+                    if (id === 'examMono') examMonoPinned = true;
+                    if (id === 'speakerB') syncExamMonoFromFemale();
+                    stopAudition();
+                });
             }
         }
 
@@ -3261,6 +3443,11 @@
         const LB = String.fromCharCode(91);                     // [
         const RB = String.fromCharCode(93);                     // ]
         const MARK_RE = new RegExp(BS + LB + '([^' + BS + RB + ']+)' + BS + RB, 'g');
+        // 停顿时长：带单位一律认；不带单位时必须带「停顿」字样，
+        // 否则 [1] / [2024] 这类方括号会被当成停顿吞掉（音频里就读不出来了）
+        const PAUSE_UNIT_RE = new RegExp('^([0-9]+(?:[.][0-9]+)?)(ms|s)$');
+        const PAUSE_BARE_RE = new RegExp('^([0-9]+(?:[.][0-9]+)?)$');
+        const isDigit = ch => ch >= '0' && ch <= '9';
         // 待开发：音频文件扩展名（语音转文字用）
         // const EXT_AUDIO_RE = /[.](mp3|wav|m4a|flac|aac|ogg|webm|amr|3gp)$/i;
 
@@ -3270,6 +3457,13 @@
                 return (ms % 1000 === 0 ? String(ms / 1000) : (ms / 1000).toFixed(1)) + 's';
             }
             return ms + 'ms';
+        }
+
+        // 角色标记：听力测试里 a = M（男）、b = W（女），其余模式是 A / B。
+        // 内部存的 key 始终是 a / b，只有显示随模式变，所以解析那段不用跟着改
+        function examRoleMark(k) {
+            if (currentInputMethod === 'exam') return k === 'b' ? 'W' : 'M';
+            return String(k).toUpperCase();
         }
 
         // 芯片类型表：属性名 / 显示文本 / 悬停提示 / 片段形态，一处定义、三处复用
@@ -3287,11 +3481,11 @@
                 hint: t => PARA_LABEL_MAP[t] || t,
                 segment: v => ({ type: 'para', tag: v })
             },
-            // 角色显示 A: / B:，解析时等价于行首文本前缀
+            // 角色显示 A: / B:（听力测试里显示 M: / W:），解析时等价于行首文本前缀
             role: {
                 attr: 'data-role',
-                label: k => k.toUpperCase() + ':',
-                hint: k => '说话人 ' + k.toUpperCase(),
+                label: k => examRoleMark(k) + ':',
+                hint: k => '说话人 ' + examRoleMark(k),
                 segment: v => ({ type: 'role', key: v === 'b' ? 'b' : 'a' })
             }
         };
@@ -3318,18 +3512,19 @@
             return null;
         }
 
-        // 「2s / 2.5s / 500ms / 500 / 停顿 2s」→ 毫秒；不是时长返回 0（无单位与 ms 都按毫秒）
+        // 「2s / 2.5s / 500ms / 停顿 2s / 停顿 500」→ 毫秒；不是时长返回 0
         function parsePauseMs(text) {
-            const t = text.split('停顿').join('').trim();
-            const m = t.match(new RegExp('^([0-9]+(?:[.][0-9]+)?)(ms|s)?$'));
-            if (!m) return 0;
-            const value = parseFloat(m[1]);
-            return m[2] === 's' ? Math.round(value * 1000) : Math.round(value);
+            const raw = String(text).trim();
+            const body = raw.split('停顿').join('').trim();
+            const unit = body.match(PAUSE_UNIT_RE);
+            if (unit) return Math.round(parseFloat(unit[1]) * (unit[2] === 's' ? 1000 : 1));
+            const bare = raw.indexOf('停顿') >= 0 ? body.match(PAUSE_BARE_RE) : null;
+            return bare ? Math.round(parseFloat(bare[1])) : 0;
         }
 
         // 方括号内容 → 芯片：先认副语言（多人模式无效，需 allowPara），再认停顿；都认不出返回 null
         function markToChip(inner, allowPara) {
-            const tag = inner.trim().toLowerCase();
+            const tag = String(inner).trim().toLowerCase();
             if (allowPara && PARALINGUISTICS.indexOf(tag) >= 0) return makeChip('para', tag);
             const ms = parsePauseMs(tag);
             return ms > 0 ? makeChip('pause', ms) : null;
@@ -3348,6 +3543,21 @@
                 last = m.index + m[0].length;
             }
             if (last < line.length) frag.appendChild(document.createTextNode(line.slice(last)));
+        }
+
+        // 提交兜底：手打（或输入法整段插入 / 拖拽回填）的标记没能即时变成芯片时，
+        // 在这里走一遍与粘贴相同的解析，拆成停顿 / 副语言片段；认不出的方括号原样留下
+        function splitTextMarks(segs, allowPara) {
+            const out = [];
+            for (const seg of segs) {
+                if (seg.type !== 'text' || seg.value.indexOf('[') < 0) { out.push(seg); continue; }
+                const frag = document.createDocumentFragment();
+                appendWithMarks(frag, seg.value, allowPara);
+                for (const node of frag.childNodes) {
+                    out.push(node.nodeType === 3 ? { type: 'text', value: node.nodeValue } : chipSegmentOf(node));
+                }
+            }
+            return out;
         }
 
         // 纯文本 → 富文本节点：还原换行；多人语音下把行首 a: / A:（不分大小写、全半角冒号）解析成角色芯片；
@@ -3431,7 +3641,8 @@
                 }
             }
             if (root) walk(root);
-            return segs;
+            // 副语言在多人语音下不生效（MultiTalker 不支持），门控与粘贴解析保持一致
+            return splitTextMarks(segs, !root || root.id !== 'dialogueText');
         }
 
         function segmentsHaveContent(segs) {
@@ -3439,12 +3650,13 @@
         }
 
         // 片段 → 纯文本（停顿不占字符，副语言保留原文，角色标记还原成 A: / B:）
-        function segmentsToPlainText(segs) {
+        // withMarks 给复制用：把停顿也还原成芯片上那串 [停顿 2s]，粘回来能重新变成芯片
+        function segmentsToPlainText(segs, withMarks) {
             return segs.map(s => {
                 if (s.type === 'text') return s.value;
                 if (s.type === 'para') return '[' + s.tag + ']';
                 if (s.type === 'role') return (s.key === 'b' ? 'B' : 'A') + ':';
-                return '';
+                return withMarks && s.type === 'pause' ? CHIP_KINDS.pause.label(s.ms) : '';
             }).join('');
         }
 
@@ -3453,14 +3665,71 @@
             el.classList.toggle('is-empty', !segmentsHaveContent(collectSegments(el)));
         }
 
+        // 手打标记：光标处刚凑出一个完整的 [xxx] 就换成芯片（跟粘贴还原、点击插入一个效果）；
+        // 没命中的原样留着，留给提交时的 splitTextMarks 兜底
+        function chipifyTailMark(editor, allowPara) {
+            const sel = window.getSelection();
+            if (!sel || sel.rangeCount !== 1) return;
+            const range = sel.getRangeAt(0);
+            const node = range.startContainer;
+            if (!range.collapsed || node.nodeType !== 3 || !editor.contains(node)) return;
+            const text = node.nodeValue || '';
+            const end = range.startOffset;
+            // 两种打法都认：顺着敲出 ]（光标在 ] 之后）、先打一对 [] 再往里填（光标在 ] 之前）。
+            // 后者要求光标前一个字符不是数字，否则 [停顿 2s] 会在打到「2」时就变成 2ms 的芯片
+            const close = text.charAt(end - 1) === ']' ? end
+                : (text.charAt(end) === ']' && !isDigit(text.charAt(end - 1)) ? end + 1 : 0);
+            if (!close) return;
+            const open = text.lastIndexOf('[', end - 1);
+            if (open < 0) return;
+            const chip = markToChip(text.slice(open + 1, close - 1), allowPara);
+            if (!chip) return;
+            const target = document.createRange();
+            target.setStart(node, open);
+            target.setEnd(node, close);
+            target.deleteContents();
+            target.insertNode(chip);
+            target.setStartAfter(chip);
+            target.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(target);
+            // 程序化改 DOM 不会再触发 input，补一次事件让占位 / 字数 / 草稿一起跟上
+            editor.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+
         // 统一挂载可编辑区行为：记录焦点、刷新占位、粘贴一律走纯文本 → 富文本节点
-        // 粘贴时会还原成芯片：[停顿 2s] / [500ms] / [500] 停顿（两种模式都认）、
+        // 粘贴与手打都会还原成芯片：[停顿 2s] / [2s] / [500ms]（两种模式都认）、
         // [laughter] 等副语言（多人模式无效，故不解析）以及 parseRoles = true 时行首的 a: / A: 角色
         function attachRichEditor(el, parseRoles) {
             if (!el) return;
+            const chipify = () => chipifyTailMark(el, !parseRoles);
             el.addEventListener('focus', () => { activeEditor = el; });
-            el.addEventListener('click', () => { activeEditor = el; });
-            el.addEventListener('input', () => refreshEditorPlaceholder(el));
+            el.addEventListener('click', () => { activeEditor = el; chipify(); });
+            el.addEventListener('input', e => {
+                // 输入法组合期间不动 DOM（组合中改结构会把候选打断），这类漏网留给提交兜底
+                if (!e.isComposing) chipify();
+                refreshEditorPlaceholder(el);
+            });
+            // 先打一对 [] 再往里填、最后用方向键 / 鼠标挪出 ] 的，靠松开按键、点一下来补
+            el.addEventListener('keyup', chipify);
+            // 复制 / 剪切共用：芯片是 contenteditable=false，浏览器默认的序列化会把它整段丢掉，
+            // 所以自己按片段还原成纯文本（[停顿 2s] / [laughter] / A:），粘回来还能变成芯片
+            const selectionText = () => {
+                const sel = window.getSelection();
+                if (!sel || sel.rangeCount !== 1 || sel.isCollapsed) return '';
+                return segmentsToPlainText(collectSegments(sel.getRangeAt(0).cloneContents()), true);
+            };
+            el.addEventListener('copy', e => {
+                const text = selectionText();
+                if (!text) return;
+                e.clipboardData.setData('text/plain', text);
+                e.preventDefault();
+            });
+            el.addEventListener('cut', e => {
+                // 不 preventDefault：让浏览器照常把选中的内容删掉，只换掉剪贴板里的文本
+                const text = selectionText();
+                if (text) e.clipboardData.setData('text/plain', text);
+            });
             el.addEventListener('paste', e => {
                 e.preventDefault();
                 const text = e.clipboardData ? e.clipboardData.getData('text/plain') : '';
@@ -3474,8 +3743,9 @@
             if (activeEditor && activeEditor.offsetParent !== null) return activeEditor;
             // 上传 txt 没有可编辑正文，字数统计与右键菜单据此停用
             if (currentInputMethod === 'file') return null;
-            return currentInputMethod === 'dialogue'
-                ? document.getElementById('dialogueText')
+            if (currentInputMethod === 'dialogue') return document.getElementById('dialogueText');
+            return currentInputMethod === 'exam'
+                ? document.getElementById('examText')
                 : document.getElementById('text');
         }
 
@@ -3508,7 +3778,7 @@
             const family = entry && entry.group.family;
             const ok = family === 'dragonHDOmni'
                 || (family === 'dragonHD' && currentLang !== 'zh');
-            let hint = '点击插入标记（如 [laughter]）。';
+            let hint = '点击插入，或直接手写标记（如 [laughter]）。';
             if (!ok) {
                 if (family === 'dragonHDFlash') hint = 'Neural-HD-Flash 不支持副语言标记。';
                 else if (family === 'dragonHD') hint = '中文语音仅 Neural-HD-Omni 支持副语言标记。';
@@ -3530,6 +3800,8 @@
         function initializeVoiceControls() {
             attachRichEditor(document.getElementById('text'));
             attachRichEditor(document.getElementById('dialogueText'), true);
+            attachRichEditor(document.getElementById('examText'));
+            renderExamMono();
             renderLangTabs();
             renderParalinguistics();
             renderAccentTabs();
@@ -3581,55 +3853,112 @@
             const tabs = {
                 text: document.getElementById('textInputTab'),
                 file: document.getElementById('fileUploadTab'),
-                dialogue: document.getElementById('dialogueTab')
+                dialogue: document.getElementById('dialogueTab'),
+                exam: document.getElementById('examTab')
             };
             const areas = {
                 text: document.getElementById('textInputArea'),
                 file: document.getElementById('fileUploadArea'),
-                dialogue: document.getElementById('dialogueArea')
+                dialogue: document.getElementById('dialogueArea'),
+                exam: document.getElementById('examArea')
             };
 
-            // 多人语音下只有语速与停顿生效，风格 / 强度 / 音调 / 副语言隐藏
+            // 右栏控件按输入方式显隐：列在表里的是「该模式下要隐藏的」
+            // 多人语音下只有语速与停顿生效，风格 / 强度 / 音调 / 副语言隐藏；
             // 多人语音只有几个模型可挑，搜索与收藏用不上；试听挪进角色卡
-            const hideInDialogue = ['styleGroup', 'degreeGroup', 'speedGroup', 'pitchGroup', 'volumeGroup', 'paraGroup', 'voiceSearchBtn', 'starBtn', 'auditionBtn'];
+            const HIDE_DIALOGUE = ['styleGroup', 'degreeGroup', 'speedGroup', 'pitchGroup', 'volumeGroup', 'paraGroup', 'voiceSearchBtn', 'starBtn', 'auditionBtn'];
+            // 听力测试照搬多人语音的面板：中文播报用主音色区（搜索 / 收藏 / 试听都在），
+            // 男声女声用角色卡，只比它多一个独白槽和一个「两遍间隔」
+            const HIDE_EXAM = ['langTabs', 'insertToolbar', 'styleTitle', 'styleGroup', 'degreeGroup', 'speedGroup', 'pitchGroup', 'volumeGroup', 'auditionBtn'];
+            const EXAM_ONLY = ['examCnSpeedRow', 'examMonoGroup', 'examGapGroup', 'examModeTabs', 'examTurnGapGroup'];
+            const HIDE_BY_METHOD = {
+                text: ['dialogueRolesGroup'].concat(EXAM_ONLY),
+                file: ['insertToolbar'].concat(EXAM_ONLY),
+                dialogue: HIDE_DIALOGUE.concat(EXAM_ONLY),
+                exam: HIDE_EXAM
+            };
+            // 每次切换都整表重设一遍，避免上一模式留下的 display 残留
+            // 只列真正随模式切换显隐的：语音区（含搜索框 / 语音下拉 / 空提示）不在这里，
+            // 它们有自己的开关状态，交给 activate 统一重设会把搜索框硬撑开
+            const TOGGLED_IDS = ['langTabs', 'insertToolbar',
+                'dialogueRolesGroup', 'styleTitle', 'styleGroup', 'degreeGroup', 'speedGroup', 'pitchGroup',
+                'volumeGroup', 'pauseGroup', 'paraGroup', 'voiceSearchBtn', 'starBtn', 'auditionBtn'].concat(EXAM_ONLY);
 
             function activate(method) {
                 currentInputMethod = method;
+                // 恢复必须排在 renderAccentTabs 之前：口音页签与三个下拉的内容都由这两项决定
+                if (method === 'exam' && examPrefs) {
+                    if (examPrefs.mode === 'plain' || examPrefs.mode === 'native') examDialogueMode = examPrefs.mode;
+                    if (examPrefs.accent) examAccentTab = examPrefs.accent;
+                }
                 for (const key in tabs) {
                     tabs[key].classList.toggle('active', key === method);
                     // 用 flex 让编辑区在面板里撑满剩余高度（面板内部滚动）
                     areas[key].style.display = key === method ? 'flex' : 'none';
                 }
-                const isDialogue = method === 'dialogue';
-                for (const id of hideInDialogue) {
-                    const el = document.getElementById(id);
-                    if (el) el.style.display = isDialogue ? 'none' : '';
-                }
-                // 上传文件没有可编辑的正文，插入工具条整条收起
-                document.getElementById('insertToolbar').style.display = method === 'file' ? 'none' : '';
-                // 切到多人语音顺手把搜索收起来，免得留着一个看不见的过滤条件
-                if (isDialogue) {
-                    document.getElementById('voiceSearch').value = '';
-                    voiceQuery = '';
-                    document.getElementById('voiceSearchWrap').style.display = 'none';
-                    document.getElementById('voiceSearchBtn').classList.remove('on');
-                }
+                // 换模式后音色列表整批换了，搜索词留着只会换来一句「没有匹配的语音」，一律清掉收起
+                document.getElementById('voiceSearch').value = '';
+                voiceQuery = '';
+                document.getElementById('voiceSearchWrap').style.display = 'none';
+                document.getElementById('voiceSearchBtn').classList.remove('on');
                 // 对话模式要切成对话语音，普通模式要切回全部语音
                 renderAccentTabs();
+                // 显隐必须排在 renderAccentTabs 之后：渲染音色时会重设 #voice / #voiceEmpty 的 display
+                const hidden = HIDE_BY_METHOD[method] || [];
+                for (const id of TOGGLED_IDS) {
+                    const el = document.getElementById(id);
+                    if (el) el.style.display = hidden.indexOf(id) >= 0 ? 'none' : '';
+                }
                 syncDialogueRolesVisibility();
+                const isExam = method === 'exam';
+                // 听力测试里语音区变成与 M / W 同款的卡片
+                document.getElementById('voiceCard').classList.toggle('card', isExam);
+                examLabels(isExam);
+                // 放在显隐循环之后：延迟补偿滑块还要再按当前对话方式收一次
+                if (isExam) {
+                    if (examPrefs) {
+                        applyExamPrefs(examPrefs);   // 写进 examChosen 与滑块，再由 renderExamRoles 回填
+                        examPrefs = null;
+                    }
+                    renderExamModeTabs();
+                    renderExamRoles();
+                }
                 updateCharCount();
+            }
+
+            // 听力测试里角色徽标就是 M / W，其余模式仍是 A / B
+            function examLabels(isExam) {
+                for (const item of [['insertRoleA', 'M', 'A'], ['insertRoleB', 'W', 'B']]) {
+                    const btn = document.getElementById(item[0]);
+                    if (!btn) continue;
+                    const mark = isExam ? item[1] : item[2];
+                    btn.textContent = mark;
+                    btn.title = '在光标处插入 ' + mark + ': 标记';
+                }
+                const tip = document.getElementById('dialogueRolesTip');
+                if (tip) tip.textContent = isExam ? '点字母插入 M: / W:' : '点字母插入 A: / B:';
+                // 听力测试里主音色下拉就是中文播报那一轨
+                const head = document.querySelector('#voiceHead h3');
+                if (head) head.textContent = isExam ? '中文播报' : '语音';
             }
 
             tabs.text.addEventListener('click', () => activate('text'));
             tabs.file.addEventListener('click', () => activate('file'));
             tabs.dialogue.addEventListener('click', () => activate('dialogue'));
+            tabs.exam.addEventListener('click', () => activate('exam'));
 
             document.getElementById('insertPauseBtn').addEventListener('click',
                 () => insertMark('pause', document.getElementById('pauseLength').value));
             document.getElementById('pauseLength').addEventListener('input', syncPauseValue);
             syncPauseValue();
 
-            for (const id of ['speedA', 'speedB']) {
+            document.getElementById('examGap').addEventListener('input', syncExamGap);
+            syncExamGap();
+
+            document.getElementById('examTurnGap').addEventListener('input', syncExamTurnGap);
+            syncExamTurnGap();
+
+            for (const id of ['speedCn', 'speedA', 'speedB', 'speedMono']) {
                 document.getElementById(id).addEventListener('input', syncRoleValues);
             }
 
@@ -3645,7 +3974,7 @@
             const fileAsDialogue = document.getElementById('fileAsDialogue');
             if (fileAsDialogue) fileAsDialogue.addEventListener('change', syncDialogueRolesVisibility);
 
-            for (const id of ['text', 'dialogueText']) {
+            for (const id of ['text', 'dialogueText', 'examText']) {
                 const editor = document.getElementById(id);
                 if (editor) editor.addEventListener('input', updateCharCount);
             }
@@ -3724,10 +4053,11 @@
             return turns.filter(t => segmentsHaveContent(t.segments));
         }
 
-        // 角色卡与工具条上的 A / B 插入按钮，只在「多人语音」或「上传文件 + 按多人语音解析」时出现
+        // 角色卡与工具条上的 A / B 插入按钮，只在「多人语音」「听力测试」或「上传文件 + 按多人语音解析」时出现
         function syncDialogueRolesVisibility() {
             const check = document.getElementById('fileAsDialogue');
             const show = currentInputMethod === 'dialogue'
+                || currentInputMethod === 'exam'
                 || (currentInputMethod === 'file' && !!(check && check.checked));
             for (const id of ['dialogueRolesGroup']) {
                 const el = document.getElementById(id);
@@ -3754,6 +4084,11 @@
 
         // 角色 A / B 的说话人下拉：跟随当前选中的对话语音
         function renderDialogueRoles(voiceId) {
+            // 听力测试：对话固定 en-Multitalker，M（a）是男声、W（b）是女声
+            if (currentInputMethod === 'exam') {
+                renderExamRoles();
+                return;
+            }
             let speakers = MULTITALKER_SPEAKERS[voiceId] || [];
             // 非对话语音（如上传文件模式）：回落到当前语言的对话音色，避免下拉为空
             if (!speakers.length && !document.getElementById('speakerA').options.length) {
@@ -3779,10 +4114,13 @@
         // 刷新角色 A / B 的语速数值（与语速标签同行显示）
         // 注意：不能用 或运算符 兜底成 1 —— 滑块最左端是 0，会被当成假值而错显示成 1.00x
         function syncRoleValues() {
-            for (const role of ['A', 'B']) {
-                const raw = parseFloat(document.getElementById('speed' + role).value);
-                const speed = Number.isFinite(raw) ? raw : 1;
-                document.getElementById('role' + role + 'Value').textContent = speed.toFixed(2) + 'x';
+            const pairs = [['speedA', 'roleAValue'], ['speedB', 'roleBValue'], ['speedCn', 'speedCnValue'], ['speedMono', 'speedMonoValue']];
+            for (const item of pairs) {
+                const input = document.getElementById(item[0]);
+                const out = document.getElementById(item[1]);
+                if (!input || !out) continue;
+                const raw = parseFloat(input.value);
+                out.textContent = (Number.isFinite(raw) ? raw : 1).toFixed(2) + 'x';
             }
         }
 
@@ -3791,6 +4129,296 @@
             return { speed: document.getElementById('speed' + role).value };
         }
 
+        // ===================================================================
+        // 听力测试：四个音色槽
+        // -------------------------------------------------------------------
+        // 中文播音走普通单音色，男女对话固定 en-Multitalker，独白用与对话
+        // 说话人同名同性的单人 DragonHD 音色（微软不支持三人以上对话，只能这样拼）
+        // ===================================================================
+        const EXAM_MULTITALKER = 'en-Multitalker:DragonHDLatestNeural';
+
+        function examSpeakers() {
+            return MULTITALKER_SPEAKERS[EXAM_MULTITALKER] || [];
+        }
+
+        // 双人对话方式：原生 = MultiTalker 多音色模型；普通 = 男女各一个普通音色（一条 speak 多个 voice）
+        let examDialogueMode = 'native';
+        // 普通模式下英文角色的口音，取值就是 VOICE_DATA 里的 tab（en-US / en-GB / ...，共 14 个）。
+        // 独立于主音色的 currentLangTab —— 否则切口音会把中文播报那一轨也变成英文
+        let examAccentTab = 'en-US';
+        // 两种对话方式的选项不同（原生是说话人、普通是音色），各记一份选择，来回切换不丢
+        const examChosen = { native: {}, plain: {} };
+        // 独白默认跟着女声走；用户自己挑过独白之后就不再自动跟随
+        let examMonoPinned = false;
+
+        function isPlainMode() {
+            return currentInputMethod === 'exam' && examDialogueMode === 'plain';
+        }
+
+        // 普通模式：列当前英语口音的全部音色，按系列分组；gender 为空表示不限（独白用）
+        // 音色 id 原样使用 —— 目录里大小写不统一（有 en-us-ava:DragonHDOmniLatestNeural 这种）
+        // 显示名补性别括号，与说话人下拉同一口径（如 Andrew（男声））
+        function fillExamVoices(id, gender) {
+            const sel = document.getElementById(id);
+            const prev = sel.value;
+            sel.innerHTML = '';
+            const lang = VOICE_DATA.find(item => item.tab === examAccentTab) || VOICE_DATA[0];
+            for (const group of lang.groups || []) {
+                const box = document.createElement('optgroup');
+                box.label = group.label || group.family;
+                let hits = 0;
+                for (const voice of group.voices || []) {
+                    const vg = String(voice.gender || group.gender || '').toLowerCase();
+                    if (gender && vg !== gender) continue;
+                    const gt = GENDER_TEXT[vg] || '';
+                    addOption(box, voice.id, voice.name + (gt ? '（' + gt + '）' : ''), false);
+                    hits++;
+                }
+                if (hits) sel.appendChild(box);
+            }
+            if (prev && Array.prototype.some.call(sel.options, o => o.value === prev)) sel.value = prev;
+        }
+
+        // 对话方式页签：就是语言页签那套 makeLangTab
+        function renderExamModeTabs() {
+            const box = document.getElementById('examModeTabs');
+            box.innerHTML = '';
+            for (const item of [['native', '原生模式'], ['plain', '普通模式']]) {
+                const btn = makeLangTab(item[1], examDialogueMode === item[0], function () {
+                    examDialogueMode = item[0];
+                    [...box.children].forEach(c => c.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderExamRoles();
+                    // 口音页签只有普通模式才有，切换方式时得跟着重渲染
+                    renderAccentTabs();
+                    saveState();   // 页签是 JS 变量，不会触发表单的 change，得手动存一次
+                });
+                box.appendChild(btn);
+            }
+        }
+
+        // 切换对话方式后重刷男 / 女 / 独白三个下拉与延迟补偿滑块
+        function renderExamRoles() {
+            if (currentInputMethod !== 'exam') return;
+            if (isPlainMode()) {
+                fillExamVoices('speakerA', 'm');
+                fillExamVoices('speakerB', 'f');
+                fillExamVoices('examMono', '');
+            } else {
+                const all = examSpeakers();
+                fillSpeakers('speakerA', all.filter(s => s.gender === 'm'), 0);
+                fillSpeakers('speakerB', all.filter(s => s.gender === 'f'), 0);
+                renderExamMono();
+            }
+            document.getElementById('examTurnGapGroup').style.display = isPlainMode() ? '' : 'none';
+            // 列表是重建的，重建完把这种方式上次选的填回去
+            const chosen = examChosen[examDialogueMode];
+            for (const id of ['speakerA', 'speakerB', 'examMono']) setSelect(id, chosen[id]);
+            syncExamMonoFromFemale();
+            syncRoleValues();
+        }
+
+        // 目录里找与说话人同名的单人 DragonHD 音色（en-US 优先，Ada 只有 en-GB）
+        function examSoloVoice(name) {
+            const lower = String(name).toLowerCase();
+            let british = null;
+            for (const lang of VOICE_DATA) {
+                for (const group of lang.groups || []) {
+                    if (group.family !== 'dragonHD') continue;
+                    for (const voice of group.voices || []) {
+                        const prefix = String(voice.id).toLowerCase().split(':')[0];
+                        const base = prefix.split('-').pop();
+                        if (base !== lower) continue;
+                        if (prefix.indexOf('en-us') === 0) return voice;
+                        if (prefix.indexOf('en-gb') === 0 && !british) british = voice;
+                    }
+                }
+            }
+            return british;
+        }
+
+        // 独白槽：原生模式只列与对话说话人对得上的那几个单人音色（Ada 标英音），普通模式列全量
+        function renderExamMono() {
+            if (isPlainMode()) {
+                fillExamVoices('examMono', '');
+                return;
+            }
+            const sel = document.getElementById('examMono');
+            const prev = sel.value;
+            sel.innerHTML = '';
+            for (const speaker of examSpeakers()) {
+                const solo = examSoloVoice(speaker.name);
+                if (!solo) continue;
+                const gender = GENDER_TEXT[speaker.gender] || '';
+                const british = String(solo.id).toLowerCase().indexOf('en-gb') === 0;
+                addOption(sel, solo.id, solo.name + '（' + gender + (british ? '·英音' : '') + '）', false);
+            }
+            if (prev && Array.prototype.some.call(sel.options, o => o.value === prev)) sel.value = prev;
+        }
+
+        // 独白默认用女声那副嗓子：女声一换就跟着换，用户自己挑过之后就不再动它。
+        // 原生模式下女声是「说话人」，要换成与她同名的单人音色才是独白能用的值
+        function syncExamMonoFromFemale() {
+            if (examMonoPinned || currentInputMethod !== 'exam') return;
+            const sel = document.getElementById('examMono');
+            const female = document.getElementById('speakerB').value;
+            let want = female;
+            if (!isPlainMode()) {
+                const speaker = examSpeakers().find(s => s.id === female);
+                const solo = speaker ? examSoloVoice(speaker.name) : null;
+                if (solo) want = solo.id;
+            }
+            if (!want || !Array.prototype.some.call(sel.options, o => o.value === want)) return;
+            sel.value = want;
+            examChosen[examDialogueMode].examMono = want;
+        }
+
+        // 行首的 M: / W:（允许前置空格，全半角冒号都认）→ { role, text }
+        function examRoleOfLine(line) {
+            let i = 0;
+            while (i < line.length && (line.charCodeAt(i) === 32 || line.charCodeAt(i) === 9)) i++;
+            const head = line.charAt(i).toUpperCase();
+            if (head !== 'M' && head !== 'W') return null;
+            let j = i + 1;
+            while (j < line.length && (line.charCodeAt(j) === 32 || line.charCodeAt(j) === 9)) j++;
+            const colon = line.charAt(j);
+            if (colon !== ':' && colon !== '：') return null;
+            return { role: head, text: line.slice(j + 1).trim() };
+        }
+
+        // 一行的说话人：行首的角色芯片（a / b）或手写的 M: / W: → 'a' / 'b'；都不是返回 null
+        function examLineRole(line) {
+            for (const seg of line) {
+                if (seg.type === 'role') return seg.key === 'b' ? 'b' : 'a';
+                if (seg.type === 'text') {
+                    const hit = examRoleOfLine(seg.value);
+                    return hit ? (hit.role === 'W' ? 'b' : 'a') : null;
+                }
+            }
+            return null;
+        }
+
+        // 去掉行首的说话人标记，剩下的（含停顿芯片）原样留下
+        function examStripRole(line) {
+            const out = [];
+            let done = false;
+            for (const seg of line) {
+                if (!done && seg.type === 'role') { done = true; continue; }
+                if (!done && seg.type === 'text') {
+                    const hit = examRoleOfLine(seg.value);
+                    if (hit) {
+                        done = true;
+                        if (hit.text) out.push({ type: 'text', value: hit.text });
+                        continue;
+                    }
+                }
+                out.push(seg);
+            }
+            return out;
+        }
+
+        // 听力测试：文稿 → 时间线
+        // M: / W: 行合成一段录音（整段打包，播两遍）；其余行给中文播报；
+        // 一段录音里只有一个人说话就是独白，用独白音色读。留白全靠文稿里的停顿标记。
+        function collectExamTimeline() {
+            const lines = splitSegmentsIntoLines(collectSegments(document.getElementById('examText')))
+                .filter(line => segmentsHaveContent(line));
+            const withTrial = document.getElementById('examWithTrial').checked;
+            const chime = document.getElementById('examChime').checked;
+            const gapMs = Math.round((Number(document.getElementById('examGap').value) || 0) * 1000);
+            const rawTurnGap = Number(document.getElementById('examTurnGap').value);
+            const turnGapMs = Number.isFinite(rawTurnGap) ? rawTurnGap : 0;
+            const timeline = [];
+            let dialogue = null;
+
+            // 只有停顿的行并进上一个块，不自己成块（否则会切碎一段录音，还会出现空块）
+            const appendToLast = segs => {
+                const target = dialogue && dialogue.turns.length
+                    ? dialogue.turns[dialogue.turns.length - 1]
+                    : timeline[timeline.length - 1];
+                if (!target) {
+                    timeline.push({ kind: 'cn', segments: segs.slice() });
+                    return;
+                }
+                if (target.turns && target.turns.length) {
+                    const turn = target.turns[target.turns.length - 1];
+                    turn.segments = turn.segments.concat(segs);
+                } else if (target.segments) {
+                    target.segments = target.segments.concat(segs);
+                }
+            };
+
+            const closeDialogue = () => {
+                if (!dialogue) return;
+                const first = dialogue.turns[0].key;
+                if (dialogue.turns.every(turn => turn.key === first)) {
+                    // 一个人从头说到尾 = 独白，多行拼成一段
+                    const merged = [];
+                    for (const turn of dialogue.turns) {
+                        if (merged.length) merged.push({ type: 'text', value: NL });
+                        for (const seg of turn.segments) merged.push(seg);
+                    }
+                    timeline.push({ kind: 'mono', segments: merged, repeat: 2, gapMs: gapMs, chime: chime });
+                } else {
+                    dialogue.repeat = 2;
+                    dialogue.gapMs = gapMs;
+                    dialogue.chime = chime;
+                    dialogue.plain = isPlainMode();
+                    dialogue.turnGapMs = turnGapMs;
+                    timeline.push(dialogue);
+                }
+                dialogue = null;
+            };
+
+            let start = 0;
+            if (!withTrial) {
+                for (let i = 0; i < lines.length; i++) {
+                    const text = lines[i].map(seg => seg.type === 'text' ? seg.value : '').join('');
+                    if (text.indexOf('听力考试正式开始') >= 0) { start = i; break; }
+                }
+            }
+            for (let i = start; i < lines.length; i++) {
+                const line = lines[i];
+                const key = examLineRole(line);
+                if (key) {
+                    if (!dialogue) dialogue = { kind: 'dialogue', turns: [] };
+                    dialogue.turns.push({ key: key, segments: examStripRole(line) });
+                    continue;
+                }
+                if (!line.some(seg => seg.type === 'text' || seg.type === 'para')) {
+                    appendToLast(line);
+                    continue;
+                }
+                closeDialogue();
+                timeline.push({ kind: 'cn', segments: line });
+            }
+            closeDialogue();
+
+            // 叮咚响在这段录音的中文提示之前（录音前面没有中文提示时就响在录音前）
+            for (let i = 0; i < timeline.length; i++) {
+                const item = timeline[i];
+                if (item.kind === 'cn' || !item.chime) continue;
+                const prev = timeline[i - 1];
+                if (prev && prev.kind === 'cn') {
+                    item.chime = false;
+                    prev.chime = true;
+                }
+            }
+            return timeline;
+        }
+
+        function syncExamGap() {
+            const raw = Number(document.getElementById('examGap').value);
+            const seconds = Number.isFinite(raw) ? raw : 1;
+            document.getElementById('examGapValue').textContent = seconds.toFixed(1) + 's';
+        }
+
+        // 延迟补偿只在普通模式出现：原生模式的 mstts:dialog 不认 break，给了也不生效
+        function syncExamTurnGap() {
+            const raw = Number(document.getElementById('examTurnGap').value);
+            const ms = Number.isFinite(raw) ? raw : 0;
+            document.getElementById('examTurnGapValue').textContent = (ms / 1000).toFixed(1) + 's';
+        }
         // 初始化文件上传功能
         // 上传区元素 id：txt 与音频两块结构相同，只差 id
         const FILE_IDS = { zone: 'fileDropZone', input: 'fileInput', info: 'fileInfo', name: 'fileName', size: 'fileSize', remove: 'fileRemoveBtn' };
@@ -3896,6 +4524,7 @@
             const error = document.getElementById('error');
             
             // 验证输入
+            let examPlan = null;
             if (currentInputMethod === 'text') {
                 if (!segmentsHaveContent(collectSegments(document.getElementById('text')))) {
                     showNotice('请输入要转换的文本内容');
@@ -3909,6 +4538,17 @@
             } else if (currentInputMethod === 'dialogue') {
                 if (!collectDialogueTurns().length) {
                     showNotice('请输入对话内容：每行一句，行首用 A: 或 B: 指定说话人');
+                    return;
+                }
+            } else if (currentInputMethod === 'exam') {
+                examPlan = collectExamTimeline();
+                if (!examPlan.length) {
+                    showNotice('请粘贴听力文稿：M: 男声、W: 女声各占一行，中文行给中文播报');
+                    return;
+                }
+                // 网页版一次请求的子请求有上限，段数太多就先挡住
+                if (examPlan.length > 38) {
+                    showNotice('文稿太长（' + examPlan.length + ' 段），请关掉试音部分或分批生成');
                     return;
                 }
             }
@@ -3988,6 +4628,40 @@
                             speakerB: document.getElementById('speakerB').value,
                             optsA: roleOpts('A'),
                             optsB: roleOpts('B'),
+                            outputFormat: audioFormat
+                        })
+                    });
+                } else if (currentInputMethod === 'exam') {
+                    // 听力测试：前端已解析成时间线，后端逐块合成后按序拼成一条
+                    const blocks = (examPlan || []).filter(b => b.kind !== 'cn').length;
+                    loadingText.textContent = '正在生成听力音频，请稍候...';
+                    progressInfo.textContent = '共 ' + (examPlan || []).length + ' 段，'
+                        + blocks + ' 段录音（每段播两遍）';
+
+                    response = await fetch('/v1/audio/speech', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        signal: signal,
+                        body: JSON.stringify({
+                            exam: true,
+                            multitalker: EXAM_MULTITALKER,
+                            // 中文播报就是主音色下拉，男声女声就是角色卡的说话人
+                            voices: {
+                                cn: document.getElementById('voice').value,
+                                male: document.getElementById('speakerA').value,
+                                female: document.getElementById('speakerB').value,
+                                mono: document.getElementById('examMono').value
+                            },
+                            // 四张卡片各自的语速：中文播报 / M / W / 独白
+                            optsCn: roleOpts('Cn'),
+                            optsA: roleOpts('A'),
+                            optsB: roleOpts('B'),
+                            optsMono: roleOpts('Mono'),
+                            chime: document.getElementById('examChime').checked,
+                            tailMs: document.getElementById('examTail').checked ? 120000 : 0,
+                            timeline: examPlan || [],
                             outputFormat: audioFormat
                         })
                     });
@@ -4199,6 +4873,8 @@
 
         // ===== 参数与草稿：记住上次的设置，刷新和重开都不丢 =====
         let stateTimer = 0;
+        // 从本地读出来的听力测试设置，等切到该模式时再回填（用后清空，避免覆盖本次会话的改动）
+        let examPrefs = null;
 
         function saveState() {
             clearTimeout(stateTimer);
@@ -4207,6 +4883,10 @@
                     const el = document.getElementById(id);
                     return el ? el.value : '';
                 };
+                const checkedOf = id => {
+                    const el = document.getElementById(id);
+                    return el ? !!el.checked : false;
+                };
                 try {
                     localStorage.setItem(PREFS_KEY, JSON.stringify({
                         voice: valueOf('voice'),
@@ -4214,11 +4894,29 @@
                         pitch: valueOf('pitch'),
                         style: valueOf('style'),
                         degree: valueOf('styleDegree'),
-                        volume: valueOf('volume')
+                        volume: valueOf('volume'),
+                        // 听力测试的槽位与滑块一起记住，刷新后不用重选一遍
+                        exam: {
+                            mode: examDialogueMode,
+                            accent: examAccentTab,
+                            speakerA: valueOf('speakerA'),
+                            speakerB: valueOf('speakerB'),
+                            examMono: valueOf('examMono'),
+                            trial: checkedOf('examWithTrial'),
+                            chime: checkedOf('examChime'),
+                            tail: checkedOf('examTail'),
+                            examGap: valueOf('examGap'),
+                            examTurnGap: valueOf('examTurnGap'),
+                            speedCn: valueOf('speedCn'),
+                            speedA: valueOf('speedA'),
+                            speedB: valueOf('speedB'),
+                            speedMono: valueOf('speedMono')
+                        }
                     }));
                     localStorage.setItem(DRAFT_KEY, JSON.stringify({
                         text: document.getElementById('text').innerHTML,
-                        dialogueText: document.getElementById('dialogueText').innerHTML
+                        dialogueText: document.getElementById('dialogueText').innerHTML,
+                        examText: document.getElementById('examText').innerHTML
                     }));
                 } catch (ignored) { }
             }, 500);
@@ -4251,6 +4949,37 @@
             syncSpeedPitch();
             syncStyleDegree();
             syncStarButton();
+            // 听力测试的下拉要切到那个模式才会填充，先存着，进模式时再回填
+            if (prefs.exam) examPrefs = prefs.exam;
+        }
+
+        // 下拉里没有记住的那个选项就别硬塞，保持默认
+        function setSelect(id, value) {
+            const el = document.getElementById(id);
+            if (!el || !value) return;
+            if (Array.prototype.some.call(el.options, o => o.value === value)) el.value = value;
+        }
+
+        // 回填听力测试的设置：下拉已由 renderExamRoles 填充后才能调
+        function applyExamPrefs(e) {
+            // 写进对应方式的选择里，交给 renderExamRoles 回填（下拉那时才填充好）
+            const mode = (e.mode === 'plain' || e.mode === 'native') ? e.mode : examDialogueMode;
+            examChosen[mode].speakerA = e.speakerA || '';
+            examChosen[mode].speakerB = e.speakerB || '';
+            examChosen[mode].examMono = e.examMono || '';
+            for (const item of [['examWithTrial', 'trial'], ['examChime', 'chime'], ['examTail', 'tail']]) {
+                const el = document.getElementById(item[0]);
+                if (el && typeof e[item[1]] === 'boolean') el.checked = e[item[1]];
+            }
+            setNumeric('examGap', e.examGap);
+            setNumeric('examTurnGap', e.examTurnGap);
+            setNumeric('speedCn', e.speedCn);
+            setNumeric('speedA', e.speedA);
+            setNumeric('speedB', e.speedB);
+            setNumeric('speedMono', e.speedMono);
+            syncExamGap();
+            syncExamTurnGap();
+            syncRoleValues();
         }
 
         // 芯片是带属性的 span，整段 innerHTML 存下来能原样还原
@@ -4258,7 +4987,7 @@
             let draft = null;
             try { draft = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); } catch (ignored) { }
             if (!draft) return;
-            for (const id of ['text', 'dialogueText']) {
+            for (const id of ['text', 'dialogueText', 'examText']) {
                 const el = document.getElementById(id);
                 if (el && typeof draft[id] === 'string' && draft[id]) {
                     el.innerHTML = draft[id];
@@ -4351,7 +5080,7 @@
         function initializeContextMenu() {
             const menu = document.getElementById('ctx');
             if (!menu) return;
-            for (const id of ['text', 'dialogueText']) {
+            for (const id of ['text', 'dialogueText', 'examText']) {
                 const editor = document.getElementById(id);
                 if (!editor) continue;
                 editor.addEventListener('contextmenu', event => {
@@ -4594,9 +5323,10 @@
         function initializeAppShell() {
             const desktop = RUNTIME === 'desktop';
             const modal = document.getElementById('appModal');
-            const editorOf = () => document.getElementById(currentInputMethod === 'dialogue'
-                ? 'dialogueText'
-                : 'text');
+            const editorOf = () => {
+                if (currentInputMethod === 'dialogue') return document.getElementById('dialogueText');
+                return document.getElementById(currentInputMethod === 'exam' ? 'examText' : 'text');
+            };
 
             // 状态栏的运行方式与「关于」共用同一份文字
             const runtimeText = desktop ? '桌面版 · 本机服务' : '网页版';

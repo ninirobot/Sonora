@@ -16,7 +16,7 @@ use tokio::net::TcpListener;
 // 待开发：语音转文字（恢复时取消下面这行注释）
 // use crate::auth;
 use crate::data;
-use crate::ssml::{SegmentKind, VoiceOpts};
+use crate::ssml::{parse_text_marks, SegmentKind, VoiceOpts};
 // 待开发：语音转文字（stt 模块已封存，恢复时改回 use crate::{stt, tts};）
 use crate::tts;
 
@@ -164,7 +164,43 @@ async fn handle_speech_json(payload: Value) -> Response<Body> {
     // 前端「设置」里选的输出格式；空值走 VoiceOpts 的默认（audio-24khz-96kbitrate-mono-mp3）
     let output_format = text_field(&payload, "outputFormat", "");
 
-    let result = if is_truthy(payload.get("dialogue")) {
+    let result = if is_truthy(payload.get("exam")) {
+        // 听力测试：前端已把文稿解析成时间线，这里逐块合成后按序拼接
+        let voices = tts::ExamVoices {
+            cn: nested_text(&payload, "voices", "cn", "zh-CN-XiaoxiaoNeural"),
+            male: nested_text(&payload, "voices", "male", "andrew"),
+            female: nested_text(&payload, "voices", "female", "ava"),
+            // 独白是英文，兜底不能是中文播报那副嗓子，与网页端保持一致
+            mono: nested_text(&payload, "voices", "mono", "en-US-Andrew:DragonHDLatestNeural"),
+        };
+        let multitalker = text_field(&payload, "multitalker", "en-Multitalker:DragonHDLatestNeural");
+        let tail_ms = payload.get("tailMs").and_then(Value::as_f64).unwrap_or(0.0).max(0.0) as u32;
+        let blocks = tts::exam_blocks_from_json(payload.get("timeline"));
+        let mut opts = VoiceOpts::default();
+        opts.output_format = output_format.clone();
+        // 四张卡片各自的语速：中文播报 / M / W / 独白
+        let mut opts_cn = opts_from_value(payload.get("optsCn"));
+        opts_cn.output_format = output_format.clone();
+        let mut opts_a = opts_from_value(payload.get("optsA"));
+        opts_a.output_format = output_format.clone();
+        let mut opts_b = opts_from_value(payload.get("optsB"));
+        opts_b.output_format = output_format.clone();
+        let mut opts_mono = opts_from_value(payload.get("optsMono"));
+        opts_mono.output_format = output_format.clone();
+        tts::exam_voice(
+            blocks,
+            voices,
+            &multitalker,
+            &opts,
+            &opts_cn,
+            &opts_a,
+            &opts_b,
+            &opts_mono,
+            is_truthy(payload.get("chime")),
+            tail_ms,
+        )
+        .await
+    } else if is_truthy(payload.get("dialogue")) {
         let speaker_a = text_field(&payload, "speakerA", "emma").to_lowercase();
         let speaker_b = text_field(&payload, "speakerB", "andrew").to_lowercase();
         // 逐行编辑器直接给结构化 turns；上传 txt 才走文本解析
@@ -182,15 +218,16 @@ async fn handle_speech_json(payload: Value) -> Response<Body> {
     } else {
         let mut opts = VoiceOpts::from_params(&speed, &volume, &pitch, &style, styledegree);
         opts.output_format = output_format.clone();
+        // 片段要么由页面解析好传进来，要么直接写在这段纯文本里（手打 or 第三方调用）
         let segments = payload
             .get("segments")
             .and_then(Value::as_array)
-            .map(|items| tts::segments_from_json(items));
+            .map(|items| tts::segments_from_json(items))
+            .filter(|items| items.iter().any(|segment| segment.kind != SegmentKind::Text))
+            .or_else(|| parse_text_marks(&input, true));
         match segments {
-            Some(items) if items.iter().any(|segment| segment.kind != SegmentKind::Text) => {
-                tts::segmented_voice(&items, &voice_name, &opts).await
-            }
-            _ => tts::voice(&input, &voice_name, &opts).await,
+            Some(items) => tts::segmented_voice(&items, &voice_name, &opts).await,
+            None => tts::voice(&input, &voice_name, &opts).await,
         }
     };
 
@@ -298,7 +335,12 @@ async fn upload_voice(multipart: Multipart) -> Result<(Vec<u8>, String), UploadE
             .and_then(|value| value.parse::<f64>().ok()),
     );
     opts.output_format = output_format.clone();
-    let bytes = tts::voice(&content, voice_name, &opts).await.map_err(UploadError::Failed)?;
+    // txt 里写了停顿 / 副语言标记就按片段合成
+    let bytes = match parse_text_marks(&content, true) {
+        Some(marks) => tts::segmented_voice(&marks, voice_name, &opts).await,
+        None => tts::voice(&content, voice_name, &opts).await,
+    }
+    .map_err(UploadError::Failed)?;
     Ok((bytes, output_format))
 }
 
@@ -345,6 +387,14 @@ fn text_field(value: &Value, key: &str, fallback: &str) -> String {
     match value.get(key) {
         Some(Value::String(text)) => text.clone(),
         Some(Value::Number(number)) => number.to_string(),
+        _ => fallback.to_string(),
+    }
+}
+
+/// 取 `{ "voices": { "cn": "..." } }` 这种嵌套字段
+fn nested_text(value: &Value, group: &str, key: &str, fallback: &str) -> String {
+    match value.get(group).and_then(|item| item.get(key)).and_then(Value::as_str) {
+        Some(text) if !text.is_empty() => text.to_string(),
         _ => fallback.to_string(),
     }
 }
