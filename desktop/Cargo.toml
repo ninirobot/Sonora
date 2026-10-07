@@ -1,6 +1,6 @@
 [package]
 name = "sonora"
-version = "0.1.0"
+version = "0.2.0"
 description = "Sonora 声界：桌面语音工作台（Windows 桌面版）"
 edition = "2021"
 
