@@ -382,8 +382,10 @@ pub fn get_dialogue_ssml(turns: &[crate::tts::Turn], voice_name: &str, opts_a: &
 }
 
 /// 普通模式：一条 speak 内多个 <voice>，男女各一个音色
-/// 实测两个坑：break 写在两个 voice 之间会被判 400；写在文本「之后」会被端点吞掉。
-/// 所以上一句末尾的停顿芯片和延迟补偿，都要挪到下一句的开头。
+/// 实测两个坑：break 写在两个 voice 之间会被判 400；只有落在「整条音频最末尾」的 break 会被吞。
+/// 句内（含某个 voice 的末尾、但后面还有 voice）的 break 一律生效，所以停顿芯片就地留着即可，
+/// 不必搬到下一句开头。唯一要搬的是整段最后一句的末尾停顿，那一处由调用方摘进
+/// pause_after_ms 交给静音池（见 tts.rs 里「停顿路径」那段）。
 pub fn get_multi_voice_ssml(
     turns: &[crate::tts::Turn],
     male: &str,
@@ -393,34 +395,21 @@ pub fn get_multi_voice_ssml(
     turn_gap_ms: u32,
 ) -> String {
     let gap = turn_gap_ms.min(1000);
-    let mut carry: u32 = 0;
     let body = turns
         .iter()
         .enumerate()
         .map(|(index, turn)| {
             let (voice, opts) = if turn.key == "b" { (female, opts_b) } else { (male, opts_a) };
-            // 取出本句末尾的停顿芯片，交给下一句开头。
-            // 整句只剩停顿时不再取，否则这一个 voice 会被掏空（与 JS 端同一条保护）
-            let mut segments = turn.segments.clone();
-            let mut tail = 0u32;
-            while segments.iter().any(|s| s.length() > 0)
-                && matches!(segments.last().map(|s| s.kind), Some(SegmentKind::Pause))
-            {
-                if let Some(seg) = segments.pop() {
-                    tail += seg.ms;
-                }
-            }
-            let lead = carry + if index > 0 { gap } else { 0 };
-            carry = tail;
-            // 官方 SSML 的 break 上限是 20 秒，超了会被判非法
+            // 延迟补偿只加在第二句起（第一句前面是上一块的停顿，不归这里管）
+            let lead = if index > 0 { gap } else { 0 };
             let brk = if lead > 0 {
-                format!("<break time=\"{}ms\"/>", lead.min(20000))
+                format!("<break time=\"{lead}ms\"/>")
             } else {
                 String::new()
             };
             format!(
                 "<voice name=\"{voice}\">{brk}{inner}</voice>",
-                inner = with_style(&segments_to_inner(&segments, opts), opts)
+                inner = with_style(&segments_to_inner(&turn.segments, opts), opts)
             )
         })
         .collect::<Vec<_>>()
@@ -432,4 +421,56 @@ pub fn get_multi_voice_ssml(
         locale = data::AppData::get().locale_of_voice(male),
         body = body
     )
+}
+
+/// 停顿落点自检（与网页端同一条规则，改动前先跑这个）
+///
+/// 旧实现认定「句尾 break 会被端点吞」，于是把每一句末尾的停顿芯片都搬到下一句开头。
+/// 实测（见 tts.rs 里的「停顿路径」矩阵）推翻了这个前提：句内的 break 一律生效，
+/// 只有落在整条音频最末尾的那一个才看音色。这里的断言就是防止搬运逻辑回潮。
+#[cfg(test)]
+mod pause_placement_tests {
+    use super::*;
+    use crate::tts::Turn;
+
+    fn turn(key: &str, text: &str, tail_pause_ms: u32) -> Turn {
+        let mut segments = vec![Segment::text(text)];
+        if tail_pause_ms > 0 {
+            segments.push(Segment { kind: SegmentKind::Pause, text: String::new(), ms: tail_pause_ms });
+        }
+        Turn { key: key.to_string(), speaker: String::new(), segments }
+    }
+
+    /// 两个 turn：第一句末尾带 2 秒停顿，延迟补偿 500ms
+    fn two_turns() -> String {
+        let turns = vec![turn("a", "甲", 2000), turn("b", "乙", 0)];
+        get_multi_voice_ssml(
+            &turns,
+            "en-US-AndrewNeural",
+            "en-US-AvaNeural",
+            &VoiceOpts::default(),
+            &VoiceOpts::default(),
+            500,
+        )
+    }
+
+    #[test]
+    fn tail_pause_stays_in_its_own_voice() {
+        let ssml = two_turns();
+        assert!(
+            ssml.contains(">甲</prosody><break time=\"2000ms\"/></voice>"),
+            "第一句的末尾停顿应当就地留在自己的 voice 里：{ssml}"
+        );
+        // 旧实现会把 2000ms 搬到第二句开头、与 500ms 延迟补偿合并成 2500ms；这个断言就是防它回潮
+        assert!(!ssml.contains("2500ms"), "停顿不该被搬到下一句：{ssml}");
+    }
+
+    #[test]
+    fn turn_gap_leads_the_second_voice() {
+        let ssml = two_turns();
+        assert!(
+            ssml.contains("<voice name=\"en-US-AvaNeural\"><break time=\"500ms\"/>"),
+            "延迟补偿应当加在第二句开头：{ssml}"
+        );
+    }
 }

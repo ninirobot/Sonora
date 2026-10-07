@@ -2612,7 +2612,7 @@
             <span id="runtimeLabel"></span>
             <span class="feature-item"><span class="feature-icon">🎙️</span><span data-i18n="header.feature1">300+ Voices</span></span>
             <span class="feature-item"><span class="feature-icon">🌍</span><span data-i18n="header.feature2">9 Languages · 23 Accents</span></span>
-            <span class="feature-item"><span class="feature-icon">🧩</span><span data-i18n="header.feature3">8 Voice Families</span></span>
+            <span class="feature-item"><span class="feature-icon">🧩</span><span data-i18n="header.feature3">9 Voice Families</span></span>
             <span class="feature-item"><span class="feature-icon">🖥️</span><span data-i18n="header.feature4">Free · Download Ready</span></span>
             <span class="status-right">Ctrl+Enter 生成</span>
         </footer>
@@ -2689,6 +2689,8 @@
         const PROMOTION = /*__DATA:PROMOTION__*/;
         // 运行环境：网页版 web / 桌面版 desktop，决定是否显示自绘窗口按钮
         const RUNTIME = /*__DATA:RUNTIME__*/;
+        // 应用版本：桌面版由编译时的版本号注入，网页版为空串（界面据此藏掉版本行）
+        const APP_VERSION = /*__DATA:APP_VERSION__*/;
 
         let selectedFile = null;
         let currentInputMethod = 'text'; // 'text' or 'file'
@@ -2708,7 +2710,7 @@
                 'header.subtitle': 'Desktop Voice Studio',
                 'header.feature1': '300+ Voices',
                 'header.feature2': '9 Languages · 23 Accents',
-                'header.feature3': '8 Voice Families',
+                'header.feature3': '9 Voice Families',
                 'header.feature4': 'Free · Download Ready',
                 'mode.tts': 'Text to Speech',
                 'mode.transcription': 'Speech to Text',
@@ -2723,7 +2725,7 @@
                 'header.subtitle': '桌面语音工作台',
                 'header.feature1': '300+ 副嗓音',
                 'header.feature2': '9 种语言 · 23 个口音',
-                'header.feature3': '8 类音色家族',
+                'header.feature3': '9 类音色家族',
                 'header.feature4': '完全免费 · 支持下载',
                 'mode.tts': '文字转语音',
                 'mode.transcription': '语音转文字',
@@ -2738,7 +2740,7 @@
                 'header.subtitle': 'デスクトップ音声スタジオ',
                 'header.feature1': '300+ 音声',
                 'header.feature2': '9 言語 · 23 アクセント',
-                'header.feature3': '8 つの音声ファミリー',
+                'header.feature3': '9 つの音声ファミリー',
                 'header.feature4': '完全無料 · ダウンロード対応',
                 'mode.tts': 'テキスト読み上げ',
                 'mode.transcription': '音声テキスト変換',
@@ -2753,7 +2755,7 @@
                 'header.subtitle': '데스크톱 음성 스튜디오',
                 'header.feature1': '300+개 음성',
                 'header.feature2': '9개 언어 · 23개 악센트',
-                'header.feature3': '8가지 음성 패밀리',
+                'header.feature3': '9가지 음성 패밀리',
                 'header.feature4': '완전 무료 · 다운로드 지원',
                 'mode.tts': '텍스트 음성 변환',
                 'mode.transcription': '음성 텍스트 변환',
@@ -2768,7 +2770,7 @@
                 'header.subtitle': 'Estudio de voz de escritorio',
                 'header.feature1': '300+ voces',
                 'header.feature2': '9 idiomas · 23 acentos',
-                'header.feature3': '8 familias de voz',
+                'header.feature3': '9 familias de voz',
                 'header.feature4': 'Gratis · Con descarga',
                 'mode.tts': 'Texto a Voz',
                 'mode.transcription': 'Voz a Texto',
@@ -2783,7 +2785,7 @@
                 'header.subtitle': 'Studio vocal de bureau',
                 'header.feature1': '300+ voix',
                 'header.feature2': '9 langues · 23 accents',
-                'header.feature3': '8 familles de voix',
+                'header.feature3': '9 familles de voix',
                 'header.feature4': 'Gratuit · Téléchargeable',
                 'mode.tts': 'Texte vers Parole',
                 'mode.transcription': 'Parole vers Texte',
@@ -2798,7 +2800,7 @@
                 'header.subtitle': 'Desktop-Sprachstudio',
                 'header.feature1': '300+ Stimmen',
                 'header.feature2': '9 Sprachen · 23 Akzente',
-                'header.feature3': '8 Stimmen-Familien',
+                'header.feature3': '9 Stimmen-Familien',
                 'header.feature4': 'Kostenlos · Zum Download',
                 'mode.tts': 'Text zu Sprache',
                 'mode.transcription': 'Sprache zu Text',
@@ -2813,7 +2815,7 @@
                 'header.subtitle': 'Настольная голосовая студия',
                 'header.feature1': '300+ голосов',
                 'header.feature2': '9 языков · 23 акцента',
-                'header.feature3': '8 семейств голосов',
+                'header.feature3': '9 семейств голосов',
                 'header.feature4': 'Бесплатно · Загрузка',
                 'mode.tts': 'Текст в Речь',
                 'mode.transcription': 'Речь в Текст',
@@ -4413,7 +4415,8 @@
             document.getElementById('examGapValue').textContent = seconds.toFixed(1) + 's';
         }
 
-        // 延迟补偿只在普通模式出现：原生模式的 mstts:dialog 不认 break，给了也不生效
+        // 延迟补偿只在普通模式出现：原生模式走 mstts:dialog，轮次之间的疏密由 MultiTalker 模型自己拿主意，
+        // 没有可插入固定间隔的位置（与「dialog 不认 break」无关，那句旧注释已被实测推翻）
         function syncExamTurnGap() {
             const raw = Number(document.getElementById('examTurnGap').value);
             const ms = Number.isFinite(raw) ? raw : 0;
@@ -5328,9 +5331,10 @@
                 return document.getElementById(currentInputMethod === 'exam' ? 'examText' : 'text');
             };
 
-            // 状态栏的运行方式与「关于」共用同一份文字
+            // 状态栏的运行方式与「关于」共用同一份文字；版本号只为桌面版显示
             const runtimeText = desktop ? '桌面版 · 本机服务' : '网页版';
-            document.getElementById('runtimeLabel').textContent = runtimeText;
+            document.getElementById('runtimeLabel').textContent =
+                APP_VERSION ? runtimeText + ' · v' + APP_VERSION : runtimeText;
 
             // 联系作者里的项目：网页端换成可点链接，桌面端保持纯文本（WebView 里外链打不开）
             if (!desktop) {
@@ -5356,13 +5360,16 @@
             }
 
             // 侧边栏「帮助」：快捷键与关于一段，联系作者另一段（结构写在卡片里）
-            document.getElementById('helpBtn').addEventListener('click', () => showModal('帮助', [
+            // 版本行只在拿得到版本号时出现（网页版没有版本号）
+            const helpRows = [
                 ['Ctrl+Enter', '生成语音'],
                 ['Ctrl+Z / Ctrl+Y', '撤销 / 重做'],
                 ['Esc', '关闭弹窗与右键菜单'],
-                ['应用', 'Sonora 声界'],
-                ['运行方式', runtimeText]
-            ]));
+                ['应用', 'Sonora 声界']
+            ];
+            if (APP_VERSION) helpRows.push(['版本', 'v' + APP_VERSION]);
+            helpRows.push(['运行方式', runtimeText]);
+            document.getElementById('helpBtn').addEventListener('click', () => showModal('帮助', helpRows));
 
             // 编辑框右上角的撤销 / 重做：mousedown 阻止抢焦点以保住光标
             for (const [id, command] of [['undoBtn', 'undo'], ['redoBtn', 'redo']]) {

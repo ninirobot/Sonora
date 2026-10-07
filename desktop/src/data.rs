@@ -46,6 +46,8 @@ impl AppData {
             ("TEXT_PLACEHOLDERS", json(&self.labels["textPlaceholders"])),
             // 运行环境：页面据此显示自绘窗口按钮（注意要产出带引号的 JS 字符串）
             ("RUNTIME", "\"desktop\"".to_string()),
+            // 版本号：直接取 Cargo.toml 里那一份，状态栏与「关于」都显示它
+            ("APP_VERSION", format!("\"{}\"", env!("CARGO_PKG_VERSION"))),
             ("PROMOTION", json(promotion)),
             ("PROMOTION.title", text(promotion, "title")),
             ("PROMOTION.subtitle", text(promotion, "subtitle")),
@@ -93,13 +95,28 @@ impl AppData {
     }
 }
 
-/// 渲染结果只算一次：页面 250KB、18 次替换，开窗口 / 刷新 / 重载都直接命中
+/// 渲染结果只算一次：页面 250KB、十几处替换，开窗口 / 刷新 / 重载都直接命中
 static PAGE: OnceLock<Result<String, String>> = OnceLock::new();
 
 pub fn page() -> Result<&'static str, String> {
     match PAGE.get_or_init(|| AppData::get().render_page()) {
         Ok(html) => Ok(html.as_str()),
         Err(message) => Err(message.clone()),
+    }
+}
+
+/// 页面自检：占位标记必须一一对上（缺值或多余都会让 render_page 报错），
+/// 顺带盯住版本号真的注进了页面 —— 状态栏与「关于」都读它，也是版本控制的一环。
+#[cfg(test)]
+mod render_tests {
+    use super::*;
+
+    #[test]
+    fn page_carries_the_build_version() {
+        let html = page().expect("页面渲染应当成功");
+        let quoted = format!("\"{}\"", env!("CARGO_PKG_VERSION"));
+        assert!(html.contains(&quoted), "页面里没有注入版本号 {}", quoted);
+        assert!(!html.contains("__DATA:"), "页面里还有未替换的占位标记");
     }
 }
 

@@ -20,10 +20,11 @@ export const END_MARK = '<!-- VOICE_STATS:END -->';
 const FAMILY_LABELS = {
     standard: '标准',
     multilingual: '多语言',
+    openai: 'OpenAI',
     dragonHD: 'Neural-HD',
     dragonHDOmni: 'Neural-HD-Omni',
     dragonHDFlash: 'Neural-HD-Flash',
-    maiVoice2: 'MAI-Voice-2',
+    maiVoice2: 'MAI-Voice-2.1',
     dialect: '方言',
     multitalker: '多人语音'
 };
@@ -31,6 +32,7 @@ const FAMILY_LABELS = {
 const FAMILY_NOTES = {
     standard: '经典 Neural 语音，风格按语音逐条列',
     multilingual: 'MultilingualNeural，一副嗓子说多国语言',
+    openai: 'Azure OpenAI 同款音色的 Turbo 版，延迟更低、多语言更稳',
     dragonHD: 'LLM 驱动的 HD 语音，共用 62 项模型级风格表',
     dragonHDOmni: 'HD 的 Omni 版本，风格 61 项（不含 whispering）',
     dragonHDFlash: 'HD 的低延迟版本，仅中文与英文',

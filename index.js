@@ -82,6 +82,8 @@ function renderPage() {
         'STYLES_UNKNOWN': JSON.stringify(STYLES_UNKNOWN),
         // 运行环境：页面据此决定要不要显示自绘窗口按钮（桌面版才有）
         'RUNTIME': '"web"',
+        // 网页版没有版本号概念，给空串，页面会把版本行藏起来
+        'APP_VERSION': '""',
         'PROMOTION': JSON.stringify(PROMOTION),
         'PROMOTION.title': PROMOTION.title,
         'PROMOTION.subtitle': PROMOTION.subtitle,
@@ -727,26 +729,19 @@ function getDialogueSsml(turns, voiceName, optsA, optsB) {
 // 普通模式：一条 speak 里放多个 <voice>，男女各用自己的音色
 // 实测两个坑：
 //   1. break 写在两个 voice 之间会被判 400，必须写在 voice 内部；
-//   2. 写在文本「之后」的 break 会被端点直接吞掉，只有写在文本「之前」才生效。
-// 所以上一句末尾的停顿芯片和延迟补偿，都要挪到下一句的开头。
+//   2. 只有落在「整条音频最末尾」的 break 会被吞，句内（含某个 voice 的末尾但后面还有 voice）
+//      的 break 一律生效 —— 所以句内的停顿芯片就地留着就行，不必搬到下一句开头。
+// 唯一要搬的是整段最后一句的末尾停顿，那一处由调用方摘进 pauseAfterMs 交给静音池。
 function getMultiVoiceSsml(turns, voiceOf, optsOf, turnGapMs = 0) {
     const raw = Number(turnGapMs);
     const gap = Number.isFinite(raw) && raw > 0 ? Math.min(1000, Math.round(raw)) : 0;
-    let carry = 0;
     const body = turns.map((turn, i) => {
         const key = turn.key === 'b' ? 'b' : 'a';
         const opts = optsOf[key];
-        // 取出本句末尾的停顿芯片，交给下一句开头（最后一句的由块的 pauseAfterMs 负责）
-        const segments = (turn.segments || []).slice();
-        let tail = 0;
-        while (segments.length && segments[segments.length - 1].type === 'pause') {
-            const ms = Number(segments.pop().ms);
-            if (Number.isFinite(ms)) tail += ms;
-        }
-        const lead = carry + (i > 0 ? gap : 0);
-        carry = tail;
-        const brk = lead > 0 ? `<break time="${Math.min(20000, Math.round(lead))}ms"/>` : '';
-        return `<voice name="${voiceOf[key]}">${brk}${withStyle(segmentsToInner(segments, opts), opts)}</voice>`;
+        // 延迟补偿只加在第二句起（第一句前面是上一块的停顿，不归这里管）
+        const lead = i > 0 ? gap : 0;
+        const brk = lead > 0 ? `<break time="${lead}ms"/>` : '';
+        return `<voice name="${voiceOf[key]}">${brk}${withStyle(segmentsToInner(turn.segments, opts), opts)}</voice>`;
     }).join('');
     const locale = localeOfVoice(voiceOf.a || voiceOf.b || 'en-US');
     return `<speak xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" version="1.0" xml:lang="${locale}">${body}</speak>`;
@@ -770,11 +765,39 @@ async function getDialogueVoice(turns, voiceName, optsA, optsB, speakerA = 'emma
 // 微软的 MultiTalker 只有 2 个音色槽位，撑不起「中文播音 + 男声 + 女声 + 独白」
 // 四角色，所以前端先把整篇文稿拆成时间线：中文提示走中文单音色、男女对话走
 // en-Multitalker、独白走单人 DragonHD，后端各发一次请求再把音频拼起来。
-// 长停顿不挂在块里，而是把用到的时长各合成一段纯静音反复复用：省下大量子请求，
-// 也绕开了「mstts:dialog 后面能不能挂 break」这个不确定。
+// 末尾停顿由静音池在块外拼字节，块内停顿就地写 break —— 这是实测定的，别凭直觉改。
 // ===========================================================================
 
-// 静音块也需要一个文本，纯标点几乎不发声
+// ===========================================================================
+// 停顿路径（2026-10-07 用 scripts/probe-silence.mjs 在真实服务上实测）
+// ---------------------------------------------------------------------------
+// 一句话规律：break 只要不在整条音频的**最末尾**，就一律生效；
+// 落在最末尾时是否生效只看音色，与容器（voice / mstts:dialog）无关。
+//
+//   break 位置               中文普通音色  英文普通音色   DragonHD*   MultiTalker   MAI   DragonHDFlash
+//   块开头 / 句中 / 句间          ✅            ✅           ✅           ✅        —        ✅
+//   多 voice / 多 turn 之间       ✅            ✅           ✅           ✅        —        —
+//   整条音频的最末尾              ✅            ✅           ❌           ❌        ❌       ❌
+//
+// mstts:silence 是官方元素、本身能用，但**按音色家族分**：普通 Neural 音色
+//（晓晓、AvaNeural）认，Δ 精确；HD 家族（DragonHD 系列含 Flash / Omni、MAI、MultiTalker）
+// 全不认。官方 HD 支持表（.../speech-service/high-definition-voices）也把 <mstts:silence>
+// 标成 DragonHD / Dragon HD Omni 均「不支持」，与实测一致。
+// 已排除「写法不对」这个可能：http / https 两种命名空间、叠加型与 -exact 绝对型、
+// 标签摆在文本前（官方示例的摆法）与摆在文本后，四种写法在 HD 上 Δ 都是 0。
+// 尴尬的是：认它的普通音色本来就不吞末尾 break，会吞的那批恰好全不认它 ——
+// 所以它在这个项目里救不了任何场景，末尾停顿只能靠静音池在块外拼字节。
+//
+// ⚠️ 那张 HD 表只能当参考：它把 Omni 的 <break>、HD 的 <prosody> 也标成「不支持」，
+// 但实测两者在我们的端点上都生效（Omni 句尾 break Δ4000；语速 ±50% 差 1~1.8 秒）。
+// 官方表讲的是 Azure 语音服务，我们走的是 Edge 端点，别照抄，以实测为准。
+//
+// 池子也不是权宜之计，它是精确的：Xiaoxiao 读「。」实测产出 0ms，池子片段 = 请求的毫秒数
+//（raw PCM 误差 0ms；MP3 容器固定多出约 48ms）。
+// 换音色或怀疑端点行为变了，跑一次 node scripts/probe-silence.mjs 复验。
+// ===========================================================================
+
+// 静音池也要带一段文本：voice 里只放静音标签、不带文本会产出 0 字节（实测）
 const SILENCE_TEXT = '。';
 // 静音池固定用这个音色：实测「。」在 MAI / DragonHD 系列下会被读出一个怪声
 //（用户听到的「两遍之间的怪声」就是它），而 Xiaoxiao 读「。」是纯静音
@@ -822,9 +845,9 @@ async function getExamVoice(body) {
     const timeline = Array.isArray(body.timeline) ? body.timeline : [];
     if (!timeline.length) throw new Error('听力内容为空，请先粘贴文稿');
 
-    // 句尾的 break 在不少音色（DragonHD / MAI 系列）下会被端点吞掉，
-    // 所以每块末尾的停顿芯片一律摘出来，交给静音池在块后拼。
-    // 块内两句之间的停顿摘不出来（它们在同一条 SSML 里），只能靠句首 break —— 见 getMultiVoiceSsml
+    // 落在「整条音频最末尾」的 break 会被 DragonHD / Flash / MAI / MultiTalker 吞掉
+    //（中文与英文普通音色不吞），所以每块末尾的停顿芯片一律摘出来，交给静音池在块后拼字节。
+    // 块内停顿不受影响，就地写 break 即可 —— 见上面的「停顿路径」
     for (const item of timeline) {
         if (!item) continue;
         const last = item.kind === 'dialogue' ? (item.turns || [])[item.turns.length - 1] : item;
@@ -892,7 +915,7 @@ async function getExamVoice(body) {
             pieces.push(audio);
             if (round < repeat && item.gapMs && silence[item.gapMs]) pieces.push(silence[item.gapMs]);
         }
-        // 对话尾巴上的停顿（前端从 dialog 里挪出来的）在这里补上
+        // 块末尾的停顿（后端从块内摘出来的）在这里补上
         if (item.pauseAfterMs && silence[item.pauseAfterMs]) pieces.push(silence[item.pauseAfterMs]);
     }
     if (tailMs > 0 && silence[20000]) {

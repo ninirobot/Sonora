@@ -68,6 +68,37 @@ cd desktop
 
 > 桌面版只是省掉了「自己部署一个服务」，**合成仍然需要联网**。
 
+### 版本与发布
+
+版本号有三处，含义不同：
+
+| 文件 | 作用 |
+| --- | --- |
+| `desktop/Cargo.toml` | 编译进 exe 的版本，也就是「当前构建的是哪一版」 |
+| `desktop/tauri.conf.json` | 打包元数据，exe 属性里看到的文件/产品版本（始终跟着 Cargo.toml） |
+| `desktop/version.json` | 仓库里给客户端拉的「最新**可下载**版本」 |
+
+**改版本号只用一条命令**（`desktop/build.ps1` 构建前会自动校验，真出错直接中断）：
+
+```powershell
+node scripts/bump-version.mjs minor                    # 0.1.0 -> 0.2.0，只升构建版本
+node scripts/bump-version.mjs patch --notes "修个小问题"
+node scripts/bump-version.mjs 1.0.0
+```
+
+发布流程（**先传 exe，再动更新清单**）：
+
+1. `node scripts/bump-version.mjs minor --notes "这版改了什么"`；
+2. 构建 exe：`cd desktop; .\build.ps1`；
+3. 到 GitHub Releases 打 tag（`v0.2.0`）并上传新的 exe；
+4. 传完之后再把更新清单推到同一版本，老用户这时才会收到提示：
+   `node scripts/bump-version.mjs publish --notes "这版改了什么"`，然后提交推送。
+
+> **顺序不能颠倒**：客户端拿 `version.json` 和 exe 里编进去的版本比。清单一旦超前，
+> 用户就会收到一个指向空下载页的更新提示。所以「清单落后于构建版本」是正常状态
+>（`check-version.mjs` 会明说「尚未发布」），而「清单超前」直接报错。
+> 桌面版状态栏和「关于」里都显示当前版本号，不用去右键属性里翻。
+
 ---
 
 ## 怎么用
@@ -98,7 +129,7 @@ cd desktop
 | 口音 | 23 |
 | 语音条目 | 387 |
 | 去重语音 id | 380 |
-| 音色家族 | 8 |
+| 音色家族 | 9 |
 | 多人对话模型 | 3 |
 
 「语音条目」按下拉里的条数算：同一副嗓子在多个语言页签下各占一条，所以比去重 id 多。
@@ -109,11 +140,12 @@ cd desktop
 | 家族 | 数量 | 说明 |
 | --- | --- | --- |
 | 标准 | 187 | 经典 Neural 语音，风格按语音逐条列 |
-| 多语言 | 51 | MultilingualNeural，一副嗓子说多国语言 |
+| 多语言 | 44 | MultilingualNeural，一副嗓子说多国语言 |
+| OpenAI | 7 | Azure OpenAI 同款音色的 Turbo 版，延迟更低、多语言更稳 |
 | Neural-HD | 52 | LLM 驱动的 HD 语音，共用 62 项模型级风格表 |
 | Neural-HD-Omni | 15 | HD 的 Omni 版本，风格 61 项（不含 whispering） |
 | Neural-HD-Flash | 18 | HD 的低延迟版本，仅中文与英文 |
-| MAI-Voice-2 | 42 | 另一套 HD 语音，含 ·Flash 低延迟变体 |
+| MAI-Voice-2.1 | 42 | 另一套 HD 语音，含 ·Flash 低延迟变体 |
 | 方言 | 12 | 中文方言、吴语与台湾国语 |
 | 多人语音 | 10 | 按轮次合成对话，同一批模型挂在多个语言页签下 |
 
@@ -130,7 +162,7 @@ cd desktop
 | Neural-HD | 2 | 晓辰、云帆 |
 | Neural-HD-Omni | 3 | 晓月、云琪、Maroonallegro |
 | Neural-HD-Flash | 15 | 晓晓、晓晓2、晓辰、晓伊、晓雨、晓涵、晓可、晓双、晓悠、云希、云逸、云霄、云汉、云夏、云野 |
-| MAI-Voice-2 | 8 | Bo、Bo·Flash、Mei、Mei·Flash、Wei、Wei·Flash、Lan、Lan·Flash |
+| MAI-Voice-2.1 | 8 | Bo、Bo·Flash、Mei、Mei·Flash、Wei、Wei·Flash、Lan、Lan·Flash |
 | 多人语音 | 2 | 英文对话、中文对话 |
 
 #### 中文 · 方言（`zh-CN`）
@@ -161,11 +193,12 @@ cd desktop
 | 分组 | 数量 | 语音 |
 | --- | --- | --- |
 | 标准 | 31 | Aria、Jenny、Guy、Davis、Jane、Jason、Sara、Tony、Nancy、Ava、Kai、Luna、Andrew、Emma、Brian、Amber、Ana、Ashley、Brandon、Christopher、Cora、Elizabeth、Eric、Jacob、Michelle、Monica、Roger、Steffan、AIGenerate1、AIGenerate2、Blue |
-| 多语言 | 29 | Andrew、Phoebe、Davis、Derek、Nancy、Serena、Ava、Amanda、Adam、Emma、Brian、Cora、Christopher、Brandon、Dustin、Evelyn、Jenny、Lewis、Lola、Ryan、Samuel、Steffan、Alloy Turbo、Echo Turbo、Fable Turbo、Onyx Turbo、Nova Turbo、Shimmer Turbo、Ash Turbo |
+| 多语言 | 22 | Andrew、Phoebe、Davis、Derek、Nancy、Serena、Ava、Amanda、Adam、Emma、Brian、Cora、Christopher、Brandon、Dustin、Evelyn、Jenny、Lewis、Lola、Ryan、Samuel、Steffan |
+| OpenAI | 7 | Alloy Turbo、Echo Turbo、Fable Turbo、Onyx Turbo、Nova Turbo、Shimmer Turbo、Ash Turbo |
 | Neural-HD | 30 | Ava、Andrew、Adam、Alloy、Aria、Bree、Brian、Davis、Emma、Emma2、Jane、Jenny、Nova、Phoebe、Serena、Steffan、Andrew2、Andrew3、Ava3、Evelyn、Jimmie、Juno、Mila、Tessa、Tiana、Tyler、Vance、Andrew-Preview、Ava-Preview、Serena-Preview |
 | Neural-HD-Omni | 10 | Andrew、Caleb、Dana、Lewis、Phoebe、Ava、Emma、Blushzephyr、Goldenspark、Jelly |
 | Neural-HD-Flash | 3 | Jimmie、Tiana、Tyler |
-| MAI-Voice-2 | 12 | Ethan、Ethan·Flash、Olivia、Olivia·Flash、Harper、Harper·Flash、Grant、Grant·Flash、Iris、Iris·Flash、Jasper、Jasper·Flash |
+| MAI-Voice-2.1 | 12 | Ethan、Ethan·Flash、Olivia、Olivia·Flash、Harper、Harper·Flash、Grant、Grant·Flash、Iris、Iris·Flash、Jasper、Jasper·Flash |
 | 多人语音 | 1 | 英文对话 |
 
 #### English · UK（`en-GB`）
@@ -183,7 +216,7 @@ cd desktop
 | 标准 | 14 | Natasha、Annette、Carly、Elsie、Freya、Joanne、Kim、Tina、William、Darren、Duncan、Ken、Neil、Tim |
 | 多语言 | 1 | William |
 | Neural-HD-Omni | 2 | Cyanspark、Siennatopaz |
-| MAI-Voice-2 | 2 | Isla、Isla·Flash |
+| MAI-Voice-2.1 | 2 | Isla、Isla·Flash |
 
 #### English · IN（`en-IN`）
 
@@ -263,7 +296,7 @@ cd desktop
 | 标准 | 7 | Nanami、Keita、Aoi、Daichi、Mayu、Naoki、Shiori |
 | 多语言 | 1 | Masaru |
 | Neural-HD | 2 | Nanami、Masaru |
-| MAI-Voice-2 Flash | 2 | Haruto、Sakura |
+| MAI-Voice-2.1 Flash | 2 | Haruto、Sakura |
 | 多人语音 | 1 | 英文对话 |
 
 </details>
@@ -277,7 +310,7 @@ cd desktop
 | 标准 | 9 | InJoon、SunHi、BongJin、GookMin、Hyunsu、JiMin、SeoHyeon、SoonBok、YuJin |
 | 多语言 | 1 | Hyunsu |
 | Neural-HD | 2 | SunHi、Hyunsu |
-| MAI-Voice-2 | 4 | Haena、Haena·Flash、Junho、Junho·Flash |
+| MAI-Voice-2.1 | 4 | Haena、Haena·Flash、Junho、Junho·Flash |
 | 多人语音 | 1 | 英文对话 |
 
 </details>
@@ -291,7 +324,7 @@ cd desktop
 | 标准 | 14 | Denise、Henri、Alain、Brigitte、Celeste、Claude、Coralie、Eloise、Jacqueline、Jerome、Josephine、Maurice、Yves、Yvette |
 | 多语言 | 3 | Vivienne、Remy、Lucien |
 | Neural-HD | 2 | Vivienne、Remy |
-| MAI-Voice-2 | 4 | Marc、Marc·Flash、Soleil、Soleil·Flash |
+| MAI-Voice-2.1 | 4 | Marc、Marc·Flash、Soleil、Soleil·Flash |
 | 多人语音 | 2 | 法语对话、英文对话 |
 
 </details>
@@ -305,7 +338,7 @@ cd desktop
 | 标准 | 16 | Alvaro、Elvira、Abril、Arnau、Dario、Elias、Estrella、Irene、Laia、Lia、Nil、Saul、Teo、Triana、Vera、Ximena |
 | 多语言 | 4 | Arabella、Isidora、Tristan、Ximena |
 | Neural-HD | 2 | Ximena、Tristan |
-| MAI-Voice-2 | 2 | Marta、Marta·Flash |
+| MAI-Voice-2.1 | 2 | Marta、Marta·Flash |
 | 多人语音 | 1 | 英文对话 |
 
 </details>
@@ -317,7 +350,7 @@ cd desktop
 | 分组 | 数量 | 语音 |
 | --- | --- | --- |
 | 标准 | 3 | Svetlana、Dmitry、Dariya |
-| MAI-Voice-2 | 4 | Lev、Lev·Flash、Masha、Masha·Flash |
+| MAI-Voice-2.1 | 4 | Lev、Lev·Flash、Masha、Masha·Flash |
 | 多人语音 | 1 | 英文对话 |
 
 </details>
@@ -331,7 +364,7 @@ cd desktop
 | 标准 | 15 | Conrad、Katja、Amala、Bernd、Christoph、Elke、Gisela、Kasper、Killian、Klarissa、Klaus、Louisa、Maja、Ralf、Tanja |
 | 多语言 | 2 | Seraphina、Florian |
 | Neural-HD | 2 | Seraphina、Florian |
-| MAI-Voice-2 | 4 | Klaus、Klaus·Flash、Mia、Mia·Flash |
+| MAI-Voice-2.1 | 4 | Klaus、Klaus·Flash、Mia、Mia·Flash |
 | 多人语音 | 1 | 英文对话 |
 
 </details>
@@ -444,12 +477,13 @@ curl -X POST "https://<your-worker>.workers.dev/v1/audio/speech" \
 | 对话音色 | **一段对话只有 2 个槽位**，第三人及之后回落到第二人的音色 |
 | 多人对话语言 | **仅英文内容稳定**；中文对话请选 `en-Multitalker`，`zh-Multitalker` 的说话人指派会乱序 |
 | 听力测试 · 叮咚 | **仅 MP3 输出会插入提示音**；WAV / OGG 拿回来的是裸 PCM，混不了 MP3 数据 |
-| 听力测试 · 停顿 | 原生模式下对话**轮次之间**的停顿会被模型忽略（普通模式才生效）；停顿芯片不能单独占一行 |
+| 听力测试 · 停顿 | 落在**整条音频最末尾**的停顿，在 DragonHD 系列（含 Flash / Omni）、MAI 系列、MultiTalker 下会被端点吞；听力测试的这类停顿由程序改用「静音片段」在块后拼，不受影响。停顿芯片不能单独占一行 |
 | 听力测试 · 网页版 | 受 CF 免费版 **50 个子请求**上限约束，特别长的稿子可能超；桌面版宽松得多（100 组） |
 
 - **风格**：只对英文内容听得出来，中文选了也基本没差别；服务端遇到不支持的风格会静默回落到中性。
 - **副语言**：Omni 系列各语言（含中文）可用，HD 系列在中文以外可用，Flash 系列不生效。
-- **语速 / 停顿**：对所有音色都有效；风格、强度、音调对多人对话无效。
+- **语速**：对所有音色都有效；风格、强度、音调对多人对话无效。
+- **停顿**：句内、句间、对话轮次之间的停顿对所有音色都有效；只有落在**整条音频最末尾**的停顿会被 DragonHD 系列（含 Flash / Omni）、MAI 系列、MultiTalker 吞掉（实测 2026-10-07，可用 `node scripts/probe-silence.mjs` 复验）。
 
 ---
 
@@ -463,14 +497,17 @@ curl -X POST "https://<your-worker>.workers.dev/v1/audio/speech" \
 ├── src/
 │   └── index.html  # 整页界面
 ├── desktop/        # Windows 桌面版（Tauri 2 + Rust）
+│   └── version.json # 客户端拉取的「最新版本」清单（见「版本与发布」）
 ├── docs/
 │   └── 使用说明.md  # 用户向操作手册
-├── scripts/        # 小工具：页面自检、语音统计、文案守护
+├── scripts/        # 小工具：页面自检、语音统计、文案守护、版本号
 ├── wrangler.toml   # Cloudflare Workers 配置
 └── LICENSE         # MIT
 ```
 
 **改语音目录只改 `data/voices.json`**，网页版与桌面版同时生效；改完跑一次 `node scripts/gen-voice-stats.mjs` 更新上面的清单。
+
+**改版本号只跑 `node scripts/bump-version.mjs`**，三处版本号一起改；`scripts/check-version.mjs` 负责校验它们一致（`build.ps1` 构建前自动跑一遍）。
 
 ---
 

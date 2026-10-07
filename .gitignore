@@ -23,6 +23,9 @@ desktop/gen/
 # 界面方案原型：挑视觉方向用的参考稿，不参与提交
 design/
 
+# 静音探针跑出来的试听音频（node scripts/probe-silence.mjs）
+scripts/probe-out/
+
 # 编辑器与系统文件
 .vscode/
 .idea/

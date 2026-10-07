@@ -157,7 +157,8 @@ pub struct ExamBlock {
     pub turns: Vec<ExamTurn>,
     pub repeat: usize,
     pub gap_ms: u32,
-    /// 对话尾巴上的停顿：mstts:dialog 内部不认 break，由前端挪出来在这里补
+    /// 块末尾的停顿：落在音频最末尾的 break 会被 HD / MultiTalker 等音色吞掉，
+    /// 所以摘出来由静音池在块后拼字节（见 exam_voice 里的「停顿路径」）
     pub pause_after_ms: u32,
     pub chime: bool,
     /// 普通模式：改用一条 speak 内多个 voice（原生模式走 mstts:dialog）
@@ -172,7 +173,7 @@ pub struct ExamTurn {
     pub segments: Vec<Segment>,
 }
 
-/// 静音块也需要一个文本，纯标点几乎不发声
+/// 静音池也要带一段文本：voice 里只放静音标签、不带文本会产出 0 字节（实测）
 const SILENCE_TEXT: &str = "。";
 /// 静音池固定用这个音色：实测「。」在 MAI / DragonHD 系列下会被读出一个怪声，Xiaoxiao 才是纯静音
 const SILENCE_VOICE: &str = "zh-CN-XiaoxiaoNeural";
@@ -198,9 +199,34 @@ pub async fn exam_voice(
         return Err("听力内容为空，请先粘贴文稿".to_string());
     }
 
-    // 句尾的 break 在不少音色（DragonHD / MAI 系列）下会被端点吞掉，
-    // 所以每块末尾的停顿芯片一律摘出来，交给静音池在块后拼。
-    // 块内两句之间的停顿摘不出来（它们在同一条 SSML 里），只能靠句首 break —— 见 get_multi_voice_ssml
+    // =======================================================================
+    // 停顿路径（2026-10-07 用 scripts/probe-silence.mjs 在真实服务上实测）
+    // -----------------------------------------------------------------------
+    // 一句话规律：break 只要不在整条音频的**最末尾**，就一律生效；
+    // 落在最末尾时是否生效只看音色，与容器（voice / mstts:dialog）无关。
+    //
+    //   break 位置               中文普通音色  英文普通音色   DragonHD*   MultiTalker   MAI   DragonHDFlash
+    //   块开头 / 句中 / 句间          ✅            ✅           ✅           ✅        —        ✅
+    //   多 voice / 多 turn 之间       ✅            ✅           ✅           ✅        —        —
+    //   整条音频的最末尾              ✅            ✅           ❌           ❌        ❌       ❌
+    //
+    // mstts:silence 是官方元素、本身能用，但**按音色家族分**：普通 Neural 音色
+    //（晓晓、AvaNeural）认，Δ 精确；HD 家族（DragonHD 系列含 Flash / Omni、MAI、MultiTalker）
+    // 全不认。已排除「写法不对」：http / https 两种命名空间、叠加型与 -exact 绝对型、
+    // 标签摆在文本前（官方示例的摆法）与摆在文本后，四种写法在 HD 上 Δ 都是 0。
+    // 官方 HD 支持表（.../speech-service/high-definition-voices）也把 <mstts:silence>
+    // 标成 DragonHD / Dragon HD Omni 均「不支持」，与实测一致。
+    // 尴尬的是：认它的普通音色本来就不吞末尾 break，会吞的那批恰好全不认它 ——
+    // 所以它救不了任何场景，末尾停顿只能靠静音池在块外拼字节。
+    //
+    // ⚠️ 那张 HD 表只能当参考：它把 Omni 的 <break>、HD 的 <prosody> 也标成「不支持」，
+    // 但实测两者在我们的端点上都生效（Omni 句尾 break Δ4000；语速 ±50% 差 1~1.8 秒）。
+    // 官方表讲的是 Azure 语音服务，我们走的是 Edge 端点，别照抄，以实测为准。
+    //
+    // 池子也不是权宜之计，它是精确的：Xiaoxiao 读「。」实测产出 0ms，池子片段 = 请求的毫秒数
+    //（raw PCM 误差 0ms；MP3 容器固定多出约 48ms）。
+    // 换音色或怀疑端点行为变了，跑一次 node scripts/probe-silence.mjs 复验。
+    // =======================================================================
     for block in blocks.iter_mut() {
         let extra = {
             let segs = if block.kind == "dialogue" {

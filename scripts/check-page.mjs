@@ -30,6 +30,7 @@ const values = {
     'MULTITALKER_SPEAKERS': JSON.stringify(voices.multitalkerSpeakers),
     'STYLES_UNKNOWN': JSON.stringify(labels.stylesUnknown),
     'RUNTIME': '"web"',
+    'APP_VERSION': '""',
     'PROMOTION': JSON.stringify(promotion),
     'PROMOTION.title': promotion.title,
     'PROMOTION.subtitle': promotion.subtitle,

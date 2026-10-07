@@ -355,53 +355,53 @@
           ]
         },
         {
-          "label": "MAI-Voice-2",
+          "label": "MAI-Voice-2.1",
           "family": "maiVoice2",
           "voices": [
             {
-              "id": "zh-CN-Bo:MAI-Voice-2",
+              "id": "zh-CN-Bo:MAI-Voice-2.1",
               "name": "Bo",
               "gender": "m",
               "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
             },
             {
-              "id": "zh-CN-Bo:MAI-Voice-2-Flash",
+              "id": "zh-CN-Bo:MAI-Voice-2.1-Flash",
               "name": "Bo·Flash",
               "gender": "m",
               "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
             },
             {
-              "id": "zh-CN-Mei:MAI-Voice-2",
+              "id": "zh-CN-Mei:MAI-Voice-2.1",
               "name": "Mei",
               "gender": "f",
               "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
             },
             {
-              "id": "zh-CN-Mei:MAI-Voice-2-Flash",
+              "id": "zh-CN-Mei:MAI-Voice-2.1-Flash",
               "name": "Mei·Flash",
               "gender": "f",
               "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
             },
             {
-              "id": "zh-CN-Wei:MAI-Voice-2",
+              "id": "zh-CN-Wei:MAI-Voice-2.1",
               "name": "Wei",
               "gender": "m",
               "styles": "angry confused disgusted embarrassed excited fearful happy hopeful jealous joyful regretful sad surprised"
             },
             {
-              "id": "zh-CN-Wei:MAI-Voice-2-Flash",
+              "id": "zh-CN-Wei:MAI-Voice-2.1-Flash",
               "name": "Wei·Flash",
               "gender": "m",
               "styles": "angry confused disgusted embarrassed excited fearful happy hopeful jealous joyful regretful sad surprised"
             },
             {
-              "id": "zh-CN-Lan:MAI-Voice-2",
+              "id": "zh-CN-Lan:MAI-Voice-2.1",
               "name": "Lan",
               "gender": "f",
               "styles": "angry confused disgusted embarrassed excited fearful happy joyful sad surprised"
             },
             {
-              "id": "zh-CN-Lan:MAI-Voice-2-Flash",
+              "id": "zh-CN-Lan:MAI-Voice-2.1-Flash",
               "name": "Lan·Flash",
               "gender": "f",
               "styles": "angry confused disgusted embarrassed excited fearful happy joyful sad surprised"
@@ -874,7 +874,13 @@
               "id": "en-US-SteffanMultilingualNeural",
               "name": "Steffan",
               "gender": "m"
-            },
+            }
+          ]
+        },
+        {
+          "label": "OpenAI",
+          "family": "openai",
+          "voices": [
             {
               "id": "en-US-AlloyTurboMultilingualNeural",
               "name": "Alloy Turbo",
@@ -1148,72 +1154,72 @@
           ]
         },
         {
-          "label": "MAI-Voice-2",
+          "label": "MAI-Voice-2.1",
           "family": "maiVoice2",
           "voices": [
             {
-              "id": "en-US-Ethan:MAI-Voice-2",
+              "id": "en-US-Ethan:MAI-Voice-2.1",
               "name": "Ethan",
               "gender": "m",
               "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
             },
             {
-              "id": "en-US-Ethan:MAI-Voice-2-Flash",
+              "id": "en-US-Ethan:MAI-Voice-2.1-Flash",
               "name": "Ethan·Flash",
               "gender": "m",
               "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
             },
             {
-              "id": "en-US-Olivia:MAI-Voice-2",
+              "id": "en-US-Olivia:MAI-Voice-2.1",
               "name": "Olivia",
               "gender": "f",
               "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
             },
             {
-              "id": "en-US-Olivia:MAI-Voice-2-Flash",
+              "id": "en-US-Olivia:MAI-Voice-2.1-Flash",
               "name": "Olivia·Flash",
               "gender": "f",
               "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
             },
             {
-              "id": "en-US-Harper:MAI-Voice-2",
+              "id": "en-US-Harper:MAI-Voice-2.1",
               "name": "Harper",
               "gender": "f",
               "styles": "angry confused determined embarrassed excited happy hopeful joyful regretful relieved sad shouting softvoice whispering"
             },
             {
-              "id": "en-US-Harper:MAI-Voice-2-Flash",
+              "id": "en-US-Harper:MAI-Voice-2.1-Flash",
               "name": "Harper·Flash",
               "gender": "f",
               "styles": "angry confused determined embarrassed excited happy hopeful joyful regretful relieved sad shouting softvoice whispering"
             },
             {
-              "id": "en-US-Grant:MAI-Voice-2",
+              "id": "en-US-Grant:MAI-Voice-2.1",
               "name": "Grant",
               "gender": "m"
             },
             {
-              "id": "en-US-Grant:MAI-Voice-2-Flash",
+              "id": "en-US-Grant:MAI-Voice-2.1-Flash",
               "name": "Grant·Flash",
               "gender": "m"
             },
             {
-              "id": "en-US-Iris:MAI-Voice-2",
+              "id": "en-US-Iris:MAI-Voice-2.1",
               "name": "Iris",
               "gender": "f"
             },
             {
-              "id": "en-US-Iris:MAI-Voice-2-Flash",
+              "id": "en-US-Iris:MAI-Voice-2.1-Flash",
               "name": "Iris·Flash",
               "gender": "f"
             },
             {
-              "id": "en-US-Jasper:MAI-Voice-2",
+              "id": "en-US-Jasper:MAI-Voice-2.1",
               "name": "Jasper",
               "gender": "m"
             },
             {
-              "id": "en-US-Jasper:MAI-Voice-2-Flash",
+              "id": "en-US-Jasper:MAI-Voice-2.1-Flash",
               "name": "Jasper·Flash",
               "gender": "m"
             }
@@ -1477,17 +1483,17 @@
           ]
         },
         {
-          "label": "MAI-Voice-2",
+          "label": "MAI-Voice-2.1",
           "family": "maiVoice2",
           "voices": [
             {
-              "id": "en-AU-Isla:MAI-Voice-2",
+              "id": "en-AU-Isla:MAI-Voice-2.1",
               "name": "Isla",
               "gender": "f",
               "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
             },
             {
-              "id": "en-AU-Isla:MAI-Voice-2-Flash",
+              "id": "en-AU-Isla:MAI-Voice-2.1-Flash",
               "name": "Isla·Flash",
               "gender": "f",
               "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
@@ -1962,17 +1968,17 @@
           ]
         },
         {
-          "label": "MAI-Voice-2 Flash",
+          "label": "MAI-Voice-2.1 Flash",
           "family": "maiVoice2",
           "voices": [
             {
-              "id": "ja-JP-Haruto:MAI-Voice-2-Flash",
+              "id": "ja-JP-Haruto:MAI-Voice-2.1-Flash",
               "name": "Haruto",
               "gender": "m",
               "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
             },
             {
-              "id": "ja-JP-Sakura:MAI-Voice-2-Flash",
+              "id": "ja-JP-Sakura:MAI-Voice-2.1-Flash",
               "name": "Sakura",
               "gender": "f",
               "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
@@ -2081,29 +2087,29 @@
           ]
         },
         {
-          "label": "MAI-Voice-2",
+          "label": "MAI-Voice-2.1",
           "family": "maiVoice2",
           "voices": [
             {
-              "id": "ko-KR-Haena:MAI-Voice-2",
+              "id": "ko-KR-Haena:MAI-Voice-2.1",
               "name": "Haena",
               "gender": "f",
               "styles": "angry confused determined embarrassed excited happy hopeful joyful regretful relieved sad softvoice surprised"
             },
             {
-              "id": "ko-KR-Haena:MAI-Voice-2-Flash",
+              "id": "ko-KR-Haena:MAI-Voice-2.1-Flash",
               "name": "Haena·Flash",
               "gender": "f",
               "styles": "angry confused determined embarrassed excited happy hopeful joyful regretful relieved sad softvoice surprised"
             },
             {
-              "id": "ko-KR-Junho:MAI-Voice-2",
+              "id": "ko-KR-Junho:MAI-Voice-2.1",
               "name": "Junho",
               "gender": "m",
               "styles": "angry confused determined embarrassed excited happy hopeful joyful relieved sad softvoice"
             },
             {
-              "id": "ko-KR-Junho:MAI-Voice-2-Flash",
+              "id": "ko-KR-Junho:MAI-Voice-2.1-Flash",
               "name": "Junho·Flash",
               "gender": "m",
               "styles": "angry confused determined embarrassed excited happy hopeful joyful relieved sad softvoice"
@@ -2248,29 +2254,29 @@
           ]
         },
         {
-          "label": "MAI-Voice-2",
+          "label": "MAI-Voice-2.1",
           "family": "maiVoice2",
           "voices": [
             {
-              "id": "fr-FR-Marc:MAI-Voice-2",
+              "id": "fr-FR-Marc:MAI-Voice-2.1",
               "name": "Marc",
               "gender": "m",
               "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
             },
             {
-              "id": "fr-FR-Marc:MAI-Voice-2-Flash",
+              "id": "fr-FR-Marc:MAI-Voice-2.1-Flash",
               "name": "Marc·Flash",
               "gender": "m",
               "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
             },
             {
-              "id": "fr-FR-Soleil:MAI-Voice-2",
+              "id": "fr-FR-Soleil:MAI-Voice-2.1",
               "name": "Soleil",
               "gender": "f",
               "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
             },
             {
-              "id": "fr-FR-Soleil:MAI-Voice-2-Flash",
+              "id": "fr-FR-Soleil:MAI-Voice-2.1-Flash",
               "name": "Soleil·Flash",
               "gender": "f",
               "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
@@ -2434,17 +2440,17 @@
           ]
         },
         {
-          "label": "MAI-Voice-2",
+          "label": "MAI-Voice-2.1",
           "family": "maiVoice2",
           "voices": [
             {
-              "id": "es-ES-Marta:MAI-Voice-2",
+              "id": "es-ES-Marta:MAI-Voice-2.1",
               "name": "Marta",
               "gender": "f",
               "styles": "adventurous caring empathy curious encouraging excited friendly cheerful nostalgic reflective sad disappointed serious"
             },
             {
-              "id": "es-ES-Marta:MAI-Voice-2-Flash",
+              "id": "es-ES-Marta:MAI-Voice-2.1-Flash",
               "name": "Marta·Flash",
               "gender": "f",
               "styles": "adventurous caring empathy curious encouraging excited friendly cheerful nostalgic reflective sad disappointed serious"
@@ -2494,29 +2500,29 @@
           ]
         },
         {
-          "label": "MAI-Voice-2",
+          "label": "MAI-Voice-2.1",
           "family": "maiVoice2",
           "voices": [
             {
-              "id": "ru-RU-Lev:MAI-Voice-2",
+              "id": "ru-RU-Lev:MAI-Voice-2.1",
               "name": "Lev",
               "gender": "m",
               "styles": "adventurous caring empathy curious encouraging excited friendly cheerful nostalgic reflective sad disappointed serious"
             },
             {
-              "id": "ru-RU-Lev:MAI-Voice-2-Flash",
+              "id": "ru-RU-Lev:MAI-Voice-2.1-Flash",
               "name": "Lev·Flash",
               "gender": "m",
               "styles": "adventurous caring empathy curious encouraging excited friendly cheerful nostalgic reflective sad disappointed serious"
             },
             {
-              "id": "ru-RU-Masha:MAI-Voice-2",
+              "id": "ru-RU-Masha:MAI-Voice-2.1",
               "name": "Masha",
               "gender": "f",
               "styles": "adventurous caring empathy curious encouraging excited friendly cheerful nostalgic reflective sad disappointed serious"
             },
             {
-              "id": "ru-RU-Masha:MAI-Voice-2-Flash",
+              "id": "ru-RU-Masha:MAI-Voice-2.1-Flash",
               "name": "Masha·Flash",
               "gender": "f",
               "styles": "adventurous caring empathy curious encouraging excited friendly cheerful nostalgic reflective sad disappointed serious"
@@ -2660,29 +2666,29 @@
           ]
         },
         {
-          "label": "MAI-Voice-2",
+          "label": "MAI-Voice-2.1",
           "family": "maiVoice2",
           "voices": [
             {
-              "id": "de-DE-Klaus:MAI-Voice-2",
+              "id": "de-DE-Klaus:MAI-Voice-2.1",
               "name": "Klaus",
               "gender": "m",
               "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
             },
             {
-              "id": "de-DE-Klaus:MAI-Voice-2-Flash",
+              "id": "de-DE-Klaus:MAI-Voice-2.1-Flash",
               "name": "Klaus·Flash",
               "gender": "m",
               "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
             },
             {
-              "id": "de-DE-Mia:MAI-Voice-2",
+              "id": "de-DE-Mia:MAI-Voice-2.1",
               "name": "Mia",
               "gender": "f",
               "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
             },
             {
-              "id": "de-DE-Mia:MAI-Voice-2-Flash",
+              "id": "de-DE-Mia:MAI-Voice-2.1-Flash",
               "name": "Mia·Flash",
               "gender": "f",
               "styles": "angry confused determined disgusted embarrassed excited fearful happy hopeful jealous joyful regretful relieved sad shouting softvoice surprised whispering"
