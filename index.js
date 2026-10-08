@@ -340,6 +340,30 @@ async function runPool(items, worker, concurrency = TTS_CONCURRENCY) {
     return results;
 }
 
+// 调试用：把本次要合成的文本整段写进 Workers Logs。
+// 列表页的 message 列只认 message 键 —— 不写它就是空白，得展开才看得到内容。
+// 正文只放 message 一处：再多放一个 text 字段，同一段文字会在日志里出现两遍。
+// 用 console.info 而不是 console.log，这样 level 显示的是 info（console.log 是 log）。
+function logTtsText(kind, text, extra) {
+    const value = String(text == null ? '' : text);
+    console.info(Object.assign({
+        message: '[tts:' + kind + '] ' + value,   // 列表页一眼看到的那一行
+        kind: kind,
+        chars: value.length
+    }, extra || {}));
+}
+
+// 片段数组 → 可读文本：停顿 / 副语言按 [xxx] 标出来，方便对着页面核对
+function segmentsToText(segments) {
+    return (segments || []).map(s => {
+        if (!s) return '';
+        if (s.type === 'text') return String(s.value || '');
+        if (s.type === 'para') return '[' + String(s.tag || '') + ']';
+        if (s.type === 'pause') return '[停顿 ' + (Number(s.ms) || 0) + 'ms]';
+        return '';
+    }).join('');
+}
+
 // opts = { rate, pitch, volume, style, styledegree, outputFormat }
 async function getVoice(text, voiceName = "zh-CN-XiaoxiaoNeural", opts = {}) {
     const { rate, pitch, volume, style, outputFormat } = normalizeVoiceOpts(opts);
@@ -349,6 +373,7 @@ async function getVoice(text, voiceName = "zh-CN-XiaoxiaoNeural", opts = {}) {
         if (!cleanText) {
             throw new Error("文本内容为空");
         }
+        logTtsText('text', cleanText, { voice: voiceName });
         
         // 如果文本很短，直接处理
         if (cleanText.length <= 1500) {
@@ -665,6 +690,7 @@ async function synthesizeGroups(groups, ssmlOf, outputFormat) {
 async function getSegmentedVoice(segments, voiceName, opts) {
     const groups = groupByLength(segments, segmentLength);
     if (!groups.length) throw new Error('文本内容为空');
+    logTtsText('segments', segmentsToText(segments), { voice: voiceName, groups: groups.length });
     const { outputFormat } = normalizeVoiceOpts(opts);
     return synthesizeGroups(groups, g => getSegmentsSsml(g, voiceName, opts), outputFormat);
 }
@@ -753,6 +779,8 @@ async function getDialogueVoice(turns, voiceName, optsA, optsB, speakerA = 'emma
         .map(t => normalizeDialogueTurn(t, speakerA, speakerB))
         .filter(t => t.segments.some(s => segmentLength(s) > 0));
     if (!list.length) throw new Error('对话内容为空，请至少写一句话');
+    logTtsText('dialogue', list.map(t => (t.key === 'b' ? 'B: ' : 'A: ') + segmentsToText(t.segments)).join('\n'),
+        { voice: voiceName, turns: list.length });
 
     const groups = groupByLength(list, turnLength, 1500, 40, '对话');
     const { outputFormat } = normalizeVoiceOpts(optsA);
@@ -844,6 +872,16 @@ async function getExamVoice(body) {
     const optsCn = voiceOptsFromParams({ ...(body.optsCn || {}), outputFormat: body.outputFormat });
     const timeline = Array.isArray(body.timeline) ? body.timeline : [];
     if (!timeline.length) throw new Error('听力内容为空，请先粘贴文稿');
+    // 听测：中文行原样记，对话行按 M: / W: 记，独白块标出来
+    logTtsText('exam', timeline.map(item => {
+        if (!item) return '';
+        if (item.kind === 'dialogue') {
+            return (item.turns || [])
+                .map(t => (t.key === 'b' ? 'W: ' : 'M: ') + segmentsToText(t.segments))
+                .join('\n');
+        }
+        return (item.kind === 'mono' ? '独白: ' : '') + segmentsToText(item.segments);
+    }).join('\n'), { blocks: timeline.length });
 
     // 落在「整条音频最末尾」的 break 会被 DragonHD / Flash / MAI / MultiTalker 吞掉
     //（中文与英文普通音色不吞），所以每块末尾的停顿芯片一律摘出来，交给静音池在块后拼字节。
