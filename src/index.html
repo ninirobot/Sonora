@@ -237,6 +237,119 @@
             margin-top: auto;
         }
 
+        /* 「合成」下方的指示行：当前方式小字 + 展开箭头，整体居中，箭头不挂角上 */
+        .rail-group {
+            position: relative;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .rail-meter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            margin-top: 2px;
+        }
+        .rail-sub {
+            font-size: 10px;
+            line-height: 1.2;
+            font-weight: 400;
+            white-space: nowrap;
+            color: var(--text-secondary);
+        }
+        .rail-item.active .rail-sub {
+            color: var(--accent);
+        }
+        .rail-caret {
+            flex: none;
+            width: 10px;
+            height: 10px;
+            color: var(--text-secondary);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.18s ease;
+        }
+        .rail-item.active .rail-caret {
+            color: var(--accent);
+        }
+        .rail-item[aria-expanded="true"] .rail-caret {
+            transform: rotate(180deg);
+        }
+
+        /* 输入方式下拉：点左侧「合成」弹出，形态照 design/rail-method-menu.html 的弹性回弹 */
+        /* rail 默认 overflow:hidden 会裁掉浮层，这里放开；panel 自身用 z-index 压过工作区 */
+        .app-rail.open {
+            z-index: 6;
+            /* 展开时才放开裁剪：收起状态下面板不可见，不影响原有布局 */
+            overflow: visible;
+        }
+        .rail-menu {
+            --i: 0;
+            position: absolute;
+            left: calc(100% + 8px);
+            top: 2px;
+            z-index: 60;
+            width: max-content;
+            min-width: 128px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding: 5px;
+            border-radius: var(--radius-md);
+            background: var(--card);
+            border: 1px solid var(--line-strong);
+            box-shadow: 0 14px 34px rgb(15 25 45 / 0.2), 0 2px 6px rgb(15 25 45 / 0.1);
+            /* 回弹一律画在圆角内，收起时不会留下描边残影 */
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateX(-10px) scale(0.92);
+            transform-origin: left center;
+            will-change: opacity, transform;
+            /* visibility 用 0s + 延迟收尾，不参与插值：收起过程中没有中间帧 */
+            transition: opacity 0.16s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s linear 0.22s;
+        }
+        .app-rail.open .rail-menu {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: none;
+            transition: opacity 0.18s ease, transform 0.3s cubic-bezier(0.34, 1.5, 0.64, 1), visibility 0s;
+        }
+        /* 逐项 overshoot 入场，幅度限制在内边距里 */
+        .app-rail.open .rail-menu .method-chip {
+            animation: railMenuIn 0.44s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+            animation-delay: calc(var(--i) * 52ms + 40ms);
+        }
+        @keyframes railMenuIn {
+            0% { opacity: 0; transform: translateX(-14px); }
+            55% { opacity: 1; transform: translateX(3px); }
+            100% { opacity: 1; transform: none; }
+        }
+        @keyframes railMenuInNarrow {
+            0% { opacity: 0; transform: translateY(-10px); }
+            55% { opacity: 1; transform: translateY(2px); }
+            100% { opacity: 1; transform: none; }
+        }
+
+        /* 下拉展开时轻微压暗工作区，层级高于工作区、低于标题栏语言下拉 */
+        .rail-dim {
+            position: fixed;
+            inset: 0;
+            z-index: 2;
+            background: rgba(15, 25, 45, 0.12);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.22s ease, visibility 0s linear 0.24s;
+        }
+        body.rail-menu-open .rail-dim {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.22s ease, visibility 0s;
+        }
+
         /* 工作区：语言条 + 主区，竖向排布 */
         .workspace {
             grid-area: 2 / 2 / 3 / 3;
@@ -246,12 +359,11 @@
             overflow: hidden;
         }
 
-        /* 语言条：语言第 1 行，口音第 2 行（不再横排挤在一起） */
+        /* 语言条：语言 / 听测方式 / 口音同行（照初版 fluent mica 的工具条） */
         .lang-bar {
             flex: none;
             display: flex;
-            flex-direction: column;
-            gap: 4px;
+            align-items: center;
             padding: 7px 16px;
             border-bottom: 1px solid var(--line);
         }
@@ -260,25 +372,16 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            min-width: 0;
         }
 
         .lang-row .lang-tabs {
             flex-wrap: wrap;
         }
 
-        /* 输入方式 chips：跟语言标签同一行，靠右，行高对齐 */
-        .lang-row .method-chips {
-            margin: 0 0 0 auto;
-            flex: none;
-        }
-        .lang-row .method-chip {
-            flex: none;
-            padding: 3px 12px;
-            font-size: 12px;
-        }
-
-        /* 没有口音时第二行整行不占位 */
-        .accent-row:has(.accent-tabs:empty) {
+        /* 听测方式与口音都只在有内容时占位，空态不留空壳 */
+        #examModeTabs:empty,
+        .accent-tabs:empty {
             display: none;
         }
 
@@ -610,26 +713,23 @@
             margin-bottom: 0;
         }
 
-        /* 输入方式：Material chip 风格（形态照 08，配色用 01） */
-        .method-chips {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 10px;
-        }
+        /* 输入方式：左侧「合成」下拉里的四枚 chip（容器 .rail-menu 见上面 rail 一段） */
         .method-chip {
-            flex: 1;
-            padding: 6px 0;
-            border: 1px solid var(--line-strong);
-            border-radius: 999px;
+            flex: none;
+            width: 100%;
+            padding: 7px 10px;
+            border: 1px solid transparent;
+            border-radius: 5px;
             background: transparent;
             font: inherit;
-            font-size: 12px;
-            color: var(--text-secondary);
+            font-size: 12.5px;
+            text-align: left;
+            color: var(--text-primary);
             cursor: pointer;
             transition: 0.16s ease;
         }
         .method-chip:hover {
-            border-color: var(--accent);
+            background: var(--accent-soft);
             color: var(--accent);
         }
         .method-chip.active {
@@ -760,13 +860,14 @@
             box-shadow: 0 0 0 3px rgb(15 108 189 / 0.16);
         }
 
-        /* 占位文字必须脱离文档流（绝对定位），否则光标会被挤到提示文字后面 */
+        /* 占位文字必须脱离文档流（绝对定位），否则光标会被挤到提示文字后面。
+           对齐要点：铺满 padding 盒再继承同一套 padding —— 起点与正文首行完全相同。
+           不写死 top/left：字体、行高、padding 都是继承来的，改字号或盒子高度都不会错位 */
         .rich-editor.is-empty::before {
             content: attr(data-placeholder);
             position: absolute;
-            top: 12px;
-            left: 16px;
-            right: 16px;
+            inset: 0;
+            padding: inherit;
             color: var(--text-secondary);
             pointer-events: none;
         }
@@ -1964,6 +2065,19 @@
             border-color: var(--line-strong);
             color: var(--text-primary);
         }
+        /* 下拉面板与里面的 chip：深色下沿用弹窗那套面层色 */
+        html.dark .rail-menu {
+            background: var(--surface-color);
+            border-color: var(--line-strong);
+            box-shadow: 0 16px 40px rgb(0 0 0 / 0.5), 0 2px 6px rgb(0 0 0 / 0.3);
+        }
+        html.dark .rail-menu .method-chip {
+            border-color: transparent;
+            color: var(--text-primary);
+        }
+        html.dark .rail-dim {
+            background: rgba(0, 0, 0, 0.32);
+        }
         /* 深色下的芯片：底改半透明、字提亮，色相与浅色保持一致 */
         html.dark .chip.pause { background: rgba(15, 108, 189, 0.24); color: #a9cdf0; border-color: rgba(15, 108, 189, 0.4); }
         html.dark .chip.para[data-para="laughter"] { background: rgba(217, 119, 6, 0.22); color: #f0c489; border-color: rgba(217, 119, 6, 0.42); }
@@ -2054,7 +2168,7 @@
                 min-height: 40vh;
             }
 
-            /* 语言条：标签横向滑，输入方式独占一行 */
+            /* 语言条：语言 / 听测方式 / 口音仍同一行，各自横向滚动 */
             .lang-bar {
                 padding: 6px 10px;
             }
@@ -2071,9 +2185,22 @@
             .lang-row .lang-tabs::-webkit-scrollbar {
                 display: none;
             }
-            .lang-row .method-chips {
-                flex: 1 0 100%;
-                margin: 0;
+
+            /* 窄屏 rail 横排：下拉改为从 rail 下方拉出 */
+            .rail-group {
+                display: contents;
+            }
+            .rail-menu {
+                left: 8px;
+                top: calc(100% + 6px);
+                transform-origin: top center;
+                transform: translateY(-8px) scale(0.96);
+            }
+            .app-rail.open .rail-menu {
+                transform: none;
+            }
+            .app-rail.open .rail-menu .method-chip {
+                animation-name: railMenuInNarrow;
             }
 
             /* 触控：输入类控件 16px 起，否则 iOS 聚焦会放大整页 */
@@ -2162,12 +2289,29 @@
             </div>
         </header>
 
-        <!-- 左侧导航：合成 / 转录 + 输入方式二级项 + 帮助 -->
+        <!-- 左侧导航：合成 / 转录 + 合成方式下拉（点「合成」弹出）+ 帮助 -->
         <nav class="app-rail">
-            <button type="button" class="rail-item active" id="ttsMode">
-                <span class="rail-icon">✎</span>
-                <span>合成</span>
-            </button>
+            <div class="rail-group">
+                <button type="button" class="rail-item active" id="ttsMode" aria-expanded="false">
+                    <span class="rail-icon">✎</span>
+                    <span>合成</span>
+                    <span class="rail-meter">
+                        <span class="rail-sub" id="railSub">单人语音</span>
+                        <svg class="rail-caret" viewBox="0 0 12 12" aria-hidden="true">
+                            <path d="M2.6 4.3 6 7.9l3.4-3.6" fill="none" stroke="currentColor"
+                                  stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                </button>
+
+                <!-- 输入方式：单人 / 多人 / 上传 / 听力测试，跟着「合成」展开 -->
+                <div class="rail-menu" id="railMenu">
+                    <button type="button" class="method-chip active" id="textInputTab" style="--i:0">单人语音</button>
+                    <button type="button" class="method-chip" id="dialogueTab" style="--i:1">多人语音</button>
+                    <button type="button" class="method-chip" id="fileUploadTab" style="--i:2">上传文件</button>
+                    <button type="button" class="method-chip" id="examTab" style="--i:3">听力测试</button>
+                </div>
+            </div>
             <button type="button" class="rail-item" id="transcriptionMode">
                 <span class="rail-icon">▶</span>
                 <span>转录</span>
@@ -2183,23 +2327,17 @@
             </button>
         </nav>
 
+        <!-- 下拉展开时压暗工作区（层级高于工作区、低于标题栏） -->
+        <div class="rail-dim" id="railDim"></div>
+
         <div class="workspace">
-            <!-- 语言条：语言第 1 行，口音第 2 行 -->
+            <!-- 语言条：语言 / 听测方式 / 口音同一行 -->
             <div class="lang-bar">
                 <div class="lang-row">
                     <div class="lang-tabs" id="langTabs"></div>
-                    <!-- 听力测试：双人对话方式，样式就是语言页签那套 -->
+                    <!-- 听力测试：双人对话方式（普通 / 原生），样式就是语言页签那套 -->
                     <div class="lang-tabs" id="examModeTabs"></div>
-
-                    <!-- 输入方式：单人 / 多人 / 上传（跟语言标签同一行，靠右） -->
-                    <div class="method-chips">
-                        <button type="button" class="method-chip active" id="textInputTab">单人语音</button>
-                        <button type="button" class="method-chip" id="dialogueTab">多人语音</button>
-                        <button type="button" class="method-chip" id="fileUploadTab">上传文件</button>
-                        <button type="button" class="method-chip" id="examTab">听力测试</button>
-                    </div>
-                </div>
-                <div class="lang-row accent-row">
+                    <!-- 二级口音：语言或听测方式的变体，无内容时被 :empty 藏掉 -->
                     <div class="lang-tabs accent-tabs" id="accentTabs"></div>
                 </div>
             </div>
@@ -3944,10 +4082,54 @@
                 if (head) head.textContent = isExam ? '中文播报' : '语音';
             }
 
-            tabs.text.addEventListener('click', () => activate('text'));
-            tabs.file.addEventListener('click', () => activate('file'));
-            tabs.dialogue.addEventListener('click', () => activate('dialogue'));
-            tabs.exam.addEventListener('click', () => activate('exam'));
+            // 下拉由「合成」按钮开合，四个 chip 点击后自动收起
+            const rail = document.querySelector('.app-rail');
+            const ttsBtn = document.getElementById('ttsMode');
+            const railMenu = document.getElementById('railMenu');
+            const railSub = document.getElementById('railSub');
+            const METHOD_LABEL = {
+                text: '单人语音', dialogue: '多人语音', file: '上传文件', exam: '听力测试'
+            };
+
+            function setRailMenu(open) {
+                rail.classList.toggle('open', open);
+                document.body.classList.toggle('rail-menu-open', open);
+                ttsBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            }
+
+            function pickMethod(method) {
+                activate(method);
+                if (railSub) railSub.textContent = METHOD_LABEL[method] || '';
+                setRailMenu(false);
+                saveState();   // 记住这次选的方式，下次打开还在这一步
+            }
+
+            ttsBtn.addEventListener('click', e => {
+                e.stopPropagation();
+                setRailMenu(!rail.classList.contains('open'));
+            });
+            // 面板内部的点击（那四个 chip）不当成「点外部」，由 pickMethod 负责收起
+            document.addEventListener('click', e => {
+                if (e.target instanceof Node && railMenu.contains(e.target)) return;
+                setRailMenu(false);
+            });
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape' && rail.classList.contains('open')) setRailMenu(false);
+            });
+
+            tabs.text.addEventListener('click', () => pickMethod('text'));
+            tabs.file.addEventListener('click', () => pickMethod('file'));
+            tabs.dialogue.addEventListener('click', () => pickMethod('dialogue'));
+            tabs.exam.addEventListener('click', () => pickMethod('exam'));
+
+            // 上次停在哪个方式，这次还回到哪个方式（存的是方式本身，不是写死的默认页）
+            function restoreMethod() {
+                let prefs = null;
+                try { prefs = JSON.parse(localStorage.getItem(PREFS_KEY) || 'null'); } catch (ignored) { }
+                const saved = prefs && prefs.method;
+                if (saved && saved !== currentInputMethod && METHOD_LABEL[saved]) pickMethod(saved);
+            }
+            restoreMethod();
 
             document.getElementById('insertPauseBtn').addEventListener('click',
                 () => insertMark('pause', document.getElementById('pauseLength').value));
@@ -4892,6 +5074,8 @@
                 };
                 try {
                     localStorage.setItem(PREFS_KEY, JSON.stringify({
+                        // 上次停在哪个方式也记下来，下次打开还在这一步
+                        method: currentInputMethod,
                         voice: valueOf('voice'),
                         speed: valueOf('speed'),
                         pitch: valueOf('pitch'),

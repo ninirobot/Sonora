@@ -12,6 +12,22 @@ name = "sonora"
 [env.staging]
 name = "sonora-staging"
 
+# 可观测性：每次部署默认开启 Workers Logs（含 invocation 日志 + console.log / 未捕获异常）
+# head_sampling_rate：1 = 每条请求都记（默认也是 1）；流量大想省点就调成 0.1 之类
+# 需要 wrangler >= 3.78.6
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+[observability.logs]
+invocation_logs = true
+
+# 运行时放置：让 Worker 跑在离后端最近的数据中心（Beta）
+# 后端是微软的 *.tts.speech.microsoft.com，所以贴 Azure 东南亚；
+# region 与 mode = "smart" 互斥，只能二选一；区域格式 {provider}:{region}
+[placement]
+region = "azure:southeastasia"
+
 # 变量配置（如果需要的话）
 [vars]
 # 可以在这里添加环境变量
